@@ -41,13 +41,13 @@ public class ExtractionController {
 
     @RequestMapping(method=POST, value="/vocabulary")
     public void addVocabulary(@RequestParam MultipartFile vocabularyFileStream) {
-        File vacabulary;
+        File vocabulary;
         try {
-            vacabulary = WebUtils.getFileFromParam(vocabularyFileStream);
+            vocabulary = WebUtils.getFileFromParam(vocabularyFileStream);
         } catch (IOException e) {
             throw new IllegalStateException("Failed to read file.", e);
         }
-        extractionService.addVocabulary(vacabulary);
+        extractionService.addVocabulary(vocabulary);
     }
 
     @RequestMapping(method=GET, value="/keyphrases")

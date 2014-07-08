@@ -8,7 +8,7 @@ public interface ExtractionService {
 
     void addDocuments(List<File> documents);
 
-    void addVocabulary(File vacabulary);
+    void addVocabulary(File vocabulary);
 
     Collection<String> getKeyphrases();
 
