@@ -24,7 +24,7 @@ public class ConceptsController {
     @Autowired
     private ConceptsService conceptsService;
 
-    @RequestMapping(method=POST, params = {"conceptsRdf"})
+    @RequestMapping(method = POST, params = {"conceptsRdf"})
     public void resumeFromSavedState(@RequestParam MultipartFile conceptsRdf) {
         File conceptsRdfFile;
         try {
@@ -35,7 +35,7 @@ public class ConceptsController {
         conceptsService.resumeFromSavedState(conceptsRdfFile);
     }
 
-    @RequestMapping(method=POST, params = "phrases")
+    @RequestMapping(method = POST, params = "phrases")
     public void addPhrases(@RequestParam MultipartFile phrases) {
         File phrasesFile ;
         try {
@@ -46,7 +46,7 @@ public class ConceptsController {
         conceptsService.addPhrases(phrasesFile);
     }
 
-    @RequestMapping(method=GET)
+    @RequestMapping(method = GET)
     public Collection<NamedEntity> getConcepts(@RequestParam(required = false) String prefix ) {
         if (prefix != null) {
             return conceptsService.getConceptsWithPrefix(prefix);
@@ -55,56 +55,56 @@ public class ConceptsController {
         }
     }
 
-    @RequestMapping(method=DELETE)
+    @RequestMapping(method = DELETE)
     public void deleteConcepts() {
         conceptsService.deleteConcepts();
     }
 
-    @RequestMapping(method=POST, value="/{prefLabel}")
+    @RequestMapping(method = POST, value = "/{prefLabel}")
     public void createConcept(@PathVariable String prefLabel) {
         conceptsService.createConcept(prefLabel);
     }
 
-    @RequestMapping(method=GET, value="/{id}")
+    @RequestMapping(method = GET, value = "/{id}")
     public Concept getConcept(@PathVariable URI id) {
         return conceptsService.getConcept(id);
     }
 
-    @RequestMapping(method=DELETE, value="/{id}")
+    @RequestMapping(method = DELETE, value = "/{id}")
     public void deleteConcept(@PathVariable URI id) {
         conceptsService.deleteConcept(id);
     }
 
     // altlabels
 
-    @RequestMapping(method=GET, value="/{id}/altlabels")
+    @RequestMapping(method = GET, value = "/{id}/altlabels")
     public Collection<String> getAltLabels() {
         return conceptsService.getAltLabels();
     }
 
-    @RequestMapping(method=POST, value="/{id}/altlabels")
+    @RequestMapping(method = POST, value = "/{id}/altlabels")
     public void addAltLabel(@RequestParam String label) {
         conceptsService.addAltLabel(label);
     }
 
-    @RequestMapping(method=DELETE, value="/{id}/altlabels")
+    @RequestMapping(method = DELETE, value = "/{id}/altlabels")
     public void deleteAltLabel(@RequestParam String label) {
         conceptsService.deleteAltLabel(label);
     }
 
     // acronyms
 
-    @RequestMapping(method=GET, value="/{id}/acronyms")
+    @RequestMapping(method = GET, value = "/{id}/acronyms")
     public Collection<String> getAcronyms() {
         return conceptsService.getAcronyms();
     }
 
-    @RequestMapping(method=POST, value="/{id}/acronyms")
+    @RequestMapping(method = POST, value = "/{id}/acronyms")
     public void addAcronym(@RequestParam String label) {
         conceptsService.addAcronym(label);
     }
 
-    @RequestMapping(method=DELETE, value="/{id}/acronyms")
+    @RequestMapping(method = DELETE, value = "/{id}/acronyms")
     public void deleteAcronym(@RequestParam String label) {
         conceptsService.deleteAcronym(label);
     }
@@ -162,34 +162,34 @@ public class ConceptsController {
 
     // related
 
-    @RequestMapping(method=GET, value="/{id}/related")
+    @RequestMapping(method = GET, value = "/{id}/related")
     public Collection<NamedEntity> getRelated(@PathVariable URI id) {
         return conceptsService.getRelated(id);
     }
 
-    @RequestMapping(method=POST, value="/{id}/related/{relatedId}")
+    @RequestMapping(method = POST, value = "/{id}/related/{relatedId}")
     public void addRelated(@PathVariable URI id, @PathVariable URI relatedId) {
         conceptsService.addRelated(id, relatedId);
     }
 
-    @RequestMapping(method=DELETE, value="/{id}/related/{relatedId}")
+    @RequestMapping(method = DELETE, value = "/{id}/related/{relatedId}")
     public void deleteRelated(@PathVariable URI id, @PathVariable URI relatedId) {
         conceptsService.deleteRelated(id, relatedId);
     }
 
     // synonyms
 
-    @RequestMapping(method=GET, value="/{id}/synonyms")
+    @RequestMapping(method = GET, value = "/{id}/synonyms")
     public Collection<NamedEntity> getSynonyms(@PathVariable URI id) {
         return conceptsService.getSynonyms(id);
     }
 
-    @RequestMapping(method=POST, value="/{id}/synonyms/{synonymId}")
+    @RequestMapping(method = POST, value = "/{id}/synonyms/{synonymId}")
     public void addSynonym(@PathVariable URI id, @PathVariable URI synonymId) {
         conceptsService.addSynonym(id, synonymId);
     }
 
-    @RequestMapping(method=DELETE, value="/{id}/synonyms/{synonymId}")
+    @RequestMapping(method = DELETE, value = "/{id}/synonyms/{synonymId}")
     public void deleteSynonym(@PathVariable URI id, @PathVariable URI synonymId) {
         conceptsService.deleteSynonym(id, synonymId);
     }
