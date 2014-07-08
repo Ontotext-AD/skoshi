@@ -21,21 +21,21 @@ public interface ConceptsService {
 
     // alt labels
 
-    Collection<String> getAltLabels();
-    void addAltLabel(String label);
-    void deleteAltLabel(String label);
+    Collection<String> getAltLabels(URI id);
+    void addAltLabel(URI id, String label);
+    void deleteAltLabel(URI id, String label);
 
     // acronyms
 
-    Collection<String> getAcronyms();
-    void addAcronym(String label);
-    void deleteAcronym(String label);
+    Collection<String> getAcronyms(URI id);
+    void addAcronym(URI id, String label);
+    void deleteAcronym(URI id, String label);
 
     // abbreviations
 
-    Collection<String> getAbbreviations();
-    void addAbbreviation(String label);
-    void deleteAbbreviation(String label);
+    Collection<String> getAbbreviations(URI id);
+    void addAbbreviation(URI id, String label);
+    void deleteAbbreviation(URI id, String label);
 
     // definition
 

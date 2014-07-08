@@ -101,12 +101,12 @@ public class ConceptsController {
 
     @RequestMapping(method = POST, value = "/{id}/acronyms")
     public void addAcronym(@RequestParam String label) {
-        conceptsService.addAcronym(label);
+        conceptsService.addAcronym(, label);
     }
 
     @RequestMapping(method = DELETE, value = "/{id}/acronyms")
     public void deleteAcronym(@RequestParam String label) {
-        conceptsService.deleteAcronym(label);
+        conceptsService.deleteAcronym(, label);
     }
 
     // abbreviations
@@ -118,12 +118,12 @@ public class ConceptsController {
 
     @RequestMapping(method = POST, value = "/{id}/abbreviations")
     public void addAbbreviation(@RequestParam String label) {
-        conceptsService.addAbbreviation(label);
+        conceptsService.addAbbreviation(, label, );
     }
 
     @RequestMapping(method = DELETE, value = "/{id}/abbreviations")
     public void deleteAbbreviation(@RequestParam String label) {
-        conceptsService.deleteAbbreviation(label);
+        conceptsService.deleteAbbreviation(, label);
     }
 
     // definition

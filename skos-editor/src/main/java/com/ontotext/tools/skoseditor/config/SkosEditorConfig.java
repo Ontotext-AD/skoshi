@@ -1,5 +1,11 @@
 package com.ontotext.tools.skoseditor.config;
 
+import com.ontotext.tools.skoseditor.repositories.ConceptsRepository;
+import com.ontotext.tools.skoseditor.repositories.sesame.SesameConceptsRepository;
+import com.ontotext.tools.skoseditor.services.ConceptsService;
+import com.ontotext.tools.skoseditor.services.ExtractionService;
+import com.ontotext.tools.skoseditor.services.impl.ConceptsServiceImpl;
+import com.ontotext.tools.skoseditor.services.impl.ExtractionServiceImpl;
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.sail.SailRepository;
@@ -17,8 +23,8 @@ public class SkosEditorConfig {
 
     @Value("db.dir") String dbDir;
 
-    @Bean
-    public Repository getRepository() {
+    @Bean(destroyMethodName="shutdown")
+    public Repository repository() {
         File dataDir = new File(dbDir);
         Repository repo = new SailRepository( new MemoryStore(dataDir) );
         try {
@@ -27,6 +33,22 @@ public class SkosEditorConfig {
             throw new IllegalStateException("Failed to initialize repository.", e);
         }
         return repo;
+    }
+
+
+    @Bean
+    public ExtractionService extractionService() {
+        return new ExtractionServiceImpl();
+    }
+
+    @Bean
+    public ConceptsRepository conceptsRepository() {
+        return new SesameConceptsRepository(repository());
+    }
+
+    @Bean
+    public ConceptsService conceptsService() {
+        return new ConceptsServiceImpl(conceptsRepository());
     }
 
 
