@@ -36,7 +36,7 @@ public class ExtractionServiceImpl implements ExtractionService {
             try {
                 Files.move(document, new File(documentsDir, document.getName()));
             } catch (IOException e) {
-                throw new IllegalStateException("Failed to move file " + document.getName());
+                throw new IllegalStateException("Failed to move file " + document.getName(), e);
             }
         }
     }
@@ -59,9 +59,9 @@ public class ExtractionServiceImpl implements ExtractionService {
         }
 
         try {
-            Files.move(vocabulary, new File(vocabularyDir, vocabulary.getName()));
+            Files.move(vocabulary, new File(vocabularyDir, "vocabulary.txt"));
         } catch (IOException e) {
-            throw new IllegalStateException("Failed to move file " + vocabulary.getName());
+            throw new IllegalStateException("Failed to move file " + vocabulary.getName(), e);
         }
     }
 
