@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Collection;
 
 import static org.springframework.web.bind.annotation.RequestMethod.*;
@@ -25,13 +26,23 @@ public class ConceptsController {
 
     @RequestMapping(method=POST, params = {"conceptsRdf"})
     public void resumeFromSavedState(@RequestParam MultipartFile conceptsRdf) {
-        File conceptsRdfFile = WebUtils.getFileFromParam(conceptsRdf);
+        File conceptsRdfFile;
+        try {
+            conceptsRdfFile = WebUtils.getFileFromParam(conceptsRdf);
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Failed to get file.");
+        }
         conceptsService.resumeFromSavedState(conceptsRdfFile);
     }
 
     @RequestMapping(method=POST, params = "phrases")
     public void addPhrases(@RequestParam MultipartFile phrases) {
-        File phrasesFile = WebUtils.getFileFromParam(phrases);
+        File phrasesFile ;
+        try {
+            phrasesFile = WebUtils.getFileFromParam(phrases);
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Failed to get file.");
+        }
         conceptsService.addPhrases(phrasesFile);
     }
 
