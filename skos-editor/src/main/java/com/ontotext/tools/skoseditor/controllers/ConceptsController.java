@@ -25,7 +25,7 @@ public class ConceptsController {
     private ConceptsService conceptsService;
 
     @RequestMapping(method = POST, params = {"conceptsRdf"})
-    public void resumeFromSavedState(@RequestParam MultipartFile conceptsRdf) {
+    public String resumeFromSavedState(@RequestParam MultipartFile conceptsRdf) {
         File conceptsRdfFile;
         try {
             conceptsRdfFile = WebUtils.getFileFromParam(conceptsRdf);
@@ -33,10 +33,11 @@ public class ConceptsController {
             throw new IllegalArgumentException("Failed to get file.");
         }
         conceptsService.resumeFromSavedState(conceptsRdfFile);
+        return "Resumed from saved state.";
     }
 
     @RequestMapping(method = POST, params = "phrases")
-    public void addPhrases(@RequestParam MultipartFile phrases) {
+    public String addPhrases(@RequestParam MultipartFile phrases) {
         File phrasesFile ;
         try {
             phrasesFile = WebUtils.getFileFromParam(phrases);
@@ -44,6 +45,7 @@ public class ConceptsController {
             throw new IllegalArgumentException("Failed to get file.");
         }
         conceptsService.addPhrases(phrasesFile);
+        return "Added phrases.";
     }
 
     @RequestMapping(method = GET)
@@ -56,13 +58,15 @@ public class ConceptsController {
     }
 
     @RequestMapping(method = DELETE)
-    public void deleteConcepts() {
+    public String deleteConcepts() {
         conceptsService.deleteConcepts();
+        return "Removed all concepts.";
     }
 
     @RequestMapping(method = POST, value = "/{prefLabel}")
-    public void createConcept(@PathVariable String prefLabel) {
+    public String createConcept(@PathVariable String prefLabel) {
         conceptsService.createConcept(prefLabel);
+        return "Concept created successfully.";
     }
 
     @RequestMapping(method = GET, value = "/{id}")
@@ -71,8 +75,9 @@ public class ConceptsController {
     }
 
     @RequestMapping(method = DELETE, value = "/{id}")
-    public void deleteConcept(@PathVariable URI id) {
+    public String deleteConcept(@PathVariable URI id) {
         conceptsService.deleteConcept(id);
+        return "Concept deleted successfully.";
     }
 
     // altlabels
@@ -83,13 +88,15 @@ public class ConceptsController {
     }
 
     @RequestMapping(method = POST, value = "/{id}/altlabels")
-    public void addAltLabel(@PathVariable URI id, @RequestParam String label) {
+    public String addAltLabel(@PathVariable URI id, @RequestParam String label) {
         conceptsService.addAltLabel(id, label);
+        return "Added label '" + label + "'.";
     }
 
     @RequestMapping(method = DELETE, value = "/{id}/altlabels")
-    public void deleteAltLabel(@PathVariable URI id, @RequestParam String label) {
+    public String deleteAltLabel(@PathVariable URI id, @RequestParam String label) {
         conceptsService.deleteAltLabel(id, label);
+        return "Deleted label '" + label + "'.";
     }
 
     // acronyms
@@ -100,13 +107,15 @@ public class ConceptsController {
     }
 
     @RequestMapping(method = POST, value = "/{id}/acronyms")
-    public void addAcronym(@PathVariable URI id, @RequestParam String label) {
+    public String addAcronym(@PathVariable URI id, @RequestParam String label) {
         conceptsService.addAcronym(id, label);
+        return "Added acronym '" + label + "'.";
     }
 
     @RequestMapping(method = DELETE, value = "/{id}/acronyms")
-    public void deleteAcronym(@PathVariable URI id, @RequestParam String label) {
+    public String deleteAcronym(@PathVariable URI id, @RequestParam String label) {
         conceptsService.deleteAcronym(id, label);
+        return "Deleted acronym '" + label + "'.";
     }
 
     // abbreviations
@@ -117,13 +126,15 @@ public class ConceptsController {
     }
 
     @RequestMapping(method = POST, value = "/{id}/abbreviations")
-    public void addAbbreviation(@PathVariable URI id, @RequestParam String label) {
+    public String addAbbreviation(@PathVariable URI id, @RequestParam String label) {
         conceptsService.addAbbreviation(id, label);
+        return "Added abbreviation '" + label + "'";
     }
 
     @RequestMapping(method = DELETE, value = "/{id}/abbreviations")
-    public void deleteAbbreviation(@PathVariable URI id, @RequestParam String label) {
+    public String deleteAbbreviation(@PathVariable URI id, @RequestParam String label) {
         conceptsService.deleteAbbreviation(id, label);
+        return "Deleted abbreviation '" + label + "'.";
     }
 
     // definition
@@ -134,13 +145,15 @@ public class ConceptsController {
     }
 
     @RequestMapping(method = PUT, value = "/{id}/definition")
-    public void updateDefinition(@PathVariable URI id, @RequestParam String definition) {
+    public String updateDefinition(@PathVariable URI id, @RequestParam String definition) {
         conceptsService.updateDefinition(id, definition);
+        return "Updated definition to '" + definition + "'.";
     }
 
     @RequestMapping(method = DELETE, value = "/{id}/definition")
-    public void deleteDefinition(@PathVariable URI id) {
+    public String deleteDefinition(@PathVariable URI id) {
         conceptsService.deleteDefinition(id);
+        return "Definition deleted successfully.";
     }
 
     // note
@@ -151,13 +164,15 @@ public class ConceptsController {
     }
 
     @RequestMapping(method = PUT, value = "/{id}/note")
-    public void updateNote(@PathVariable URI id, @RequestParam String note) {
+    public String updateNote(@PathVariable URI id, @RequestParam String note) {
         conceptsService.updateNote(id, note);
+        return "Updated note to '" + note + "'.";
     }
 
     @RequestMapping(method = DELETE, value = "/{id}/note")
-    public void deleteNote(@PathVariable URI id) {
+    public String deleteNote(@PathVariable URI id) {
         conceptsService.deleteNote(id);
+        return "Note deleted successfully.";
     }
 
     // related
@@ -168,13 +183,15 @@ public class ConceptsController {
     }
 
     @RequestMapping(method = POST, value = "/{id}/related/{relatedId}")
-    public void addRelated(@PathVariable URI id, @PathVariable URI relatedId) {
+    public String addRelated(@PathVariable URI id, @PathVariable URI relatedId) {
         conceptsService.addRelated(id, relatedId);
+        return "Added related concept.";
     }
 
     @RequestMapping(method = DELETE, value = "/{id}/related/{relatedId}")
-    public void deleteRelated(@PathVariable URI id, @PathVariable URI relatedId) {
+    public String deleteRelated(@PathVariable URI id, @PathVariable URI relatedId) {
         conceptsService.deleteRelated(id, relatedId);
+        return "Deleted related concept.";
     }
 
     // synonyms
@@ -185,13 +202,15 @@ public class ConceptsController {
     }
 
     @RequestMapping(method = POST, value = "/{id}/synonyms/{synonymId}")
-    public void addSynonym(@PathVariable URI id, @PathVariable URI synonymId) {
+    public String addSynonym(@PathVariable URI id, @PathVariable URI synonymId) {
         conceptsService.addSynonym(id, synonymId);
+        return "Added synonym.";
     }
 
     @RequestMapping(method = DELETE, value = "/{id}/synonyms/{synonymId}")
-    public void deleteSynonym(@PathVariable URI id, @PathVariable URI synonymId) {
+    public String deleteSynonym(@PathVariable URI id, @PathVariable URI synonymId) {
         conceptsService.deleteSynonym(id, synonymId);
+        return "Deleted synonym.";
     }
 
     // broader
@@ -202,13 +221,15 @@ public class ConceptsController {
     }
 
     @RequestMapping(method = POST, value = "/{id}/broader/{broaderId}")
-    public void addBroader(@PathVariable URI id, @PathVariable URI broaderId) {
+    public String addBroader(@PathVariable URI id, @PathVariable URI broaderId) {
         conceptsService.addBroader(id, broaderId);
+        return "Added broader concept.";
     }
 
     @RequestMapping(method = DELETE, value = "/{id}/broader/{broaderId}")
-    public void deleteBroader(@PathVariable URI id, @PathVariable URI broaderId) {
+    public String deleteBroader(@PathVariable URI id, @PathVariable URI broaderId) {
         conceptsService.deleteBroader(id, broaderId);
+        return "Deleted broader concept.";
     }
 
     // narrower
@@ -219,13 +240,15 @@ public class ConceptsController {
     }
 
     @RequestMapping(method = POST, value = "/{id}/narrower/{narrowerId}")
-    public void addNarrower(@PathVariable URI id, @PathVariable URI narrowerId) {
+    public String addNarrower(@PathVariable URI id, @PathVariable URI narrowerId) {
         conceptsService.addNarrower(id, narrowerId);
+        return "Added narrower concept.";
     }
 
     @RequestMapping(method = DELETE, value = "/{id}/narrower/{narrowerId}")
-    public void deleteNarrower(@PathVariable URI id, @PathVariable URI narrowerId) {
+    public String deleteNarrower(@PathVariable URI id, @PathVariable URI narrowerId) {
         conceptsService.deleteNarrower(id, narrowerId);
+        return "Deleted narrower concept.";
     }
 
 
