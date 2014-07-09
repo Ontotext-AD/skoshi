@@ -48,7 +48,7 @@ public class ConceptsController {
         return "Added phrases.";
     }
 
-    @RequestMapping(method = GET)
+    @RequestMapping(method = GET, params = "prefix")
     public Collection<NamedEntity> getConcepts(@RequestParam(required = false) String prefix ) {
         if (prefix != null) {
             return conceptsService.getConceptsWithPrefix(prefix);

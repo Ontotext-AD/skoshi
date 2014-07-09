@@ -16,7 +16,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
-@ContextConfiguration(classes = { WebConfig.class })
+@ContextConfiguration(classes = { WebConfig.class, SkosEditorConfig.class })
 public class WebConfigTest {
 
     private MockMvc mockMvc;
