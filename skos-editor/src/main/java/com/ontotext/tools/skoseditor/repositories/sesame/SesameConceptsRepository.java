@@ -1,9 +1,6 @@
 package com.ontotext.tools.skoseditor.repositories.sesame;
 
-import com.ontotext.tools.skoseditor.model.Concept;
-import com.ontotext.tools.skoseditor.model.NamedEntity;
-import com.ontotext.tools.skoseditor.model.NamedEntityImpl;
-import com.ontotext.tools.skoseditor.model.SKOSX;
+import com.ontotext.tools.skoseditor.model.*;
 import com.ontotext.tools.skoseditor.repositories.ConceptsRepository;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
@@ -193,7 +190,49 @@ public class SesameConceptsRepository implements ConceptsRepository {
 
     @Override
     public Concept findConcept(URI id) {
-        throw new NotImplementedException();
+        String prefLabel = findPrefLabel(id);
+        Concept concept = new ConceptImpl(id, prefLabel);
+
+        concept.setAltLabels(findAltLabels(id));
+        concept.setAcronyms(findAcronyms(id));
+        concept.setAbbreviations(findAbbreviations(id));
+
+        concept.setDefinition(findDefinition(id));
+        concept.setNote(findNote(id));
+
+        concept.setRelated(findRelated(id));
+        concept.setSynonyms(findSynonyms(id));
+
+        concept.setBroader(findBroader(id));
+        concept.setNarrower(findNarrower(id));
+
+        return concept;
+    }
+
+    public String findPrefLabel(URI id) {
+        String prefLabel = null;
+        try {
+            RepositoryConnection connection = repository.getConnection();
+            try {
+                RepositoryResult<Statement> result = connection.getStatements(id, SKOS.PREF_LABEL, null, false);
+                while (result.hasNext()) {
+                    String label = result.next().getObject().stringValue();
+                    if (prefLabel != null) {
+                        throw new IllegalStateException(
+                                String.format("More than one pref label for concept %s: %s  , %s",
+                                        id.stringValue(),
+                                        prefLabel,
+                                        label));
+                    }
+                    prefLabel = label;
+                }
+            } finally {
+                connection.close();
+            }
+        } catch (RepositoryException re) {
+            throw new IllegalStateException(re);
+        }
+        return prefLabel;
     }
 
     @Override
