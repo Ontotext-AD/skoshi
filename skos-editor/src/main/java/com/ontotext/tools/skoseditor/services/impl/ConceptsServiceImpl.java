@@ -99,7 +99,7 @@ public class ConceptsServiceImpl implements ConceptsService {
 
     @Override
     public void deleteAcronym(URI id, String label) {
-        conceptsRepository.addAcronym(id, label);
+        conceptsRepository.deleteAcronym(id, label);
     }
 
     @Override
@@ -124,7 +124,7 @@ public class ConceptsServiceImpl implements ConceptsService {
 
     @Override
     public void updateDefinition(URI id, String definition) {
-        conceptsRepository.updateDefinition(id, definition)
+        conceptsRepository.updateDefinition(id, definition);
     }
 
     @Override

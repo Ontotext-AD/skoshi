@@ -23,7 +23,7 @@ public class SkosEditorConfig {
 
     @Value("db.dir") String dbDir;
 
-    @Bean(destroyMethodName="shutdown")
+    @Bean(destroyMethod="shutDown")
     public Repository repository() {
         File dataDir = new File(dbDir);
         Repository repo = new SailRepository( new MemoryStore(dataDir) );

@@ -78,52 +78,52 @@ public class ConceptsController {
     // altlabels
 
     @RequestMapping(method = GET, value = "/{id}/altlabels")
-    public Collection<String> getAltLabels() {
-        return conceptsService.getAltLabels();
+    public Collection<String> getAltLabels(@PathVariable URI id) {
+        return conceptsService.getAltLabels(id);
     }
 
     @RequestMapping(method = POST, value = "/{id}/altlabels")
-    public void addAltLabel(@RequestParam String label) {
-        conceptsService.addAltLabel(label);
+    public void addAltLabel(@PathVariable URI id, @RequestParam String label) {
+        conceptsService.addAltLabel(id, label);
     }
 
     @RequestMapping(method = DELETE, value = "/{id}/altlabels")
-    public void deleteAltLabel(@RequestParam String label) {
-        conceptsService.deleteAltLabel(label);
+    public void deleteAltLabel(@PathVariable URI id, @RequestParam String label) {
+        conceptsService.deleteAltLabel(id, label);
     }
 
     // acronyms
 
     @RequestMapping(method = GET, value = "/{id}/acronyms")
-    public Collection<String> getAcronyms() {
-        return conceptsService.getAcronyms();
+    public Collection<String> getAcronyms(@PathVariable URI id) {
+        return conceptsService.getAcronyms(id);
     }
 
     @RequestMapping(method = POST, value = "/{id}/acronyms")
-    public void addAcronym(@RequestParam String label) {
-        conceptsService.addAcronym(, label);
+    public void addAcronym(@PathVariable URI id, @RequestParam String label) {
+        conceptsService.addAcronym(id, label);
     }
 
     @RequestMapping(method = DELETE, value = "/{id}/acronyms")
-    public void deleteAcronym(@RequestParam String label) {
-        conceptsService.deleteAcronym(, label);
+    public void deleteAcronym(@PathVariable URI id, @RequestParam String label) {
+        conceptsService.deleteAcronym(id, label);
     }
 
     // abbreviations
 
     @RequestMapping(method = GET, value = "/{id}/abbreviations")
-    public Collection<String> getAbbreviations() {
-        return conceptsService.getAbbreviations();
+    public Collection<String> getAbbreviations(@PathVariable URI id) {
+        return conceptsService.getAbbreviations(id);
     }
 
     @RequestMapping(method = POST, value = "/{id}/abbreviations")
-    public void addAbbreviation(@RequestParam String label) {
-        conceptsService.addAbbreviation(, label, );
+    public void addAbbreviation(@PathVariable URI id, @RequestParam String label) {
+        conceptsService.addAbbreviation(id, label);
     }
 
     @RequestMapping(method = DELETE, value = "/{id}/abbreviations")
-    public void deleteAbbreviation(@RequestParam String label) {
-        conceptsService.deleteAbbreviation(, label);
+    public void deleteAbbreviation(@PathVariable URI id, @RequestParam String label) {
+        conceptsService.deleteAbbreviation(id, label);
     }
 
     // definition
