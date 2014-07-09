@@ -6,6 +6,8 @@ import com.ontotext.tools.skoseditor.services.ConceptsService;
 import com.ontotext.tools.skoseditor.services.ExtractionService;
 import com.ontotext.tools.skoseditor.services.impl.ConceptsServiceImpl;
 import com.ontotext.tools.skoseditor.services.impl.ExtractionServiceImpl;
+import com.ontotext.tools.skoseditor.util.StringToUriConverter;
+import com.ontotext.tools.skoseditor.util.UriToStringConverter;
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.sail.SailRepository;
@@ -14,8 +16,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.support.ConversionServiceFactoryBean;
+import org.springframework.core.convert.ConversionService;
+import org.springframework.core.convert.converter.Converter;
+import org.springframework.core.convert.support.ConversionServiceFactory;
 
 import java.io.File;
+import java.util.HashSet;
+import java.util.Set;
 
 @Configuration
 @PropertySource(value="classpath:skos-editor.properties")
@@ -50,6 +58,5 @@ public class SkosEditorConfig {
     public ConceptsService conceptsService() {
         return new ConceptsServiceImpl(conceptsRepository());
     }
-
 
 }
