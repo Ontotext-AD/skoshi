@@ -18,7 +18,7 @@ import java.util.List;
 
 @Configuration
 @EnableWebMvc
-@ComponentScan(basePackages = {"com.ontotext.tools.skoseditor.controllers"})
+@ComponentScan("com.ontotext.tools.skoseditor.controllers")
 public class WebConfig extends WebMvcConfigurerAdapter {
 
     @Override

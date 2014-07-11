@@ -17,7 +17,8 @@ import java.util.List;
 
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
-@RestController("/extraction")
+@RestController
+@RequestMapping("/extraction")
 public class ExtractionController {
 
     @Autowired

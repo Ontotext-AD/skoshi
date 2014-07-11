@@ -18,7 +18,8 @@ import java.util.Collection;
 
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
-@RestController("/concepts")
+@RestController
+@RequestMapping("/concepts")
 public class ConceptsController {
 
     @Autowired
