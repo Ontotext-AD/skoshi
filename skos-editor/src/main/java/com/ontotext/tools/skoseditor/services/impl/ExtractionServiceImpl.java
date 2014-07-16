@@ -6,6 +6,7 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -67,6 +68,7 @@ public class ExtractionServiceImpl implements ExtractionService {
 
     @Override
     public Collection<String> getKeyphrases() {
-        throw new NotImplementedException();
+        // TODO: implement the real stuff
+        return Arrays.asList(new String[] {"management", "organization", "order"});
     }
 }

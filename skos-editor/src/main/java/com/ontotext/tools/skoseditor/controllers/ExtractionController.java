@@ -4,8 +4,10 @@ import com.ontotext.tools.skoseditor.services.ExtractionService;
 import com.ontotext.tools.skoseditor.util.WebUtils;
 import net.lingala.zip4j.exception.ZipException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,7 +26,8 @@ public class ExtractionController {
     @Autowired
     private ExtractionService extractionService;
 
-    @RequestMapping(method=POST, value="/documents")
+    @RequestMapping(method = POST, value = "/documents")
+    @ResponseStatus(HttpStatus.CREATED)
     public void addDocuments(@RequestParam MultipartFile documentsFileStream) {
         List<File> documents;
         try {
@@ -40,7 +43,8 @@ public class ExtractionController {
         extractionService.addDocuments(documents);
     }
 
-    @RequestMapping(method=POST, value="/vocabulary")
+    @RequestMapping(method = POST, value = "/vocabulary")
+    @ResponseStatus(HttpStatus.CREATED)
     public void addVocabulary(@RequestParam MultipartFile vocabularyFileStream) {
         File vocabulary;
         try {
@@ -51,7 +55,8 @@ public class ExtractionController {
         extractionService.addVocabulary(vocabulary);
     }
 
-    @RequestMapping(method=GET, value="/keyphrases")
+    @RequestMapping(method = GET, value = "/keyphrases")
+    @ResponseStatus(HttpStatus.OK)
     public Collection<String> getKeyphrases() {
         return extractionService.getKeyphrases();
     }
