@@ -96,16 +96,16 @@ public class ConceptsController {
 
     @RequestMapping(method = POST, value = "/{id}/altlabels")
     @ResponseStatus(HttpStatus.CREATED)
-    public String addAltLabel(@PathVariable URI id, @RequestParam String label) {
-        conceptsService.addAltLabel(id, label);
-        return "Added label '" + label + "'.";
+    public String addAltLabel(@PathVariable URI id, @RequestParam String value) {
+        conceptsService.addAltLabel(id, value);
+        return "Added label '" + value + "'.";
     }
 
     @RequestMapping(method = DELETE, value = "/{id}/altlabels")
     @ResponseStatus(HttpStatus.OK)
-    public String deleteAltLabel(@PathVariable URI id, @RequestParam String label) {
-        conceptsService.deleteAltLabel(id, label);
-        return "Deleted label '" + label + "'.";
+    public String deleteAltLabel(@PathVariable URI id, @RequestParam String value) {
+        conceptsService.deleteAltLabel(id, value);
+        return "Deleted label '" + value + "'.";
     }
 
     // acronyms
@@ -118,16 +118,16 @@ public class ConceptsController {
 
     @RequestMapping(method = POST, value = "/{id}/acronyms")
     @ResponseStatus(HttpStatus.CREATED)
-    public String addAcronym(@PathVariable URI id, @RequestParam String label) {
-        conceptsService.addAcronym(id, label);
-        return "Added acronym '" + label + "'.";
+    public String addAcronym(@PathVariable URI id, @RequestParam String value) {
+        conceptsService.addAcronym(id, value);
+        return "Added acronym '" + value + "'.";
     }
 
     @RequestMapping(method = DELETE, value = "/{id}/acronyms")
     @ResponseStatus(HttpStatus.OK)
-    public String deleteAcronym(@PathVariable URI id, @RequestParam String label) {
-        conceptsService.deleteAcronym(id, label);
-        return "Deleted acronym '" + label + "'.";
+    public String deleteAcronym(@PathVariable URI id, @RequestParam String value) {
+        conceptsService.deleteAcronym(id, value);
+        return "Deleted acronym '" + value + "'.";
     }
 
     // abbreviations
@@ -140,16 +140,16 @@ public class ConceptsController {
 
     @RequestMapping(method = POST, value = "/{id}/abbreviations")
     @ResponseStatus(HttpStatus.CREATED)
-    public String addAbbreviation(@PathVariable URI id, @RequestParam String label) {
-        conceptsService.addAbbreviation(id, label);
-        return "Added abbreviation '" + label + "'";
+    public String addAbbreviation(@PathVariable URI id, @RequestParam String value) {
+        conceptsService.addAbbreviation(id, value);
+        return "Added abbreviation '" + value + "'";
     }
 
     @RequestMapping(method = DELETE, value = "/{id}/abbreviations")
     @ResponseStatus(HttpStatus.OK)
-    public String deleteAbbreviation(@PathVariable URI id, @RequestParam String label) {
-        conceptsService.deleteAbbreviation(id, label);
-        return "Deleted abbreviation '" + label + "'.";
+    public String deleteAbbreviation(@PathVariable URI id, @RequestParam String value) {
+        conceptsService.deleteAbbreviation(id, value);
+        return "Deleted abbreviation '" + value + "'.";
     }
 
     // definition
@@ -162,9 +162,9 @@ public class ConceptsController {
 
     @RequestMapping(method = PUT, value = "/{id}/definition")
     @ResponseStatus(HttpStatus.OK)
-    public String updateDefinition(@PathVariable URI id, @RequestParam String definition) {
-        conceptsService.updateDefinition(id, definition);
-        return "Updated definition to '" + definition + "'.";
+    public String updateDefinition(@PathVariable URI id, @RequestParam String value) {
+        conceptsService.updateDefinition(id, value);
+        return "Updated definition to '" + value + "'.";
     }
 
     @RequestMapping(method = DELETE, value = "/{id}/definition")
@@ -184,9 +184,9 @@ public class ConceptsController {
 
     @RequestMapping(method = PUT, value = "/{id}/note")
     @ResponseStatus(HttpStatus.OK)
-    public String updateNote(@PathVariable URI id, @RequestParam String note) {
-        conceptsService.updateNote(id, note);
-        return "Updated note to '" + note + "'.";
+    public String updateNote(@PathVariable URI id, @RequestParam String value) {
+        conceptsService.updateNote(id, value);
+        return "Updated note to '" + value + "'.";
     }
 
     @RequestMapping(method = DELETE, value = "/{id}/note")
