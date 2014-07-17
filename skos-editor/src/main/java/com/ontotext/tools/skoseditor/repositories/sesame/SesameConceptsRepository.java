@@ -2,6 +2,7 @@ package com.ontotext.tools.skoseditor.repositories.sesame;
 
 import com.ontotext.tools.skoseditor.model.*;
 import com.ontotext.tools.skoseditor.repositories.ConceptsRepository;
+import com.ontotext.tools.skoseditor.util.SparqlUtils;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
 import org.openrdf.model.impl.URIImpl;
@@ -66,7 +67,8 @@ public class SesameConceptsRepository implements ConceptsRepository {
     public Collection<NamedEntity> findConceptsWithPrefix(String prefix) {
         Collection<NamedEntity> concepts = new ArrayList<>();
         try {
-            String sparql = "select ?concept ?label where { ?concept rdfs:label ?label FILTER(strStarts(?label, '"+prefix+"')) }";
+            String sparql = SparqlUtils.getPrefix("skos", SKOS.NAMESPACE) +
+                    "select ?concept ?label where { ?concept rdfs:label ?label FILTER(strStarts(?label, '"+prefix+"')) }";
             RepositoryConnection connection = repository.getConnection();
             try {
                 TupleQuery tupleQuery = connection.prepareTupleQuery(QueryLanguage.SPARQL, sparql);
@@ -93,7 +95,8 @@ public class SesameConceptsRepository implements ConceptsRepository {
     public Collection<NamedEntity> findAllConcepts() {
         Collection<NamedEntity> concepts = new ArrayList<>();
         try {
-            String sparql = "select ?concept ?label where { ?concept a skos:Concept; skos:prefLabel ?label }";
+            String sparql = SparqlUtils.getPrefix("skos", SKOS.NAMESPACE) +
+                    "select ?concept ?label where { ?concept a skos:Concept; skos:prefLabel ?label }";
             RepositoryConnection connection = repository.getConnection();
             try {
                 TupleQuery tupleQuery = connection.prepareTupleQuery(QueryLanguage.SPARQL, sparql);
@@ -136,7 +139,8 @@ public class SesameConceptsRepository implements ConceptsRepository {
     public NamedEntity findConceptByLabel(String label) {
         NamedEntity concept = null;
         try {
-            String sparql = "select ?concept ?prefLabel where { ?concept a skos:Concept; skos:prefLabel ?prefLabel; rdfs:label '"+label+"' }";
+            String sparql = SparqlUtils.getPrefix("skos", SKOS.NAMESPACE) +
+                    "select ?concept ?prefLabel where { ?concept a skos:Concept; skos:prefLabel ?prefLabel; rdfs:label '"+label+"' }";
             RepositoryConnection connection = repository.getConnection();
             try {
                 TupleQuery tupleQuery = connection.prepareTupleQuery(QueryLanguage.SPARQL, sparql);

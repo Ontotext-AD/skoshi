@@ -23,7 +23,7 @@ public class ConceptsController {
     @Autowired
     private ConceptsService conceptsService;
 
-    @RequestMapping(method = POST, params = {"conceptsRdf"})
+    @RequestMapping(method = POST, params = "conceptsRdf")
     @ResponseStatus(HttpStatus.CREATED)
     public String resumeFromSavedState(@RequestParam MultipartFile conceptsRdf) {
         File conceptsRdfFile;
@@ -49,7 +49,7 @@ public class ConceptsController {
         return "Added phrases.";
     }
 
-    @RequestMapping(method = GET, params = "prefix")
+    @RequestMapping(method = GET)
     @ResponseStatus(HttpStatus.OK)
     public Collection<NamedEntity> getConcepts(@RequestParam(required = false) String prefix ) {
         if (prefix != null) {
