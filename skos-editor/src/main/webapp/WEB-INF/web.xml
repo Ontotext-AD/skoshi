@@ -38,7 +38,10 @@
              and fully-qualified @Configuration classes -->
         <init-param>
             <param-name>contextConfigLocation</param-name>
-            <param-value>com.ontotext.tools.skoseditor.config.WebConfig</param-value>
+            <param-value>
+                com.ontotext.tools.skoseditor.config.WebAppConfig,
+                com.ontotext.tools.skoseditor.config.SwaggerConfig
+            </param-value>
         </init-param>
     </servlet>
 

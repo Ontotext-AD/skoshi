@@ -19,7 +19,7 @@ import java.util.List;
 @Configuration
 @EnableWebMvc
 @ComponentScan("com.ontotext.tools.skoseditor.controllers")
-public class WebConfig extends WebMvcConfigurerAdapter {
+public class WebAppConfig extends WebMvcConfigurerAdapter {
 
     @Override
     public void addFormatters(FormatterRegistry registry) {
