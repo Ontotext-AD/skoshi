@@ -14,11 +14,16 @@ public class NamedEntityImpl implements NamedEntity {
 
     @Override
     public URI getId() {
-        return null;
+        return id;
     }
 
     @Override
     public String getPrefLabel() {
-        return null;
+        return prefLabel;
+    }
+
+    @Override
+    public String toString() {
+        return "NamedEntity[id="+id.getLocalName()+",lbl="+prefLabel+"]";
     }
 }

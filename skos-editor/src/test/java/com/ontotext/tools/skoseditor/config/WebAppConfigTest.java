@@ -11,7 +11,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -30,8 +32,16 @@ public class WebAppConfigTest {
     }
 
     @Test
-    public void testRequestMapping() throws Exception {
+    public void info() throws Exception {
         mockMvc.perform(get("/info"))
+                .andDo(print());
+    }
+
+    @Test
+    public void getConcepts() throws Exception {
+        mockMvc.perform(delete("/concepts"));
+        mockMvc.perform(post("/concepts/concept1"));
+        mockMvc.perform(get("/concepts"))
                 .andDo(print());
     }
 
