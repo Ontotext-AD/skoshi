@@ -168,7 +168,7 @@ public class SesameConceptsRepository implements ConceptsRepository {
     }
 
     @Override
-    public void addConcept(String prefLabel) {
+    public URI addConcept(String prefLabel) {
         URI id = label2id(prefLabel);
         if (hasConcept(id)) {
             throw new IllegalArgumentException("A concept with such ID already exists: " + id);
@@ -184,6 +184,7 @@ public class SesameConceptsRepository implements ConceptsRepository {
         } catch (RepositoryException re) {
             throw new IllegalStateException(re);
         }
+        return id;
     }
 
     private URI label2id(String label) {

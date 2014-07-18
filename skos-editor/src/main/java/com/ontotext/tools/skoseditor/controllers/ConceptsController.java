@@ -6,6 +6,8 @@ import com.ontotext.tools.skoseditor.services.ConceptsService;
 import com.ontotext.tools.skoseditor.util.WebUtils;
 import com.wordnik.swagger.annotations.Api;
 import org.openrdf.model.URI;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +23,8 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 @RestController
 @RequestMapping("/concepts")
 public class ConceptsController {
+
+    Logger log = LoggerFactory.getLogger(ConceptsController.class);
 
     @Autowired
     private ConceptsService conceptsService;
@@ -70,9 +74,8 @@ public class ConceptsController {
 
     @RequestMapping(method = POST, value = "/{prefLabel}")
     @ResponseStatus(HttpStatus.CREATED)
-    public String createConcept(@PathVariable String prefLabel) {
-        conceptsService.createConcept(prefLabel);
-        return "Concept created successfully.";
+    public URI createConcept(@PathVariable String prefLabel) {
+        return conceptsService.createConcept(prefLabel);
     }
 
     @RequestMapping(method = GET, value = "/{id}")
@@ -203,6 +206,7 @@ public class ConceptsController {
     @RequestMapping(method = GET, value = "/{id}/related")
     @ResponseStatus(HttpStatus.OK)
     public Collection<NamedEntity> getRelated(@PathVariable URI id) {
+        log.info("PHILIP: id : " + id);
         return conceptsService.getRelated(id);
     }
 

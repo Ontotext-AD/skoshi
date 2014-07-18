@@ -3,24 +3,46 @@ package com.ontotext.tools.skoseditor.config;
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.ontotext.tools.skoseditor.util.JacksonObjectMapper;
-import com.ontotext.tools.skoseditor.util.JsonUriDeserializer;
-import com.ontotext.tools.skoseditor.util.JsonUriSerializer;
+import com.ontotext.tools.skoseditor.util.*;
 import org.openrdf.model.URI;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.ConversionServiceFactoryBean;
+import org.springframework.core.convert.ConversionService;
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Configuration
 @EnableWebMvc
 @ComponentScan("com.ontotext.tools.skoseditor.controllers")
 public class WebAppConfig extends WebMvcConfigurerAdapter {
+
+
+    @Bean
+    public ConversionService conversionService() {
+        ConversionServiceFactoryBean bean = new ConversionServiceFactoryBean();
+        bean.setConverters(getConverters());
+        bean.afterPropertiesSet();
+        ConversionService object = bean.getObject();
+        return object;
+    }
+
+    private Set<Converter> getConverters() {
+        Set<Converter> converters = new HashSet<Converter>();
+
+        converters.add(new UriToStringConverter());
+        converters.add(new StringToUriConverter());
+
+        return converters;
+    }
 
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {

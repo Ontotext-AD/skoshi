@@ -24,6 +24,6 @@ public class NamedEntityImpl implements NamedEntity {
 
     @Override
     public String toString() {
-        return "NamedEntity[id="+id.getLocalName()+",lbl="+prefLabel+"]";
+        return "NamedEntity[id:"+id.getLocalName()+",lbl:"+prefLabel+"]";
     }
 }

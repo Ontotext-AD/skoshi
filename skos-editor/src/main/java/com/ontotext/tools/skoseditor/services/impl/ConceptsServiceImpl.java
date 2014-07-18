@@ -55,11 +55,11 @@ public class ConceptsServiceImpl implements ConceptsService {
     }
 
     @Override
-    public void createConcept(String prefLabel) {
+    public URI createConcept(String prefLabel) {
         if (conceptsRepository.findConceptByLabel(prefLabel) != null) {
             throw new IllegalArgumentException("A concept with this label already exists.");
         }
-        conceptsRepository.addConcept(prefLabel);
+        return conceptsRepository.addConcept(prefLabel);
     }
 
     @Override

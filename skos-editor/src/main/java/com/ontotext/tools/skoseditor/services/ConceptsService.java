@@ -15,7 +15,7 @@ public interface ConceptsService {
     Collection<NamedEntity> getAllConcepts();
     void deleteConcepts();
 
-    void createConcept(String prefLabel);
+    URI createConcept(String prefLabel);
     Concept getConcept(URI id);
     void deleteConcept(URI id);
 
