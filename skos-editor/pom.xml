@@ -121,6 +121,13 @@
             <scope>provided</scope>
         </dependency>
 
+        <dependency>
+            <groupId>com.jayway.jsonpath</groupId>
+            <artifactId>json-path</artifactId>
+            <version>0.9.1</version>
+            <scope>test</scope>
+        </dependency>
+
         <!-- Swagger -->
         <dependency>
             <groupId>com.mangofactory</groupId>
