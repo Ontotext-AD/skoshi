@@ -14,16 +14,16 @@ public class IdEncodingUtil {
 
     private IdEncodingUtil() {}
 
-    public static String encode(String value) {
-        byte[] encodedBytes = Base64.encodeBase64(value.getBytes());
-        return new String(encodedBytes);
-    }
-
-    public static String decode(String value) {
-        byte[] encodedBytes = value.getBytes();
-        byte[] decodedBytes = Base64.decodeBase64(encodedBytes);
-        return new String(decodedBytes);
-    }
+//    public static String encode(String value) {
+//        byte[] encodedBytes = Base64.encodeBase64(value.getBytes());
+//        return new String(encodedBytes);
+//    }
+//
+//    public static String decode(String value) {
+//        byte[] encodedBytes = value.getBytes();
+//        byte[] decodedBytes = Base64.decodeBase64(encodedBytes);
+//        return new String(decodedBytes);
+//    }
 
 //    public static String encode(String value) {
 //        try {

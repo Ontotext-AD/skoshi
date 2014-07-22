@@ -1,5 +1,6 @@
 package com.ontotext.tools.skoseditor.config;
 
+import com.ontotext.tools.skoseditor.services.UriEncodeService;
 import com.ontotext.tools.skoseditor.util.IdEncodingUtil;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,6 +33,9 @@ public class WebAppConfigTest {
     @Autowired
     WebApplicationContext webApplicationContext;
 
+    @Autowired
+    UriEncodeService uriEncodeService;
+
     @Before
     public void setup() {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
@@ -51,7 +55,7 @@ public class WebAppConfigTest {
                 .andExpect(status().isOk());
 
         URI concept1id = createConcept("test concept");
-        String concept1encodedId = IdEncodingUtil.encode(concept1id.stringValue());
+        String concept1encodedId = uriEncodeService.encode(concept1id);
 
         mockMvc.perform(get("/concepts"))
                 .andDo(print())
@@ -74,7 +78,7 @@ public class WebAppConfigTest {
         clearConcepts();
         URI conceptId = createConcept("test concept");
 
-        String conceptEncodedId = IdEncodingUtil.encode(conceptId.stringValue());
+        String conceptEncodedId = uriEncodeService.encode(conceptId);
 
         mockMvc.perform(get("/concepts/" + conceptEncodedId+ "/" + property))
                 .andExpect(status().isOk())
@@ -110,7 +114,7 @@ public class WebAppConfigTest {
         clearConcepts();
         URI conceptId = createConcept("test concept");
 
-        String conceptEncodedId = IdEncodingUtil.encode(conceptId.stringValue());
+        String conceptEncodedId = uriEncodeService.encode(conceptId);
 
         String secondValue = "second value";
 
@@ -145,13 +149,13 @@ public class WebAppConfigTest {
         clearConcepts();
         URI conceptId = createConcept("test concept");
 
-        String conceptEncodedId = IdEncodingUtil.encode(conceptId.stringValue());
+        String conceptEncodedId = uriEncodeService.encode(conceptId);
 
         URI object1id = createConcept("object 1");
         URI object2id = createConcept("object 2");
 
-        String object1EncodedId = IdEncodingUtil.encode(object1id.stringValue());
-        String object2EncodedId = IdEncodingUtil.encode(object2id.stringValue());
+        String object1EncodedId = uriEncodeService.encode(object1id);
+        String object2EncodedId = uriEncodeService.encode(object2id);
 
 
         mockMvc.perform(get("/concepts/" + conceptEncodedId + "/" + property))
@@ -191,7 +195,7 @@ public class WebAppConfigTest {
     private URI createConcept(String label) throws Exception {
 
         URI newConceptId = new URIImpl(SKOS.NAMESPACE + label);
-        String encodedConceptId = IdEncodingUtil.encode(newConceptId.stringValue());
+        String encodedConceptId = uriEncodeService.encode(newConceptId);
 
         mockMvc.perform(post("/concepts/" + label))
                 .andExpect(status().isCreated())

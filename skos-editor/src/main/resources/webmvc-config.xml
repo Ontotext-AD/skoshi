@@ -14,7 +14,17 @@
     <!-- DispatcherServlet Context: defines this servlet's request-processing
         infrastructure -->
 
-    <bean id="jsonUriObjectMapper" class="com.ontotext.tools.skoseditor.util.JacksonObjectMapper"/>
+    <bean id="repository" factory-method="newInstance" class="com.ontotext.tools.skoseditor.util.RepositoryProvider">
+        <constructor-arg name="dataFolder" value="${db.dir}"/>
+    </bean>
+
+    <bean id="idEncodeService" class="com.ontotext.tools.skoseditor.services.impl.UriEncodeServiceImpl">
+        <constructor-arg ref="repository"/>
+    </bean>
+
+    <bean id="jsonUriObjectMapper" class="com.ontotext.tools.skoseditor.util.JacksonObjectMapper">
+        <constructor-arg ref="idEncodeService"/>
+    </bean>
 
     <!-- Enables the Spring MVC @Controller programming model -->
     <mvc:annotation-driven conversion-service="conversionService" content-negotiation-manager="contentNegotiationManager">
@@ -29,8 +39,12 @@
           class="org.springframework.context.support.ConversionServiceFactoryBean">
         <property name="converters">
             <set>
-                <bean class="com.ontotext.tools.skoseditor.util.StringToUriConverter"/>
-                <bean class="com.ontotext.tools.skoseditor.util.UriToStringConverter"/>
+                <bean class="com.ontotext.tools.skoseditor.util.StringToUriConverter">
+                    <constructor-arg ref="idEncodeService"/>
+                </bean>
+                <bean class="com.ontotext.tools.skoseditor.util.UriToStringConverter">
+                    <constructor-arg ref="idEncodeService"/>
+                </bean>
             </set>
         </property>
     </bean>

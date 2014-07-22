@@ -1,5 +1,6 @@
 package com.ontotext.tools.skoseditor.util;
 
+import org.openrdf.model.vocabulary.SKOS;
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.sail.SailRepository;
@@ -16,6 +17,7 @@ public class RepositoryProvider {
         Repository repo = new SailRepository( new MemoryStore(dataDir) );
         try {
             repo.initialize();
+            repo.getConnection().setNamespace("skos", SKOS.NAMESPACE);
         } catch (RepositoryException e) {
             throw new IllegalStateException("Failed to initialize repository.", e);
         }
