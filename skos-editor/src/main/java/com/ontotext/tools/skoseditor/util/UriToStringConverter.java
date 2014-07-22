@@ -7,6 +7,8 @@ public class UriToStringConverter implements Converter<URI, String> {
 
     @Override
     public String convert(URI uri) {
-        return uri.stringValue();
+        String value = uri.stringValue();
+        value = IdEncodingUtil.encode(value);
+        return new String(value);
     }
 }

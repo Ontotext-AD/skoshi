@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+					http://www.springframework.org/schema/beans
+                    http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+                    http://www.springframework.org/schema/context
+                    http://www.springframework.org/schema/context/spring-context-4.0.xsd">
+
+
+    <context:property-placeholder order="1" location="classpath:skos-editor.properties" ignore-unresolvable="true"/>
+
+    <bean id="repository" factory-method="newInstance" class="com.ontotext.tools.skoseditor.util.RepositoryProvider">
+        <constructor-arg name="dataFolder" value="${db.dir}"/>
+    </bean>
+
+    <bean id="extractionService" class="com.ontotext.tools.skoseditor.services.impl.ExtractionServiceImpl"/>
+
+    <bean id="conceptsRepository" class="com.ontotext.tools.skoseditor.repositories.sesame.SesameConceptsRepository">
+        <constructor-arg ref="repository"/>
+    </bean>
+
+    <bean id="conceptsService" class="com.ontotext.tools.skoseditor.services.impl.ConceptsServiceImpl">
+        <constructor-arg ref="conceptsRepository"/>
+    </bean>
+</beans>

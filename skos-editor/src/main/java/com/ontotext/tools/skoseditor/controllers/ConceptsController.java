@@ -206,7 +206,6 @@ public class ConceptsController {
     @RequestMapping(method = GET, value = "/{id}/related")
     @ResponseStatus(HttpStatus.OK)
     public Collection<NamedEntity> getRelated(@PathVariable URI id) {
-        log.info("PHILIP: id : " + id);
         return conceptsService.getRelated(id);
     }
 

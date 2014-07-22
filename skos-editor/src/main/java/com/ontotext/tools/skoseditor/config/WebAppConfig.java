@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.ontotext.tools.skoseditor.util.*;
 import org.openrdf.model.URI;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -26,7 +27,6 @@ import java.util.Set;
 public class WebAppConfig extends WebMvcConfigurerAdapter {
 
 
-    @Bean
     public ConversionService conversionService() {
         ConversionServiceFactoryBean bean = new ConversionServiceFactoryBean();
         bean.setConverters(getConverters());
@@ -49,7 +49,6 @@ public class WebAppConfig extends WebMvcConfigurerAdapter {
         converters.add(converter());
     }
 
-    @Bean
     public MappingJackson2HttpMessageConverter converter() {
         MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
         converter.setObjectMapper(mapper());
@@ -60,7 +59,6 @@ public class WebAppConfig extends WebMvcConfigurerAdapter {
      * Provides the Jackson ObjectMapper with custom configuration for our JSON serialization.
      * @return The Jackson object mapper with non-null serialization configured
      */
-    @Bean
     public ObjectMapper mapper() {
         return new JacksonObjectMapper();
     }
