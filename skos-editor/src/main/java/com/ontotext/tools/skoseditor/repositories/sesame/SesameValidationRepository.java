@@ -1,5 +1,6 @@
 package com.ontotext.tools.skoseditor.repositories.sesame;
 
+import com.ontotext.tools.skoseditor.error.NotFoundException;
 import com.ontotext.tools.skoseditor.repositories.ValidationRepository;
 import org.openrdf.model.URI;
 import org.openrdf.model.vocabulary.RDF;
@@ -17,27 +18,20 @@ public class SesameValidationRepository implements ValidationRepository {
     }
 
     @Override
-    public void validateExists(URI id) throws IllegalArgumentException {
-//        boolean hasConcept = false;
-//        try {
-//            RepositoryConnection connection = repository.getConnection();
-//            try {
-//                hasConcept = connection.hasStatement(id, RDF.TYPE, SKOS.CONCEPT, false);
-//            } catch (Exception e) {
-//                throw new IllegalStateException("Failed to import concepts.", e);
-//            } finally {
-//                connection.close();
-//            }
-//        } catch (RepositoryException re) {
-//            throw new IllegalStateException(re);
-//        }
-//        return hasConcept;
-//
-//
-//        try {
-//            return repository.getConnection().hasStatement(id, null, null, false);
-//        } catch (RepositoryException e) {
-//            e.printStackTrace();
-//        }
+    public void validateExists(URI id) throws NotFoundException {
+        try {
+            RepositoryConnection connection = repository.getConnection();
+            try {
+                boolean exists = connection.hasStatement(id, null, null, false);
+                if (!exists)
+                    throw new NotFoundException();
+            } catch (RepositoryException re) {
+                throw new IllegalStateException("Failed to import concepts.", re);
+            } finally {
+                connection.close();
+            }
+        } catch (RepositoryException re) {
+            throw new IllegalStateException(re);
+        }
     }
 }

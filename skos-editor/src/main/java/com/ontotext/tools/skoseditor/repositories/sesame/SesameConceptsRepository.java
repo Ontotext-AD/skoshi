@@ -168,11 +168,7 @@ public class SesameConceptsRepository implements ConceptsRepository {
     }
 
     @Override
-    public URI addConcept(String prefLabel) {
-        URI id = label2id(prefLabel);
-        if (hasConcept(id)) {
-            throw new IllegalArgumentException("A concept with such ID already exists: " + id);
-        }
+    public URI addConcept(URI id, String prefLabel) {
         try {
             RepositoryConnection connection = repository.getConnection();
             try {
@@ -185,12 +181,6 @@ public class SesameConceptsRepository implements ConceptsRepository {
             throw new IllegalStateException(re);
         }
         return id;
-    }
-
-    private URI label2id(String label) {
-        label = label.replace(' ', '_');
-        label = label.replaceAll("[^a-zA-Z0-9]]", "_");
-        return new URIImpl(SKOS.NAMESPACE + label);
     }
 
     @Override

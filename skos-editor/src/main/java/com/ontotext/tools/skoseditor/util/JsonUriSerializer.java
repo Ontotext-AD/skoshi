@@ -16,7 +16,9 @@ public class JsonUriSerializer extends JsonSerializer<URI> {
     @Override
     public void serialize(URI uri, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
         log.debug("Serializing " + uri);
-        jsonGenerator.writeString(uri.stringValue());
+        String text = uri.stringValue();
+        text = IdEncodingUtil.encode(text);
+        jsonGenerator.writeString(text);
     }
 
     @Override

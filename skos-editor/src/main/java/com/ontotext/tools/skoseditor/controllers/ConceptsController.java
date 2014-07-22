@@ -4,7 +4,7 @@ import com.ontotext.tools.skoseditor.model.Concept;
 import com.ontotext.tools.skoseditor.model.NamedEntity;
 import com.ontotext.tools.skoseditor.services.ConceptsService;
 import com.ontotext.tools.skoseditor.util.WebUtils;
-import com.wordnik.swagger.annotations.Api;
+//import com.wordnik.swagger.annotations.Api;
 import org.openrdf.model.URI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +19,7 @@ import java.util.Collection;
 
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
-@Api(value = "concepts", position = 1)
+//@Api(value = "concepts", position = 1)
 @RestController
 @RequestMapping("/concepts")
 public class ConceptsController {

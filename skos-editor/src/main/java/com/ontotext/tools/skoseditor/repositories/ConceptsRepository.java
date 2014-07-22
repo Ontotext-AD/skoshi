@@ -21,7 +21,7 @@ public interface ConceptsRepository {
 
     NamedEntity findConceptByLabel(String label);
 
-    URI addConcept(String prefLabel);
+    URI addConcept(URI id, String prefLabel);
 
     Concept findConcept(URI id);
 

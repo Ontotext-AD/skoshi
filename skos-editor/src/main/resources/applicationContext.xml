@@ -15,6 +15,10 @@
         <constructor-arg name="dataFolder" value="${db.dir}"/>
     </bean>
 
+    <bean id="validationRepository" class="com.ontotext.tools.skoseditor.repositories.sesame.SesameValidationRepository">
+        <constructor-arg ref="repository"/>
+    </bean>
+
     <bean id="extractionService" class="com.ontotext.tools.skoseditor.services.impl.ExtractionServiceImpl"/>
 
     <bean id="conceptsRepository" class="com.ontotext.tools.skoseditor.repositories.sesame.SesameConceptsRepository">
@@ -23,5 +27,6 @@
 
     <bean id="conceptsService" class="com.ontotext.tools.skoseditor.services.impl.ConceptsServiceImpl">
         <constructor-arg ref="conceptsRepository"/>
+        <constructor-arg ref="validationRepository"/>
     </bean>
 </beans>

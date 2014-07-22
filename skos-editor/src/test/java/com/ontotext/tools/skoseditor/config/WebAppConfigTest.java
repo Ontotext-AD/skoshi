@@ -49,23 +49,21 @@ public class WebAppConfigTest {
 
         mockMvc.perform(delete("/concepts"))
                 .andExpect(status().isOk());
-        mockMvc.perform(post("/concepts/concept1"))
-                .andExpect(status().isCreated());
 
-        URI concept1id = new URIImpl(SKOS.NAMESPACE + "concept1");
+        URI concept1id = createConcept("test concept");
         String concept1encodedId = IdEncodingUtil.encode(concept1id.stringValue());
 
         mockMvc.perform(get("/concepts"))
                 .andDo(print())
                 .andExpect(status().isOk())
 
-                .andExpect(jsonPath("[0].id").value(concept1id.stringValue()))
-                .andExpect(jsonPath("[0].prefLabel").value("concept1"));
+                .andExpect(jsonPath("[0].id").value(concept1encodedId))
+                .andExpect(jsonPath("[0].prefLabel").value("test concept"));
 
         mockMvc.perform(get("/concepts/" + concept1encodedId))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("id").value(concept1id.stringValue()));
+                .andExpect(jsonPath("id").value(concept1encodedId));
 
         mockMvc.perform(delete("/concepts/" + concept1encodedId))
                 .andExpect(status().isOk());
@@ -74,7 +72,7 @@ public class WebAppConfigTest {
     private void testMultiValueDataProperty(String property, String value1, String value2) throws Exception {
 
         clearConcepts();
-        URI conceptId = createTestConcept();
+        URI conceptId = createConcept("test concept");
 
         String conceptEncodedId = IdEncodingUtil.encode(conceptId.stringValue());
 
@@ -110,7 +108,7 @@ public class WebAppConfigTest {
     private void testSingleValueDataProperty(String property, String value) throws Exception {
 
         clearConcepts();
-        URI conceptId = createTestConcept();
+        URI conceptId = createConcept("test concept");
 
         String conceptEncodedId = IdEncodingUtil.encode(conceptId.stringValue());
 
@@ -142,15 +140,19 @@ public class WebAppConfigTest {
                 .andExpect(content().string(""));
     }
 
-    private void testMultiValueObjectProperty(String property, URI object1, URI object2) throws Exception {
+    private void testMultiValueObjectProperty(String property, String object1label, String object2label) throws Exception {
 
         clearConcepts();
-        URI conceptId = createTestConcept();
+        URI conceptId = createConcept("test concept");
 
         String conceptEncodedId = IdEncodingUtil.encode(conceptId.stringValue());
 
-        String object1EncodedId = IdEncodingUtil.encode(object1.stringValue());
-        String object2EncodedId = IdEncodingUtil.encode(object2.stringValue());
+        URI object1id = createConcept("object 1");
+        URI object2id = createConcept("object 2");
+
+        String object1EncodedId = IdEncodingUtil.encode(object1id.stringValue());
+        String object2EncodedId = IdEncodingUtil.encode(object2id.stringValue());
+
 
         mockMvc.perform(get("/concepts/" + conceptEncodedId + "/" + property))
                 .andExpect(status().isOk())
@@ -161,7 +163,7 @@ public class WebAppConfigTest {
 
         mockMvc.perform(get("/concepts/" + conceptEncodedId + "/" + property))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("[0].id").value(object1.stringValue()));
+                .andExpect(jsonPath("[0].id").value(object1EncodedId));
 
         mockMvc.perform(post("/concepts/" + conceptEncodedId + "/" + property + "/" + object2EncodedId))
                 .andExpect(status().isCreated());
@@ -171,7 +173,7 @@ public class WebAppConfigTest {
 
         mockMvc.perform(get("/concepts/" + conceptEncodedId + "/" + property))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("[0].id").value(object2.stringValue()));
+                .andExpect(jsonPath("[0].id").value(object2EncodedId));
 
         mockMvc.perform(delete("/concepts/" + conceptEncodedId + "/" + property + "/" + object2EncodedId))
                 .andExpect(status().isOk());
@@ -186,13 +188,14 @@ public class WebAppConfigTest {
                 .andExpect(status().isOk());
     }
 
-    private URI createTestConcept() throws Exception {
+    private URI createConcept(String label) throws Exception {
 
-        URI newConceptId = new URIImpl(SKOS.NAMESPACE + "concept1");
+        URI newConceptId = new URIImpl(SKOS.NAMESPACE + label);
+        String encodedConceptId = IdEncodingUtil.encode(newConceptId.stringValue());
 
-        mockMvc.perform(post("/concepts/concept1"))
+        mockMvc.perform(post("/concepts/" + label))
                 .andExpect(status().isCreated())
-                .andExpect(content().string("\"" + newConceptId.stringValue() + "\""));
+                .andExpect(content().string("\"" + encodedConceptId + "\""));
 
         return newConceptId;
     }
@@ -223,11 +226,24 @@ public class WebAppConfigTest {
         testSingleValueDataProperty("note", "A note");
     }
 
-//    @Test
-//    public void testRelated() throws Exception {
-//        URI r1 = new URIImpl(SKOS.NAMESPACE + "r1");
-//        URI r2 = new URIImpl(SKOS.NAMESPACE + "r2");
-//        testMultiValueObjectProperty("related", r1, r2);
-//    }
+    @Test
+    public void testRelated() throws Exception {
+        testMultiValueObjectProperty("related", "r1", "r2");
+    }
+
+    @Test
+    public void testSynonyms() throws Exception {
+        testMultiValueObjectProperty("synonyms", "s1", "s2");
+    }
+
+    @Test
+    public void testBroader() throws Exception {
+        testMultiValueObjectProperty("broader", "b1", "b2");
+    }
+
+    @Test
+    public void testNarrower() throws Exception {
+        testMultiValueObjectProperty("narrower", "n1", "n2");
+    }
 
 }

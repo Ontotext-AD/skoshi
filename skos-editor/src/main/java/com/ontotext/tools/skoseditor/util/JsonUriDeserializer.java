@@ -19,6 +19,7 @@ public class JsonUriDeserializer extends JsonDeserializer<URI> {
     public URI deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JsonProcessingException {
         String text = jsonParser.getText();
         log.debug("Deserializing: " + text);
+        text = IdEncodingUtil.decode(text);
         URI uri = new ValueFactoryImpl().createURI(text);
         return uri;
     }
