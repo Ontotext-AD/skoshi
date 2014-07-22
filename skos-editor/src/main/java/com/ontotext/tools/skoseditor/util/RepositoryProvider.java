@@ -1,5 +1,6 @@
 package com.ontotext.tools.skoseditor.util;
 
+import org.apache.commons.io.FileUtils;
 import org.openrdf.model.vocabulary.SKOS;
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryException;
@@ -13,7 +14,11 @@ public class RepositoryProvider {
     private RepositoryProvider() {}
 
     public static Repository newInstance(String dataFolder) {
-        File dataDir = new File(dataFolder);
+
+        File dataDir = new File(FileUtils.getUserDirectoryPath() + "/.skoseditor/data");
+        if (!dataDir.exists()) {
+            dataDir.mkdirs();
+        }
         Repository repo = new SailRepository( new MemoryStore(dataDir) );
         try {
             repo.initialize();
