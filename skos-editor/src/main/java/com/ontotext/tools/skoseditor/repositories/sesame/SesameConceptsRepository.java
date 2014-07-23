@@ -251,6 +251,41 @@ public class SesameConceptsRepository implements ConceptsRepository {
     }
 
     @Override
+    public String getPrefLabel(URI id) {
+        String prefLabel = "";
+        try {
+            RepositoryConnection connection = repository.getConnection();
+            try {
+                RepositoryResult<Statement> result = connection.getStatements(id, SKOS.PREF_LABEL, null, false);
+                if (result.hasNext()) {
+                    prefLabel = result.next().getObject().stringValue();
+                }
+                result.close();
+            } finally {
+                connection.close();
+            }
+        } catch (RepositoryException re) {
+            throw new IllegalStateException(re);
+        }
+        return prefLabel;
+    }
+
+    @Override
+    public void updatePrefLabel(URI id, String value) {
+        try {
+            RepositoryConnection connection = repository.getConnection();
+            try {
+                connection.remove(id, SKOS.PREF_LABEL, null);
+                connection.add(id, SKOS.PREF_LABEL, connection.getValueFactory().createLiteral(value));
+            } finally {
+                connection.close();
+            }
+        } catch (RepositoryException re) {
+            throw new IllegalStateException(re);
+        }
+    }
+
+    @Override
     public Collection<String> findAltLabels(URI id) {
         return findConceptDataPropertyValues(id, SKOS.ALT_LABEL);
     }

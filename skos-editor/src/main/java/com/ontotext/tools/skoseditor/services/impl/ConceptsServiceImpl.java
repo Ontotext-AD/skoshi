@@ -91,6 +91,18 @@ public class ConceptsServiceImpl implements ConceptsService {
     }
 
     @Override
+    public String getPrefLabel(URI id) {
+        validationRepository.validateExists(id);
+        return conceptsRepository.getPrefLabel(id);
+    }
+
+    @Override
+    public void updatePrefLabel(URI id, String value) {
+        validationRepository.validateExists(id);
+        conceptsRepository.updatePrefLabel(id, value);
+    }
+
+    @Override
     public Collection<String> getAltLabels(URI id) {
         validationRepository.validateExists(id);
         return conceptsRepository.findAltLabels(id);

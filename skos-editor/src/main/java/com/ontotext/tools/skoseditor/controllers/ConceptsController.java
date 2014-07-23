@@ -91,6 +91,19 @@ public class ConceptsController {
         return "Concept deleted successfully.";
     }
 
+    // preflabel
+
+    @RequestMapping(method = GET, value = "/{id}/preflabel")
+    public String getPrefLabel(@PathVariable URI id) {
+        return conceptsService.getPrefLabel(id);
+    }
+
+    @RequestMapping(method = PUT, value = "/{id}/preflabel")
+    public String updatePrefLabel(@PathVariable URI id, @RequestParam String value) {
+        conceptsService.updatePrefLabel(id, value);
+        return "Preferred label updated successfully.";
+    }
+
     // altlabels
 
     @RequestMapping(method = GET, value = "/{id}/altlabels")

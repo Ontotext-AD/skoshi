@@ -143,14 +143,14 @@ public class WebAppConfigTest {
 
         mockMvc.perform(get("/concepts/" + conceptId + "/" + property))
                 .andExpect(status().isOk())
-                .andExpect(content().string("\"" + value + "\""));
+                .andExpect(content().string(quote(value)));
 
         mockMvc.perform(put("/concepts/" + conceptId + "/" + property).param("value", secondValue))
                 .andExpect(status().isOk());
 
         mockMvc.perform(get("/concepts/" + conceptId + "/" + property))
                 .andExpect(status().isOk())
-                .andExpect(content().string("\"" + secondValue + "\""));
+                .andExpect(content().string(quote(secondValue)));
 
         mockMvc.perform(delete("/concepts/" + conceptId + "/" + property).param("value", secondValue))
                 .andExpect(status().isOk());
@@ -212,6 +212,28 @@ public class WebAppConfigTest {
         return id.substring(1, id.length()-1);
     }
 
+    @Test
+    public void testPrefLabel() throws Exception {
+
+        String prefLabel = "test concept";
+
+        clearConcepts();
+        String conceptId = createConcept(prefLabel);
+
+        String newPrefLabel = "New Pref Label";
+
+        mockMvc.perform(get("/concepts/" + conceptId+ "/preflabel"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(quote(prefLabel)));
+
+        mockMvc.perform(put("/concepts/" + conceptId+ "/preflabel?value=" + newPrefLabel))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/concepts/" + conceptId+ "/preflabel"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(quote(newPrefLabel)));
+
+    }
 
     @Test
     public void testAltLabels() throws Exception {
@@ -258,4 +280,6 @@ public class WebAppConfigTest {
         testMultiValueObjectProperty("narrower", "n1", "n2");
     }
 
+
+    private static final String quote(String s) { return "\"" + s + "\""; }
 }

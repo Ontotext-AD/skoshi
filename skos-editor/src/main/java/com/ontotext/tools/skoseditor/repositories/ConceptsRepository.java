@@ -27,6 +27,10 @@ public interface ConceptsRepository {
 
     void deleteConcept(URI id);
 
+    String getPrefLabel(URI id);
+
+    void updatePrefLabel(URI id, String value);
+
     Collection<String> findAltLabels(URI id);
 
     void addAltLabel(URI id, String label);
@@ -80,4 +84,5 @@ public interface ConceptsRepository {
     void addNarrower(URI id, URI narrowerId);
 
     void deleteNarrower(URI id, URI narrowerId);
+
 }

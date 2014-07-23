@@ -19,6 +19,11 @@ public interface ConceptsService {
     Concept getConcept(URI id);
     void deleteConcept(URI id);
 
+    // pref label
+
+    String getPrefLabel(URI id);
+    void updatePrefLabel(URI id, String value);
+
     // alt labels
 
     Collection<String> getAltLabels(URI id);
