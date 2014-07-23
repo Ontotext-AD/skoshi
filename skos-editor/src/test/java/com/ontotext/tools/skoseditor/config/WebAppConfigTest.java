@@ -84,9 +84,7 @@ public class WebAppConfigTest {
     public void testPrefixSearch() throws Exception {
 
         clearConcepts();
-        String conceptId = createConcept("test concept");
-
-        System.out.println("PHILIP: " + conceptId);
+        String conceptId = createConcept("Test Concept");
 
         mockMvc.perform(get("/concepts?prefix=test"))
                 .andDo(print())

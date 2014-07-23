@@ -73,7 +73,7 @@ public class SesameConceptsRepository implements ConceptsRepository {
                     "    { ?concept skos:prefLabel ?label }\n" +
                     "    union \n" +
                     "    { ?concept skos:altLabel ?label }\n" +
-                    "    FILTER(strStarts(?label, '"+prefix+"')) \n" +
+                    "    FILTER(STRSTARTS(UCASE(?label), '"+prefix.toUpperCase()+"')) \n" +
                     "}";
             RepositoryConnection connection = repository.getConnection();
             try {
