@@ -1,10 +1,8 @@
 package com.ontotext.tools.skoseditor.config;
 
-import com.ontotext.tools.skoseditor.services.UriEncodeService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openrdf.model.URI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -165,8 +163,8 @@ public class WebAppConfigTest {
         clearConcepts();
         String conceptId = createConcept("test concept");
 
-        String object1id = createConcept("object 1");
-        String object2id = createConcept("object 2");
+        String object1id = createConcept(object1label);
+        String object2id = createConcept(object2label);
 
 
         mockMvc.perform(get("/concepts/" + conceptId + "/" + property))
@@ -232,7 +230,6 @@ public class WebAppConfigTest {
         mockMvc.perform(get("/concepts/" + conceptId+ "/preflabel"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(quote(newPrefLabel)));
-
     }
 
     @Test
