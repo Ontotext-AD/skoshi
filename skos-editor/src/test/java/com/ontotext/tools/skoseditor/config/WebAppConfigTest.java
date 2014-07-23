@@ -31,10 +31,10 @@ public class WebAppConfigTest {
     private MockMvc mockMvc;
 
     @Autowired
-    WebApplicationContext webApplicationContext;
+    private WebApplicationContext webApplicationContext;
 
     @Autowired
-    UriEncodeService uriEncodeService;
+    private UriEncodeService uriEncodeService;
 
     @Before
     public void setup() {
@@ -44,6 +44,13 @@ public class WebAppConfigTest {
     @Test
     public void testInfo() throws Exception {
         mockMvc.perform(get("/info"))
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @Test
+    public void testSwagger() throws Exception {
+        mockMvc.perform(get("/api-docs"))
                 .andExpect(status().isOk())
                 .andDo(print());
     }
@@ -72,6 +79,23 @@ public class WebAppConfigTest {
         mockMvc.perform(delete("/concepts/" + concept1encodedId))
                 .andExpect(status().isOk());
     }
+
+//    @Test
+//    public void testPrefixSearch() throws Exception {
+//
+//        clearConcepts();
+//        URI conceptId = createConcept("test concept");
+//        String conceptEncodedId = uriEncodeService.encode(conceptId);
+//
+////        mockMvc.perform(get("/info/repo/dump"))
+////                .andDo(print());
+//
+//        mockMvc.perform(get("/concepts?prefix=test"))
+//                .andDo(print())
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("[0].id").value(conceptEncodedId));
+//
+//    }
 
     private void testMultiValueDataProperty(String property, String value1, String value2) throws Exception {
 

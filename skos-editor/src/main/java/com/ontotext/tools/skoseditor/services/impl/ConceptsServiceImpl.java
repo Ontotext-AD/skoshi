@@ -72,7 +72,7 @@ public class ConceptsServiceImpl implements ConceptsService {
     }
 
     private URI label2id(String label) {
-        label = label.replaceAll("[^a-zA-Z0-9]]", "_");
+        label = label.replaceAll("[^a-zA-Z0-9]]", "-");
         return new URIImpl(SKOS.NAMESPACE + label);
     }
 

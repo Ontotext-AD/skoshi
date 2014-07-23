@@ -2,7 +2,7 @@ package com.ontotext.tools.skoseditor.controllers;
 
 import com.ontotext.tools.skoseditor.services.ExtractionService;
 import com.ontotext.tools.skoseditor.util.WebUtils;
-//import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.Api;
 import net.lingala.zip4j.exception.ZipException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,7 +20,7 @@ import java.util.List;
 
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
-//@Api(value = "extraction", position = 0)
+@Api(value = "extraction", description = "Extraction Functionality", position = 0)
 @RestController
 @RequestMapping("/extraction")
 public class ExtractionController {
