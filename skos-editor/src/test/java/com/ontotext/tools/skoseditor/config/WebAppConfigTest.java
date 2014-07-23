@@ -1,13 +1,10 @@
 package com.ontotext.tools.skoseditor.config;
 
 import com.ontotext.tools.skoseditor.services.UriEncodeService;
-import com.ontotext.tools.skoseditor.util.IdEncodingUtil;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openrdf.model.URI;
-import org.openrdf.model.impl.URIImpl;
-import org.openrdf.model.vocabulary.SKOS;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -33,9 +30,6 @@ public class WebAppConfigTest {
     @Autowired
     private WebApplicationContext webApplicationContext;
 
-    @Autowired
-    private UriEncodeService uriEncodeService;
-
     @Before
     public void setup() {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
@@ -43,16 +37,23 @@ public class WebAppConfigTest {
 
     @Test
     public void testInfo() throws Exception {
+//        mockMvc.perform(delete("/concepts"))
+//                .andExpect(status().isOk());
+//
+//        createConcept("test concept");
+
         mockMvc.perform(get("/info"))
                 .andExpect(status().isOk())
                 .andDo(print());
+//        mockMvc.perform(get("/info/repo/dump"))
+//                .andDo(print());
+
     }
 
     @Test
     public void testSwagger() throws Exception {
         mockMvc.perform(get("/api-docs"))
-                .andExpect(status().isOk())
-                .andDo(print());
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -61,74 +62,69 @@ public class WebAppConfigTest {
         mockMvc.perform(delete("/concepts"))
                 .andExpect(status().isOk());
 
-        URI concept1id = createConcept("test concept");
-        String concept1encodedId = uriEncodeService.encode(concept1id);
+        String concept1id = createConcept("test concept");
 
         mockMvc.perform(get("/concepts"))
                 .andDo(print())
                 .andExpect(status().isOk())
 
-                .andExpect(jsonPath("[0].id").value(concept1encodedId))
+                .andExpect(jsonPath("[0].id").value(concept1id))
                 .andExpect(jsonPath("[0].prefLabel").value("test concept"));
 
-        mockMvc.perform(get("/concepts/" + concept1encodedId))
+        mockMvc.perform(get("/concepts/" + concept1id))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("id").value(concept1encodedId));
+                .andExpect(jsonPath("id").value(concept1id));
 
-        mockMvc.perform(delete("/concepts/" + concept1encodedId))
+        mockMvc.perform(delete("/concepts/" + concept1id))
                 .andExpect(status().isOk());
     }
 
-//    @Test
-//    public void testPrefixSearch() throws Exception {
-//
-//        clearConcepts();
-//        URI conceptId = createConcept("test concept");
-//        String conceptEncodedId = uriEncodeService.encode(conceptId);
-//
-////        mockMvc.perform(get("/info/repo/dump"))
-////                .andDo(print());
-//
-//        mockMvc.perform(get("/concepts?prefix=test"))
-//                .andDo(print())
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("[0].id").value(conceptEncodedId));
-//
-//    }
+    @Test
+    public void testPrefixSearch() throws Exception {
+
+        clearConcepts();
+        String conceptId = createConcept("test concept");
+
+        System.out.println("PHILIP: " + conceptId);
+
+        mockMvc.perform(get("/concepts?prefix=test"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("[0].id").value(conceptId));
+
+    }
 
     private void testMultiValueDataProperty(String property, String value1, String value2) throws Exception {
 
         clearConcepts();
-        URI conceptId = createConcept("test concept");
+        String conceptId = createConcept("test concept");
 
-        String conceptEncodedId = uriEncodeService.encode(conceptId);
-
-        mockMvc.perform(get("/concepts/" + conceptEncodedId+ "/" + property))
+        mockMvc.perform(get("/concepts/" + conceptId+ "/" + property))
                 .andExpect(status().isOk())
                 .andExpect(content().string("[]"));
 
-        mockMvc.perform(post("/concepts/" + conceptEncodedId + "/" + property).param("value", value1))
+        mockMvc.perform(post("/concepts/" + conceptId + "/" + property).param("value", value1))
                 .andExpect(status().isCreated());
 
-        mockMvc.perform(get("/concepts/" + conceptEncodedId + "/" + property))
+        mockMvc.perform(get("/concepts/" + conceptId + "/" + property))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("[0]").value(value1));
 
-        mockMvc.perform(post("/concepts/" + conceptEncodedId + "/" + property).param("value", value2))
+        mockMvc.perform(post("/concepts/" + conceptId + "/" + property).param("value", value2))
                 .andExpect(status().isCreated());
 
-        mockMvc.perform(delete("/concepts/" + conceptEncodedId + "/" + property).param("value", value1))
+        mockMvc.perform(delete("/concepts/" + conceptId + "/" + property).param("value", value1))
                 .andExpect(status().isOk());
 
-        mockMvc.perform(get("/concepts/" + conceptEncodedId + "/" + property))
+        mockMvc.perform(get("/concepts/" + conceptId + "/" + property))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("[0]").value(value2));
 
-        mockMvc.perform(delete("/concepts/" + conceptEncodedId + "/" + property).param("value", value2))
+        mockMvc.perform(delete("/concepts/" + conceptId + "/" + property).param("value", value2))
                 .andExpect(status().isOk());
 
-        mockMvc.perform(get("/concepts/" + conceptEncodedId+"/" + property))
+        mockMvc.perform(get("/concepts/" + conceptId+"/" + property))
                 .andExpect(status().isOk())
                 .andExpect(content().string("[]"));
     }
@@ -136,34 +132,32 @@ public class WebAppConfigTest {
     private void testSingleValueDataProperty(String property, String value) throws Exception {
 
         clearConcepts();
-        URI conceptId = createConcept("test concept");
-
-        String conceptEncodedId = uriEncodeService.encode(conceptId);
+        String conceptId = createConcept("test concept");
 
         String secondValue = "second value";
 
-        mockMvc.perform(get("/concepts/" + conceptEncodedId+ "/" + property))
+        mockMvc.perform(get("/concepts/" + conceptId+ "/" + property))
                 .andExpect(status().isOk())
                 .andExpect(content().string(""));
 
-        mockMvc.perform(put("/concepts/" + conceptEncodedId + "/" + property).param("value", value))
+        mockMvc.perform(put("/concepts/" + conceptId + "/" + property).param("value", value))
                 .andExpect(status().isOk());
 
-        mockMvc.perform(get("/concepts/" + conceptEncodedId + "/" + property))
+        mockMvc.perform(get("/concepts/" + conceptId + "/" + property))
                 .andExpect(status().isOk())
                 .andExpect(content().string("\"" + value + "\""));
 
-        mockMvc.perform(put("/concepts/" + conceptEncodedId + "/" + property).param("value", secondValue))
+        mockMvc.perform(put("/concepts/" + conceptId + "/" + property).param("value", secondValue))
                 .andExpect(status().isOk());
 
-        mockMvc.perform(get("/concepts/" + conceptEncodedId + "/" + property))
+        mockMvc.perform(get("/concepts/" + conceptId + "/" + property))
                 .andExpect(status().isOk())
                 .andExpect(content().string("\"" + secondValue + "\""));
 
-        mockMvc.perform(delete("/concepts/" + conceptEncodedId + "/" + property).param("value", secondValue))
+        mockMvc.perform(delete("/concepts/" + conceptId + "/" + property).param("value", secondValue))
                 .andExpect(status().isOk());
 
-        mockMvc.perform(get("/concepts/" + conceptEncodedId+"/" + property))
+        mockMvc.perform(get("/concepts/" + conceptId+"/" + property))
                 .andExpect(status().isOk())
                 .andExpect(content().string(""));
     }
@@ -171,42 +165,37 @@ public class WebAppConfigTest {
     private void testMultiValueObjectProperty(String property, String object1label, String object2label) throws Exception {
 
         clearConcepts();
-        URI conceptId = createConcept("test concept");
+        String conceptId = createConcept("test concept");
 
-        String conceptEncodedId = uriEncodeService.encode(conceptId);
-
-        URI object1id = createConcept("object 1");
-        URI object2id = createConcept("object 2");
-
-        String object1EncodedId = uriEncodeService.encode(object1id);
-        String object2EncodedId = uriEncodeService.encode(object2id);
+        String object1id = createConcept("object 1");
+        String object2id = createConcept("object 2");
 
 
-        mockMvc.perform(get("/concepts/" + conceptEncodedId + "/" + property))
+        mockMvc.perform(get("/concepts/" + conceptId + "/" + property))
                 .andExpect(status().isOk())
                 .andExpect(content().string("[]"));
 
-        mockMvc.perform(post("/concepts/" + conceptEncodedId + "/" + property + "/" + object1EncodedId))
+        mockMvc.perform(post("/concepts/" + conceptId + "/" + property + "/" + object1id))
                 .andExpect(status().isCreated());
 
-        mockMvc.perform(get("/concepts/" + conceptEncodedId + "/" + property))
+        mockMvc.perform(get("/concepts/" + conceptId + "/" + property))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("[0].id").value(object1EncodedId));
+                .andExpect(jsonPath("[0].id").value(object1id));
 
-        mockMvc.perform(post("/concepts/" + conceptEncodedId + "/" + property + "/" + object2EncodedId))
+        mockMvc.perform(post("/concepts/" + conceptId + "/" + property + "/" + object2id))
                 .andExpect(status().isCreated());
 
-        mockMvc.perform(delete("/concepts/" + conceptEncodedId + "/" + property + "/" + object1EncodedId))
+        mockMvc.perform(delete("/concepts/" + conceptId + "/" + property + "/" + object1id))
                 .andExpect(status().isOk());
 
-        mockMvc.perform(get("/concepts/" + conceptEncodedId + "/" + property))
+        mockMvc.perform(get("/concepts/" + conceptId + "/" + property))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("[0].id").value(object2EncodedId));
+                .andExpect(jsonPath("[0].id").value(object2id));
 
-        mockMvc.perform(delete("/concepts/" + conceptEncodedId + "/" + property + "/" + object2EncodedId))
+        mockMvc.perform(delete("/concepts/" + conceptId + "/" + property + "/" + object2id))
                 .andExpect(status().isOk());
 
-        mockMvc.perform(get("/concepts/" + conceptEncodedId+"/" + property))
+        mockMvc.perform(get("/concepts/" + conceptId+"/" + property))
                 .andExpect(status().isOk())
                 .andExpect(content().string("[]"));
     }
@@ -216,16 +205,13 @@ public class WebAppConfigTest {
                 .andExpect(status().isOk());
     }
 
-    private URI createConcept(String label) throws Exception {
+    private String createConcept(String label) throws Exception {
 
-        URI newConceptId = new URIImpl(SKOS.NAMESPACE + label);
-        String encodedConceptId = uriEncodeService.encode(newConceptId);
-
-        mockMvc.perform(post("/concepts/" + label))
+        String id = mockMvc.perform(post("/concepts/" + label))
                 .andExpect(status().isCreated())
-                .andExpect(content().string("\"" + encodedConceptId + "\""));
+                .andReturn().getResponse().getContentAsString();
 
-        return newConceptId;
+        return id.substring(1, id.length()-1);
     }
 
 

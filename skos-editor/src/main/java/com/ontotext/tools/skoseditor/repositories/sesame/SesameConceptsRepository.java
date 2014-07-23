@@ -68,7 +68,13 @@ public class SesameConceptsRepository implements ConceptsRepository {
         Collection<NamedEntity> concepts = new ArrayList<>();
         try {
             String sparql = SparqlUtils.getPrefix("skos", SKOS.NAMESPACE) +
-                    "select ?concept ?label where { ?concept rdfs:label ?label FILTER(strStarts(?label, '"+prefix+"')) }";
+                    "select ?concept ?label where \n" +
+                    "{\n" +
+                    "    { ?concept skos:prefLabel ?label }\n" +
+                    "    union \n" +
+                    "    { ?concept skos:altLabel ?label }\n" +
+                    "    FILTER(strStarts(?label, '"+prefix+"')) \n" +
+                    "}";
             RepositoryConnection connection = repository.getConnection();
             try {
                 TupleQuery tupleQuery = connection.prepareTupleQuery(QueryLanguage.SPARQL, sparql);
