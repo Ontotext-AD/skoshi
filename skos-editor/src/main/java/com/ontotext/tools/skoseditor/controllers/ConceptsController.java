@@ -29,7 +29,7 @@ public class ConceptsController {
     @Autowired
     private ConceptsService conceptsService;
 
-    @RequestMapping(method = POST)
+    @RequestMapping(method = POST, value = "/import")
     @ResponseStatus(HttpStatus.CREATED)
     public String resumeFromSavedState(@RequestParam MultipartFile conceptsRdf) {
         File conceptsRdfFile;
@@ -39,10 +39,11 @@ public class ConceptsController {
             throw new IllegalArgumentException("Failed to get file.");
         }
         conceptsService.resumeFromSavedState(conceptsRdfFile);
+        conceptsRdfFile.delete();
         return "Resumed from saved state.";
     }
 
-    @RequestMapping(method = PUT)
+    @RequestMapping(method = POST)
     @ResponseStatus(HttpStatus.CREATED)
     public String addPhrases(@RequestParam MultipartFile phrases) {
         File phrasesFile ;
@@ -52,6 +53,7 @@ public class ConceptsController {
             throw new IllegalArgumentException("Failed to get file.");
         }
         conceptsService.addPhrases(phrasesFile);
+        phrasesFile.delete();
         return "Added phrases.";
     }
 
