@@ -78,7 +78,7 @@ public class WebUtils {
         return extractedFiles;
     }
 
-    public static void appendTurtleToResponse(String fileName, String contentType, String content, HttpServletResponse response) {
+    public static void appendFileToResponse(String fileName, String contentType, String content, HttpServletResponse response) {
         try {
             byte[] bytes = content.getBytes("UTF-8");
             response.setContentType(contentType);

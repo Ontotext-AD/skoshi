@@ -9,10 +9,7 @@ import org.openrdf.model.URI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -56,7 +53,7 @@ public class ConceptsController {
 
         String timestamp = new SimpleDateFormat("yyyyMMdd-HHmm").format(new Date());
         String filename = "concepts-" + timestamp + ".ttl";
-        WebUtils.appendTurtleToResponse(filename, "text/turtle", conceptsRdf, response);
+        WebUtils.appendFileToResponse(filename, "text/turtle", conceptsRdf, response);
     }
 
     @RequestMapping(method = POST)
