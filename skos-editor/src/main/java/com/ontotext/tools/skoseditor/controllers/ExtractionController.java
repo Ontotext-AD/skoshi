@@ -43,6 +43,9 @@ public class ExtractionController {
             throw new IllegalStateException("Failed to read file.", e);
         }
         extractionService.addDocuments(documents);
+        for (File document : documents) {
+            document.delete();
+        }
     }
 
     @RequestMapping(method = POST, value = "/vocabulary")
