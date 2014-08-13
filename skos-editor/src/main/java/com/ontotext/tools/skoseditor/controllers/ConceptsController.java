@@ -24,12 +24,12 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 @RequestMapping("/concepts")
 public class ConceptsController {
 
-    Logger log = LoggerFactory.getLogger(ConceptsController.class);
+    private Logger log = LoggerFactory.getLogger(ConceptsController.class);
 
     @Autowired
     private ConceptsService conceptsService;
 
-    @RequestMapping(method = POST, params = "conceptsRdf")
+    @RequestMapping(method = POST)
     @ResponseStatus(HttpStatus.CREATED)
     public String resumeFromSavedState(@RequestParam MultipartFile conceptsRdf) {
         File conceptsRdfFile;
@@ -42,7 +42,7 @@ public class ConceptsController {
         return "Resumed from saved state.";
     }
 
-    @RequestMapping(method = POST, params = "phrases")
+    @RequestMapping(method = PUT)
     @ResponseStatus(HttpStatus.CREATED)
     public String addPhrases(@RequestParam MultipartFile phrases) {
         File phrasesFile ;
