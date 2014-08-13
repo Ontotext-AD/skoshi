@@ -53,7 +53,7 @@ public class ConceptsController {
         byte[] content = conceptsRdfXml.getBytes();
 
         HttpHeaders header = new HttpHeaders();
-        header.setContentType(new MediaType("application", "pdf"));
+        header.setContentType(new MediaType("application", "rdf+xml"));
         header.set("Content-Disposition", "attachment; filename=concepts.rdf");
         header.setContentLength(content.length);
 
