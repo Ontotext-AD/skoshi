@@ -9,7 +9,10 @@ import org.openrdf.model.URI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,16 +34,30 @@ public class ConceptsController {
 
     @RequestMapping(method = POST, value = "/import")
     @ResponseStatus(HttpStatus.CREATED)
-    public String resumeFromSavedState(@RequestParam MultipartFile conceptsRdf) {
+    public String importConcepts(@RequestParam MultipartFile conceptsRdf) {
         File conceptsRdfFile;
         try {
             conceptsRdfFile = WebUtils.getFileFromParam(conceptsRdf);
         } catch (IOException e) {
             throw new IllegalArgumentException("Failed to get file.");
         }
-        conceptsService.resumeFromSavedState(conceptsRdfFile);
+        conceptsService.importConcepts(conceptsRdfFile);
         conceptsRdfFile.delete();
         return "Resumed from saved state.";
+    }
+
+    @RequestMapping(method = GET, value = "/export")
+    @ResponseStatus(HttpStatus.OK)
+    public HttpEntity<byte[]> exportConcepts() {
+        String conceptsRdfXml = conceptsService.exportConcepts();
+        byte[] content = conceptsRdfXml.getBytes();
+
+        HttpHeaders header = new HttpHeaders();
+        header.setContentType(new MediaType("application", "pdf"));
+        header.set("Content-Disposition", "attachment; filename=concepts.rdf");
+        header.setContentLength(content.length);
+
+        return new HttpEntity<byte[]>(content, header);
     }
 
     @RequestMapping(method = POST)
@@ -59,11 +76,14 @@ public class ConceptsController {
 
     @RequestMapping(method = GET)
     @ResponseStatus(HttpStatus.OK)
-    public Collection<NamedEntity> getConcepts(@RequestParam(required = false) String prefix ) {
+    public Collection<NamedEntity> getConcepts(
+                @RequestParam(required = false) String prefix,
+                @RequestParam(required = false, defaultValue = "0") int limit,
+                @RequestParam(required = false, defaultValue = "0") int offset) {
         if (prefix != null) {
-            return conceptsService.getConceptsWithPrefix(prefix);
+            return conceptsService.getConceptsWithPrefix(prefix, limit, offset);
         } else {
-            return conceptsService.getAllConcepts();
+            return conceptsService.getAllConcepts(limit, offset);
         }
     }
 

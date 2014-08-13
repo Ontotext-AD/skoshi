@@ -27,9 +27,14 @@ public class ConceptsServiceImpl implements ConceptsService {
     }
 
     @Override
-    public void resumeFromSavedState(File conceptsRdfFile) {
+    public void importConcepts(File conceptsRdfFile) {
         deleteConcepts();
         conceptsRepository.importConcepts(conceptsRdfFile);
+    }
+
+    @Override
+    public String exportConcepts() {
+        return conceptsRepository.exportConcepts();
     }
 
     @Override
@@ -45,13 +50,13 @@ public class ConceptsServiceImpl implements ConceptsService {
     }
 
     @Override
-    public Collection<NamedEntity> getConceptsWithPrefix(String prefix) {
-        return conceptsRepository.findConceptsWithPrefix(prefix);
+    public Collection<NamedEntity> getConceptsWithPrefix(String prefix, int limit, int offset) {
+        return conceptsRepository.findConceptsWithPrefix(prefix, limit, offset);
     }
 
     @Override
-    public Collection<NamedEntity> getAllConcepts() {
-        return conceptsRepository.findAllConcepts();
+    public Collection<NamedEntity> getAllConcepts(int limit, int offset) {
+        return conceptsRepository.findAllConcepts(limit, offset);
     }
 
     @Override

@@ -9,10 +9,12 @@ import java.util.Collection;
 
 public interface ConceptsService {
 
-    void resumeFromSavedState(File conceptsRdfFile);
+    void importConcepts(File conceptsRdfFile);
+    String exportConcepts();
+
     void addPhrases(File phrasesFile);
-    Collection<NamedEntity> getConceptsWithPrefix(String prefix);
-    Collection<NamedEntity> getAllConcepts();
+    Collection<NamedEntity> getConceptsWithPrefix(String prefix, int limit, int offset);
+    Collection<NamedEntity> getAllConcepts(int limit, int offset);
     void deleteConcepts();
 
     URI createConcept(String prefLabel);

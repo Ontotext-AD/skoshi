@@ -14,9 +14,11 @@ import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.RepositoryResult;
 import org.openrdf.rio.RDFFormat;
+import org.openrdf.rio.turtle.TurtleWriter;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.File;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -64,7 +66,27 @@ public class SesameConceptsRepository implements ConceptsRepository {
     }
 
     @Override
-    public Collection<NamedEntity> findConceptsWithPrefix(String prefix) {
+    public String exportConcepts() {
+        try {
+            RepositoryConnection connection = repository.getConnection();
+            try {
+                StringWriter stringWriter = new StringWriter();
+                TurtleWriter ttlWriter = new TurtleWriter(stringWriter);
+                connection.export(ttlWriter);
+                stringWriter.flush();
+                return stringWriter.toString();
+            } catch (Exception e) {
+                throw new IllegalStateException("Failed to export concepts.", e);
+            } finally {
+                connection.close();
+            }
+        } catch (RepositoryException re) {
+            throw new IllegalStateException(re);
+        }
+    }
+
+    @Override
+    public Collection<NamedEntity> findConceptsWithPrefix(String prefix, int limit, int offset) {
         Collection<NamedEntity> concepts = new ArrayList<>();
         try {
             String sparql = SparqlUtils.getPrefix("skos", SKOS.NAMESPACE) +
@@ -75,6 +97,8 @@ public class SesameConceptsRepository implements ConceptsRepository {
                     "    { ?concept skos:altLabel ?label }\n" +
                     "    FILTER(STRSTARTS(UCASE(?label), '"+prefix.toUpperCase()+"')) \n" +
                     "}";
+            if (limit != 0) sparql += "limit " + limit + "\n";
+            if (offset != 0) sparql += "offset " + offset + "\n";
             RepositoryConnection connection = repository.getConnection();
             try {
                 TupleQuery tupleQuery = connection.prepareTupleQuery(QueryLanguage.SPARQL, sparql);
@@ -98,11 +122,13 @@ public class SesameConceptsRepository implements ConceptsRepository {
     }
 
     @Override
-    public Collection<NamedEntity> findAllConcepts() {
+    public Collection<NamedEntity> findAllConcepts(int limit, int offset) {
         Collection<NamedEntity> concepts = new ArrayList<>();
         try {
             String sparql = SparqlUtils.getPrefix("skos", SKOS.NAMESPACE) +
-                    "select ?concept ?label where { ?concept a skos:Concept; skos:prefLabel ?label }";
+                    "select ?concept ?label where { ?concept a skos:Concept; skos:prefLabel ?label }\n";
+            if (limit != 0) sparql += "limit " + limit + "\n";
+            if (offset != 0) sparql += "offset " + offset + "\n";
             RepositoryConnection connection = repository.getConnection();
             try {
                 TupleQuery tupleQuery = connection.prepareTupleQuery(QueryLanguage.SPARQL, sparql);

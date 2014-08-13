@@ -13,9 +13,11 @@ public interface ConceptsRepository {
 
     void importConcepts(File conceptsRdfFile);
 
-    Collection<NamedEntity> findConceptsWithPrefix(String prefix);
+    String exportConcepts();
 
-    Collection<NamedEntity> findAllConcepts();
+    Collection<NamedEntity> findConceptsWithPrefix(String prefix, int limit, int offset);
+
+    Collection<NamedEntity> findAllConcepts(int limit, int offset);
 
     void clearRepository();
 
