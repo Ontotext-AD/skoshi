@@ -14,6 +14,8 @@ import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.RepositoryResult;
 import org.openrdf.rio.RDFFormat;
+import org.openrdf.rio.RDFWriter;
+import org.openrdf.rio.rdfxml.RDFXMLWriter;
 import org.openrdf.rio.turtle.TurtleWriter;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
@@ -71,8 +73,8 @@ public class SesameConceptsRepository implements ConceptsRepository {
             RepositoryConnection connection = repository.getConnection();
             try {
                 StringWriter stringWriter = new StringWriter();
-                TurtleWriter ttlWriter = new TurtleWriter(stringWriter);
-                connection.export(ttlWriter);
+                RDFWriter rdfWriter = new TurtleWriter(stringWriter);
+                connection.export(rdfWriter);
                 stringWriter.flush();
                 return stringWriter.toString();
             } catch (Exception e) {

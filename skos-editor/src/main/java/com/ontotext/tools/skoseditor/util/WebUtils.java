@@ -4,6 +4,7 @@ import com.google.common.io.Files;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.tika.Tika;
 import org.apache.tika.mime.MediaType;
@@ -11,8 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -75,6 +76,21 @@ public class WebUtils {
         extractedFiles.addAll(FileUtils.listFiles(unzipDir, TrueFileFilter.INSTANCE, null));
         log.trace("Extracted {} files from archive to: {}", extractedFiles.size(), unzipDir.getAbsolutePath());
         return extractedFiles;
+    }
+
+    public static void appendTurtleToResponse(String fileName, String contentType, String content, HttpServletResponse response) {
+        try {
+            byte[] bytes = content.getBytes("UTF-8");
+            response.setContentType(contentType);
+            response.setContentLength(bytes.length);
+            response.setHeader("Content-Disposition", "attachment; filename="+fileName);
+            InputStream is = new ByteArrayInputStream(bytes);
+            // copy it to response's OutputStream
+            IOUtils.copy(is, response.getOutputStream());
+            response.flushBuffer();
+        } catch (IOException ex) {
+            throw new RuntimeException("Failed to write file to output stream", ex);
+        }
     }
 
 }

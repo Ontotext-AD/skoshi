@@ -16,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -50,18 +51,12 @@ public class ConceptsController {
 
     @RequestMapping(method = GET, value = "/export")
     @ResponseStatus(HttpStatus.OK)
-    public HttpEntity<byte[]> exportConcepts() {
-        String conceptsRdfXml = conceptsService.exportConcepts();
-        byte[] content = conceptsRdfXml.getBytes();
+    public void exportConcepts(HttpServletResponse response) {
+        String conceptsRdf = conceptsService.exportConcepts();
 
         String timestamp = new SimpleDateFormat("yyyyMMdd-HHmm").format(new Date());
-
-        HttpHeaders header = new HttpHeaders();
-        header.setContentType(new MediaType("application", "rdf+xml"));
-        header.set("Content-Disposition", "attachment; filename=concepts-" + timestamp + ".rdf");
-        header.setContentLength(content.length);
-
-        return new HttpEntity<byte[]>(content, header);
+        String filename = "concepts-" + timestamp + ".ttl";
+        WebUtils.appendTurtleToResponse(filename, "text/turtle", conceptsRdf, response);
     }
 
     @RequestMapping(method = POST)

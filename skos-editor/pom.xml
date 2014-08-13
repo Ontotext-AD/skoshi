@@ -74,6 +74,11 @@
             <artifactId>sesame-runtime</artifactId>
             <version>${sesame.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.openrdf.sesame</groupId>
+            <artifactId>sesame-rio-rdfxml</artifactId>
+            <version>${sesame.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>com.google.guava</groupId>
