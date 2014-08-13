@@ -18,7 +18,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.Date;
 
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
@@ -52,9 +54,11 @@ public class ConceptsController {
         String conceptsRdfXml = conceptsService.exportConcepts();
         byte[] content = conceptsRdfXml.getBytes();
 
+        String timestamp = new SimpleDateFormat("yyyyMMdd-HHmm").format(new Date());
+
         HttpHeaders header = new HttpHeaders();
         header.setContentType(new MediaType("application", "rdf+xml"));
-        header.set("Content-Disposition", "attachment; filename=concepts.rdf");
+        header.set("Content-Disposition", "attachment; filename=concepts-" + timestamp + ".rdf");
         header.setContentLength(content.length);
 
         return new HttpEntity<byte[]>(content, header);
