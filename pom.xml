@@ -14,7 +14,8 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>skos-editor</module>
+        <module>skos-editor-api</module>
+		<module>skos-editor-ui</module>
     </modules>
 
 </project>
