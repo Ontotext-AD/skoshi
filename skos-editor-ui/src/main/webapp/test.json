@@ -1,0 +1,22 @@
+[
+	{"id":"skos~arms%2C+ammunition%2C+and+explosives","label":"AA&E"},
+	{"id":"skos~acquisition+advice+code","label":"AAC"},
+	{"id":"skos~arms%2C+ammunition%2C+and+explosives","label":"AAE"},
+	{"id":"skos~abandoned","label":"AB"},
+	{"id":"skos~aircraft","label":"AC"},
+	{"id":"skos~affordable+care+act","label":"ACA"},
+	{"id":"skos~Activity+code+to","label":"ACT"},
+	{"id":"skos~airworthiness+directive","label":"AD"},
+	{"id":"skos~automatic+data+processing","label":"ADP"},
+	{"id":"skos~ammunition+and+explosives","label":"AE"},
+	{"id":"skos~army+electronic+product+support","label":"AEPS"},
+	{"id":"skos~air+force","label":"AF"},
+	{"id":"skos~accountable+officer","label":"AO"},
+	{"id":"skos~army+regulation","label":"AR"},
+	{"id":"skos~Aviation+CSI","label":"Aviation CSI"},
+	{"id":"skos~abandoned","label":"abandoned"},
+	{"id":"skos~abuse","label":"abuse"},
+	{"id":"skos~aerospace+maintenance","label":"aerospace maintenance"},
+	{"id":"skos~aetna","label":"aetna"},
+	{"id":"skos~agreement","label":"agreement"}
+]
