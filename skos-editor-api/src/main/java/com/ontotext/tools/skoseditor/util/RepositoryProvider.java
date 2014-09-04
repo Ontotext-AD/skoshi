@@ -1,6 +1,6 @@
 package com.ontotext.tools.skoseditor.util;
 
-import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.openrdf.model.vocabulary.SKOS;
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryConnection;
@@ -18,19 +18,28 @@ public class RepositoryProvider {
 
     private RepositoryProvider() {}
 
-    public static Repository newInstance(String dataFolder) {
+    public static Repository newInstance(String dataFolderPath) {
 
-        File dataDir = new File(FileUtils.getUserDirectoryPath() + File.separator + dataFolder);
-        if (!dataDir.exists()) {
+        if (StringUtils.isEmpty(dataFolderPath)) {
+            dataFolderPath = "~/.skosedit/data";
+        }
+
+        File dataDir = new File(dataFolderPath);
+
+        boolean dataDirExists = dataDir.exists();
+
+        if (!dataDirExists) {
             dataDir.mkdirs();
         }
         Repository repo = new SailRepository( new ForwardChainingRDFSInferencer(new MemoryStore(dataDir)) );
         try {
             repo.initialize();
             RepositoryConnection connection = repo.getConnection();
-            connection.setNamespace("skos", SKOS.NAMESPACE);
-            connection.add(RepositoryProvider.class.getClassLoader().getResource("kb/skos.rdf"), SKOS.NAMESPACE, RDFFormat.RDFXML);
-            connection.add(RepositoryProvider.class.getClassLoader().getResource("kb/skos-x.ttl"), SKOS.NAMESPACE, RDFFormat.TURTLE);
+            if (!dataDirExists) {
+                connection.setNamespace("skos", SKOS.NAMESPACE);
+                connection.add(RepositoryProvider.class.getClassLoader().getResource("kb/skos.rdf"), SKOS.NAMESPACE, RDFFormat.RDFXML);
+                connection.add(RepositoryProvider.class.getClassLoader().getResource("kb/skos-x.ttl"), SKOS.NAMESPACE, RDFFormat.TURTLE);
+            }
         } catch (RepositoryException re) {
             throw new IllegalStateException("Failed to initialize repository.", re);
         } catch (RDFParseException|IOException rpe) {
