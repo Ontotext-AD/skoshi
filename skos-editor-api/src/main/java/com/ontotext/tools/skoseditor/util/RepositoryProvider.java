@@ -10,11 +10,15 @@ import org.openrdf.rio.RDFFormat;
 import org.openrdf.rio.RDFParseException;
 import org.openrdf.sail.inferencer.fc.ForwardChainingRDFSInferencer;
 import org.openrdf.sail.memory.MemoryStore;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
 
 public class RepositoryProvider {
+
+    private static final Logger log = LoggerFactory.getLogger(RepositoryProvider.class);
 
     private RepositoryProvider() {}
 
@@ -23,6 +27,8 @@ public class RepositoryProvider {
         if (StringUtils.isEmpty(dataFolderPath)) {
             dataFolderPath = "~/.skosedit/data";
         }
+
+        log.debug("Sesame Repository data folder: " + dataFolderPath);
 
         File dataDir = new File(dataFolderPath);
 
@@ -46,6 +52,11 @@ public class RepositoryProvider {
             throw new IllegalStateException("Failed to parse rdf.", rpe);
         }
         return repo;
+    }
+
+    public static void main(String[] args) throws Exception {
+        Repository r = newInstance(null);
+        System.out.println("OK");
     }
 
 }
