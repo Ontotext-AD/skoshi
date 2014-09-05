@@ -7,7 +7,7 @@
 
 
     <bean id="repository" factory-method="newInstance" class="com.ontotext.tools.skoseditor.util.RepositoryProvider">
-        <constructor-arg name="dataFolder" value="#{ systemProperties['skosedit.home'] }"/>
+        <constructor-arg name="dataFolderPath" value="#{ systemProperties['skosedit.home'] }"/>
     </bean>
 
     <bean id="validationRepository" class="com.ontotext.tools.skoseditor.repositories.sesame.SesameValidationRepository">
