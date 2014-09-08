@@ -25,7 +25,7 @@ public class RepositoryProvider {
     public static Repository newInstance(String dataFolderPath) {
 
         if (StringUtils.isEmpty(dataFolderPath)) {
-            dataFolderPath = "~/.skosedit/data";
+            dataFolderPath = System.getProperty("user.home") + "/.skosedit/data";
         }
 
         log.debug("Sesame Repository data folder: " + dataFolderPath);
