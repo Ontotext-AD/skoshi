@@ -214,6 +214,16 @@ function getConcepts(limit, offset) {
 	if (limit == 0 && offset == 0) {
 		$('#conceptsContainer').html('');	
 	}
+	
+	/* var cl = new CanvasLoader('concepts-loader');
+	cl.setDiameter(25);
+	cl.setDensity(80);
+	cl.setRange(1);
+	cl.setFPS(45);
+	cl.show(); */
+
+	$('#concepts-loader').html('Loading next 50 concepts...');
+
 	var txt = '';
 	var xhr = $.ajax({
 		url: service + "/concepts?limit=" + limit + "&offset=" + offset,
@@ -234,6 +244,8 @@ function getConcepts(limit, offset) {
 			$('#conceptsContainer').html('No concepts.');
 		}
 		tooltip('c' + offset);
+		//cl.hide();
+		$('#concepts-loader').html('');
 	});
 	
 }
