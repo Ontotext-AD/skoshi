@@ -2,6 +2,9 @@ $(function() {
 
   /* retrieve concepts and the selected concept if any */
 
+  var limit = 50;
+  var offset = 0;
+
   (function() {
     if (id && id != null) {
       getConceptDetails(id);
@@ -9,7 +12,7 @@ $(function() {
     if ($('#conceptsSearchBox').val().length > 0) {
       autoSuggestService();
     } else {
-      getConcepts();
+      getConcepts(50, 0);
     }
     $('#conceptsSearchBox').focusTextToEnd();
     $("#importForm").attr("action", service + "/concepts/import");
@@ -17,6 +20,33 @@ $(function() {
 
 
   /* EVENT HANDLERS */
+
+  $('#conceptsContainer').bind('scroll', function(){
+     if($(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight){
+        offset = offset + 50;
+        getConcepts(limit, offset);
+     }
+  });
+
+  /* $(document).on('mouseover', '.tt, .active', function() {
+    var className = $(this).attr('class');
+
+          if (className == 'list-group-item tt') {
+            if (id && id != null) {
+              $(this).append('<ul class="nav nav-pills nav-stacked" data-ttipid="' + $(this).attr('data-id') + '"><li><a href="javascript:void(0)" id="synonyms">Add to synonyms</a></li><li><a href="javascript:void(0)" id="related">Add to related</a></li><li><a href="javascript:void(0)" id="broader">Add to broader</a></li><li><a href="javascript:void(0)" id="narrower">Add to narrower</a></li><li><a href="javascript:void(0)" id="deleteConceptFromList">Delete</a></li></ul>');
+            } else {
+              $(this).append('<ul class="nav nav-pills nav-stacked" data-ttipid="' + $(this).attr('data-id') + '"><li><a href="javascript:void(0)" id="deleteConceptFromList">Delete</a></li></ul>');
+            }
+          } else {
+            $(this).append('<ul class="nav nav-pills nav-stacked" data-ttipid="' + $(this).attr('data-id') + '"><li><a href="javascript:void(0)" id="deleteConceptFromList">Delete</a></li></ul>');
+          }
+
+  });
+
+$(document).on('mouseout', '.tt, .active', function() {
+    $('#tooltip').hide();
+
+  }); */
 
   $('#conceptsSearchBox').keyup(function() {
     autoSuggestService();
@@ -55,7 +85,7 @@ $(function() {
     };
     $("#importForm").ajaxForm(options);
     $('#import').modal('hide');
-    getConcepts();
+    getConcepts(50, 0);
   });
 
   $(document).on('click', '.tt', function() {
@@ -99,7 +129,7 @@ $(function() {
       } else {
         alertify.success(result);
       }
-      getConcepts();
+      getConcepts(50, 0);
     }).fail(function(result) {
       alertify.error('Error');
     });

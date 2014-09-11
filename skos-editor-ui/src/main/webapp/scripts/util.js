@@ -50,7 +50,53 @@ if (location.port && location.port.length > 0) {
 	service = protocol + '://' + document.location.hostname + '/' + api;
 }
 
-var tooltip = function() {
+var tooltip = function(param) {
+
+	$('.' + param).qtip({
+		content: {
+			text: function(event, api) {
+				if (id && id != null) {
+					return '<ul class="nav nav-pills nav-stacked" data-ttipid="' + $(this).attr('data-id') + '"><li><a href="javascript:void(0)" id="synonyms">Add to synonyms</a></li><li><a href="javascript:void(0)" id="related">Add to related</a></li><li><a href="javascript:void(0)" id="broader">Add to broader</a></li><li><a href="javascript:void(0)" id="narrower">Add to narrower</a></li><li><a href="javascript:void(0)" id="deleteConceptFromList">Delete</a></li></ul>';
+				} else {
+					return '<ul class="nav nav-pills nav-stacked" data-ttipid="' + $(this).attr('data-id') + '"><li><a href="javascript:void(0)" id="deleteConceptFromList">Delete</a></li></ul>';
+				}
+			}
+		},
+		position: {
+			my: 'left center',
+			at: 'right center'
+		},
+		hide: {
+			fixed: true,
+			delay: 150
+		},
+		show: {
+			solo: true
+		}
+	});
+
+	$('.active').qtip({
+		content: {
+			text: function(event, api) {
+				return '<ul class="nav nav-pills nav-stacked" data-ttipid="' + $(this).attr('data-id') + '"><li><a href="javascript:void(0)" id="deleteConceptFromList">Delete</a></li></ul>';
+			}
+		},
+		position: {
+			my: 'left center',
+			at: 'right center'
+		},
+		hide: {
+			fixed: true,
+			delay: 150
+		},
+		show: {
+			solo: true
+		}
+	});
+
+}
+
+var tooltipAutoSuggest = function() {
 
 	$('.tt').qtip({
 		content: {
@@ -99,22 +145,9 @@ var tooltip = function() {
 
 /* CORE FUNCTIONS */
 
-function autoSuggestService() {
-	setTimeout(function() {
-	    console.log(conceptDataCached);
-	  }, 500);
+function autoSuggestRenderer(url, textValue) {
 	
-	if (xhr) {
-      xhr.abort();
-    }
-    var textValue = $('#conceptsSearchBox').val();
-    var url;
-    if (textValue.length > 0) {
-      url = service + "/concepts?prefix=" + textValue;
-    } else {
-      url = service + "/concepts";
-    }
-    $('#conceptsContainer').html('');
+	$('#conceptsContainer').html('');
     xhr = $.ajax({
       url: url,
     }).done(function(result) {
@@ -132,10 +165,25 @@ function autoSuggestService() {
           $('#conceptsContainer').highlight(textValue);
         }
       });
-      if (id && id != null) {
-        tooltip();
-      }
+        tooltipAutoSuggest();
     });
+}
+function autoSuggestService() {
+
+	if (xhr) {
+      xhr.abort();
+    }
+    
+    var url;
+    var textValue = $('#conceptsSearchBox').val();
+    if (textValue.length >= 2) {
+      url = service + "/concepts?prefix=" + textValue;
+      autoSuggestRenderer(url, textValue);
+    } else if (textValue.length == 0) {
+      url = service + "/concepts?limit=50";
+      autoSuggestRenderer(url, textValue);
+    }
+    
 }
 
 function changeNotePrefDef(type, el) {
@@ -162,25 +210,32 @@ function addRemoveRSNB(http, type, conceptID, itemID) {
 	});
 }
 
-function getConcepts() {
-	$('#conceptsContainer').html('');
-	$.ajax({
-		url: service + "/concepts",
+function getConcepts(limit, offset) {
+	if (limit == 0 && offset == 0) {
+		$('#conceptsContainer').html('');	
+	}
+	var txt = '';
+	var xhr = $.ajax({
+		url: service + "/concepts?limit=" + limit + "&offset=" + offset,
 		type: "GET"
 	}).done(function(result) {
 		$.each(result, function(i, l) {
 			var dataID = encodeURIComponent(l.id);
 			if (id && id != null && id == dataID) {
-				$('#conceptsContainer').append('<a href="javascript:void(0)" class="list-group-item active" data-id="' + l.id + '">' + l.prefLabel + '</a>');
+				txt += '<a href="javascript:void(0)" class="list-group-item active c' + offset + '" data-id="' + l.id + '">' + l.prefLabel + '</a>';
+				//$('#conceptsContainer').append('<a href="javascript:void(0)" class="list-group-item active" data-id="' + l.id + '">' + l.prefLabel + '</a>');
 			} else {
-				$('#conceptsContainer').append('<a href="javascript:void(0)" class="list-group-item tt" data-id="' + l.id + '">' + l.prefLabel + '</a>');
+				txt += '<a href="javascript:void(0)" class="list-group-item tt c' + offset + '" data-id="' + l.id + '">' + l.prefLabel + '</a>';
+				//$('#conceptsContainer').append('<a href="javascript:void(0)" class="list-group-item tt" data-id="' + l.id + '">' + l.prefLabel + '</a>');
 			}
 		});
+		$('#conceptsContainer').append(txt);
 		if (result.length <= 0) {
 			$('#conceptsContainer').html('No concepts.');
 		}
-		tooltip();
+		tooltip('c' + offset);
 	});
+	
 }
 
 function getConceptDetails(id) {
