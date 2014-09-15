@@ -1,7 +1,8 @@
 body {
   margin: 10px;
   padding: 10px;
-  background: #fafafa url("../images/bg.jpg") repeat;
+  background: #fafafa url("../images/body.png") repeat;
+  font-family: "Open Sans" !important;
 }
 h2 {
   margin-bottom: 20px !important;
@@ -154,4 +155,8 @@ h2 {
 }
 .qtip {
   box-shadow: 1px 2px 5px 0px rgba(50, 50, 50, 0.75) !important;
+}
+#concepts-loader {
+  font-size: 10px;
+  font-weight: bold;
 }

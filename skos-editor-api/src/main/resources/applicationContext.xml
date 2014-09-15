@@ -1,18 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="
 					http://www.springframework.org/schema/beans
-                    http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
-                    http://www.springframework.org/schema/context
-                    http://www.springframework.org/schema/context/spring-context-4.0.xsd">
+                    http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
 
-
-    <context:property-placeholder order="1" location="classpath:skos-editor.properties" ignore-unresolvable="true"/>
 
     <bean id="repository" factory-method="newInstance" class="com.ontotext.tools.skoseditor.util.RepositoryProvider">
-        <constructor-arg name="dataFolder" value="${db.dir}"/>
+        <constructor-arg name="dataFolderPath" value="#{ systemProperties['skosedit.home'] }"/>
     </bean>
 
     <bean id="validationRepository" class="com.ontotext.tools.skoseditor.repositories.sesame.SesameValidationRepository">

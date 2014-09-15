@@ -1,8 +1,102 @@
-var service = 'http://localhost:8080/skos';
 
-var xhr, el, conceptDataCached, id = getUrlParameter('id');
+var service, protocol, api, xhr, el, conceptDataCached;
+var id = getUrlParameter('id');
 
-var tooltip = function() {
+function parseUri (str) {
+	var	o   = parseUri.options,
+		m   = o.parser[o.strictMode ? "strict" : "loose"].exec(str),
+		uri = {},
+		i   = 14;
+
+	while (i--) uri[o.key[i]] = m[i] || "";
+
+	uri[o.q.name] = {};
+	uri[o.key[12]].replace(o.q.parser, function ($0, $1, $2) {
+		if ($1) uri[o.q.name][$1] = $2;
+	});
+
+	return uri;
+};
+
+parseUri.options = {
+	strictMode: false,
+	key: ["source","protocol","authority","userInfo","user","password","host","port","relative","path","directory","file","query","anchor"],
+	q:   {
+		name:   "queryKey",
+		parser: /(?:^|&)([^&=]*)=?([^&]*)/g
+	},
+	parser: {
+		strict: /^(?:([^:\/?#]+):)?(?:\/\/((?:(([^:@]*)(?::([^:@]*))?)?@)?([^:\/?#]*)(?::(\d*))?))?((((?:[^?#\/]*\/)*)([^?#]*))(?:\?([^#]*))?(?:#(.*))?)/,
+		loose:  /^(?:(?![^:@]+:[^:@\/]*@)([^:\/?#.]+):)?(?:\/\/)?((?:(([^:@]*)(?::([^:@]*))?)?@)?([^:\/?#]*)(?::(\d*))?)(((\/(?:[^?#](?![^?#\/]*\.[^?#\/.]+(?:[?#]|$)))*\/?)?([^?#\/]*))(?:\?([^#]*))?(?:#(.*))?)/
+	}
+};
+
+if (location.protocol === 'https:') {
+    protocol = 'https';
+} else {
+	protocol = 'http';
+}
+var dir = parseUri(document.location).directory;
+dir = dir.replace(/\//g,'');
+if (dir.length > 0) {
+	api = dir + '-api';
+} else {
+	api = 'ROOT-api'
+}
+
+if (location.port && location.port.length > 0) {
+	service = protocol + '://' + document.location.hostname + ':' + location.port + '/' + api;
+} else {
+	service = protocol + '://' + document.location.hostname + '/' + api;
+}
+
+var tooltip = function(param) {
+
+	$('.' + param).qtip({
+		content: {
+			text: function(event, api) {
+				if (id && id != null) {
+					return '<ul class="nav nav-pills nav-stacked" data-ttipid="' + $(this).attr('data-id') + '"><li><a href="javascript:void(0)" id="synonyms">Add to synonyms</a></li><li><a href="javascript:void(0)" id="related">Add to related</a></li><li><a href="javascript:void(0)" id="broader">Add to broader</a></li><li><a href="javascript:void(0)" id="narrower">Add to narrower</a></li><li><a href="javascript:void(0)" id="deleteConceptFromList">Delete</a></li></ul>';
+				} else {
+					return '<ul class="nav nav-pills nav-stacked" data-ttipid="' + $(this).attr('data-id') + '"><li><a href="javascript:void(0)" id="deleteConceptFromList">Delete</a></li></ul>';
+				}
+			}
+		},
+		position: {
+			my: 'left center',
+			at: 'right center'
+		},
+		hide: {
+			fixed: true,
+			delay: 150
+		},
+		show: {
+			solo: true
+		}
+	});
+
+	$('.active').qtip({
+		content: {
+			text: function(event, api) {
+				return '<ul class="nav nav-pills nav-stacked" data-ttipid="' + $(this).attr('data-id') + '"><li><a href="javascript:void(0)" id="deleteConceptFromList">Delete</a></li></ul>';
+			}
+		},
+		position: {
+			my: 'left center',
+			at: 'right center'
+		},
+		hide: {
+			fixed: true,
+			delay: 150
+		},
+		show: {
+			solo: true
+		}
+	});
+
+}
+
+var tooltipAutoSuggest = function() {
 
 	$('.tt').qtip({
 		content: {
@@ -51,22 +145,9 @@ var tooltip = function() {
 
 /* CORE FUNCTIONS */
 
-function autoSuggestService() {
-	setTimeout(function() {
-	    console.log(conceptDataCached);
-	  }, 500);
+function autoSuggestRenderer(url, textValue) {
 	
-	if (xhr) {
-      xhr.abort();
-    }
-    var textValue = $('#conceptsSearchBox').val();
-    var url;
-    if (textValue.length > 0) {
-      url = service + "/concepts?prefix=" + textValue;
-    } else {
-      url = service + "/concepts";
-    }
-    $('#conceptsContainer').html('');
+	$('#conceptsContainer').html('');
     xhr = $.ajax({
       url: url,
     }).done(function(result) {
@@ -84,10 +165,25 @@ function autoSuggestService() {
           $('#conceptsContainer').highlight(textValue);
         }
       });
-      if (id && id != null) {
-        tooltip();
-      }
+        tooltipAutoSuggest();
     });
+}
+function autoSuggestService() {
+
+	if (xhr) {
+      xhr.abort();
+    }
+    
+    var url;
+    var textValue = $('#conceptsSearchBox').val();
+    if (textValue.length >= 2) {
+      url = service + "/concepts?prefix=" + textValue;
+      autoSuggestRenderer(url, textValue);
+    } else if (textValue.length == 0) {
+      url = service + "/concepts?limit=50";
+      autoSuggestRenderer(url, textValue);
+    }
+    
 }
 
 function changeNotePrefDef(type, el) {
@@ -114,25 +210,44 @@ function addRemoveRSNB(http, type, conceptID, itemID) {
 	});
 }
 
-function getConcepts() {
-	$('#conceptsContainer').html('');
-	$.ajax({
-		url: service + "/concepts",
+function getConcepts(limit, offset) {
+	if (limit == 0 && offset == 0) {
+		$('#conceptsContainer').html('');	
+	}
+	
+	/* var cl = new CanvasLoader('concepts-loader');
+	cl.setDiameter(25);
+	cl.setDensity(80);
+	cl.setRange(1);
+	cl.setFPS(45);
+	cl.show(); */
+
+	$('#concepts-loader').html('Loading next 50 concepts...');
+
+	var txt = '';
+	var xhr = $.ajax({
+		url: service + "/concepts?limit=" + limit + "&offset=" + offset,
 		type: "GET"
 	}).done(function(result) {
 		$.each(result, function(i, l) {
 			var dataID = encodeURIComponent(l.id);
 			if (id && id != null && id == dataID) {
-				$('#conceptsContainer').append('<a href="javascript:void(0)" class="list-group-item active" data-id="' + l.id + '">' + l.prefLabel + '</a>');
+				txt += '<a href="javascript:void(0)" class="list-group-item active c' + offset + '" data-id="' + l.id + '">' + l.prefLabel + '</a>';
+				//$('#conceptsContainer').append('<a href="javascript:void(0)" class="list-group-item active" data-id="' + l.id + '">' + l.prefLabel + '</a>');
 			} else {
-				$('#conceptsContainer').append('<a href="javascript:void(0)" class="list-group-item tt" data-id="' + l.id + '">' + l.prefLabel + '</a>');
+				txt += '<a href="javascript:void(0)" class="list-group-item tt c' + offset + '" data-id="' + l.id + '">' + l.prefLabel + '</a>';
+				//$('#conceptsContainer').append('<a href="javascript:void(0)" class="list-group-item tt" data-id="' + l.id + '">' + l.prefLabel + '</a>');
 			}
 		});
+		$('#conceptsContainer').append(txt);
 		if (result.length <= 0) {
 			$('#conceptsContainer').html('No concepts.');
 		}
-		tooltip();
+		tooltip('c' + offset);
+		//cl.hide();
+		$('#concepts-loader').html('');
 	});
+	
 }
 
 function getConceptDetails(id) {

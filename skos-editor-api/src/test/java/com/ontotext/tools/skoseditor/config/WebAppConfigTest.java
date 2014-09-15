@@ -60,7 +60,7 @@ public class WebAppConfigTest {
         mockMvc.perform(delete("/concepts"))
                 .andExpect(status().isOk());
 
-        String concept1id = createConcept("test concept");
+        final String concept1id = createConcept("test concept");
 
         mockMvc.perform(get("/concepts"))
                 .andDo(print())
@@ -82,7 +82,7 @@ public class WebAppConfigTest {
     public void testPrefixSearch() throws Exception {
 
         clearConcepts();
-        String conceptId = createConcept("Test Concept");
+        final String conceptId = createConcept("Test Concept");
 
         mockMvc.perform(get("/concepts?prefix=test"))
                 .andDo(print())
@@ -91,10 +91,10 @@ public class WebAppConfigTest {
 
     }
 
-    private void testMultiValueDataProperty(String property, String value1, String value2) throws Exception {
+    private void testMultiValueDataProperty(final String property, final String value1, final String value2) throws Exception {
 
         clearConcepts();
-        String conceptId = createConcept("test concept");
+        final String conceptId = createConcept("test concept");
 
         mockMvc.perform(get("/concepts/" + conceptId+ "/" + property))
                 .andExpect(status().isOk())
@@ -125,12 +125,12 @@ public class WebAppConfigTest {
                 .andExpect(content().string("[]"));
     }
 
-    private void testSingleValueDataProperty(String property, String value) throws Exception {
+    private void testSingleValueDataProperty(final String property, final String value) throws Exception {
 
         clearConcepts();
-        String conceptId = createConcept("test concept");
+        final String conceptId = createConcept("test concept");
 
-        String secondValue = "second value";
+        final String secondValue = "second value";
 
         mockMvc.perform(get("/concepts/" + conceptId+ "/" + property))
                 .andExpect(status().isOk())
@@ -158,13 +158,13 @@ public class WebAppConfigTest {
                 .andExpect(content().string(""));
     }
 
-    private void testMultiValueObjectProperty(String property, String object1label, String object2label) throws Exception {
+    private void testMultiValueObjectProperty(final String property, final String object1label, final String object2label) throws Exception {
 
         clearConcepts();
-        String conceptId = createConcept("test concept");
+        final String conceptId = createConcept("test concept");
 
-        String object1id = createConcept(object1label);
-        String object2id = createConcept(object2label);
+        final String object1id = createConcept(object1label);
+        final String object2id = createConcept(object2label);
 
 
         mockMvc.perform(get("/concepts/" + conceptId + "/" + property))
@@ -201,9 +201,9 @@ public class WebAppConfigTest {
                 .andExpect(status().isOk());
     }
 
-    private String createConcept(String label) throws Exception {
+    private String createConcept(final String label) throws Exception {
 
-        String id = mockMvc.perform(post("/concepts/" + label))
+        final String id = mockMvc.perform(post("/concepts/" + label))
                 .andExpect(status().isCreated())
                 .andReturn().getResponse().getContentAsString();
 
@@ -213,12 +213,12 @@ public class WebAppConfigTest {
     @Test
     public void testPrefLabel() throws Exception {
 
-        String prefLabel = "test concept";
+        final String prefLabel = "test concept";
 
         clearConcepts();
-        String conceptId = createConcept(prefLabel);
+        final String conceptId = createConcept(prefLabel);
 
-        String newPrefLabel = "New Pref Label";
+        final String newPrefLabel = "New Pref Label";
 
         mockMvc.perform(get("/concepts/" + conceptId+ "/preflabel"))
                 .andExpect(status().isOk())
@@ -278,5 +278,5 @@ public class WebAppConfigTest {
     }
 
 
-    private static final String quote(String s) { return "\"" + s + "\""; }
+    private static final String quote(final String s) { return "\"" + s + "\""; }
 }
