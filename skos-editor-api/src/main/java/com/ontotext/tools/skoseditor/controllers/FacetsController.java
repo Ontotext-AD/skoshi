@@ -38,7 +38,6 @@ public class FacetsController {
     @RequestMapping(method = GET, value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Object retrieveFacet(@PathVariable URI id) {
-        facetsService.checkExists(id);
         // TODO: get the facet tree
         return facetsService.getFacet(id);
     }
@@ -46,7 +45,6 @@ public class FacetsController {
     @RequestMapping(method = DELETE, value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
     public String deleteFacet(@PathVariable URI id) {
-        facetsService.checkExists(id);
         facetsService.deleteFacet(id);
         return "Facet removed successfully.";
     }
@@ -54,7 +52,6 @@ public class FacetsController {
     @RequestMapping(method = POST, value = "/{facetId}/concepts/{conceptId}")
     @ResponseStatus(HttpStatus.CREATED)
     public String addConceptToFacet(@PathVariable URI facetId, @PathVariable URI conceptId) {
-        facetsService.checkExists(facetId);
         facetsService.addConceptToFacet(facetId, conceptId);
         return "Concept added successfully.";
     }
@@ -62,7 +59,6 @@ public class FacetsController {
     @RequestMapping(method = DELETE, value = "/{facetId}/concepts/{conceptId}")
     @ResponseStatus(HttpStatus.OK)
     public String removeConceptFromFacet(@PathVariable URI facetId, @PathVariable URI conceptId) {
-        facetsService.checkExists(facetId);
         facetsService.removeConceptFromFacet(facetId, conceptId);
         return "Concept removed successfully.";
     }
@@ -70,7 +66,6 @@ public class FacetsController {
     @RequestMapping(method = GET, value = "/{id}/available")
     @ResponseStatus(HttpStatus.OK)
     public Collection<Concept> getAvailableConceptsForFacet(@PathVariable URI id) {
-        facetsService.checkExists(id);
         return facetsService.getAvailableConceptsForFacet(id);
     }
 }
