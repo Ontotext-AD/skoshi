@@ -48,12 +48,14 @@ public class ConceptsController {
 
     @RequestMapping(method = GET, value = "/export")
     @ResponseStatus(HttpStatus.OK)
-    public void exportConcepts(HttpServletResponse response) {
+    public String exportConcepts(HttpServletResponse response) {
         String conceptsRdf = conceptsService.exportConcepts();
 
         String timestamp = new SimpleDateFormat("yyyyMMdd-HHmm").format(new Date());
         String filename = "concepts-" + timestamp + ".ttl";
         WebUtils.appendFileToResponse(filename, "text/turtle", conceptsRdf, response);
+
+        return "Concepts exported successfully.";
     }
 
     @RequestMapping(method = POST)
