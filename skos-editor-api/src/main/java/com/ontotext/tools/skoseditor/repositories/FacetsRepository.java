@@ -1,4 +1,4 @@
-package com.ontotext.tools.skoseditor.services;
+package com.ontotext.tools.skoseditor.repositories;
 
 import com.ontotext.tools.skoseditor.model.Concept;
 import com.ontotext.tools.skoseditor.model.NamedEntity;
@@ -6,13 +6,13 @@ import org.openrdf.model.URI;
 
 import java.util.Collection;
 
-public interface FacetsService {
+public interface FacetsRepository {
 
-    void createFacet(String label);
+    void createFacet(URI id, String label);
 
-    Collection<NamedEntity> getFacets();
+    Collection<NamedEntity> findFacets();
 
-    Object getFacet(URI id);
+    Object findFacet(URI id);
 
     void deleteFacet(URI id);
 
@@ -20,6 +20,5 @@ public interface FacetsService {
 
     void removeConceptFromFacet(URI facetId, URI conceptId);
 
-    Collection<Concept> getAvailableConceptsForFacet(URI id);
-
+    Collection<Concept> findAvailableConceptsForFacet(URI id);
 }

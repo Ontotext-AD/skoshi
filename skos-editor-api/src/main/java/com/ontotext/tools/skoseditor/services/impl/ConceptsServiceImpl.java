@@ -6,6 +6,7 @@ import com.ontotext.tools.skoseditor.model.NamedEntity;
 import com.ontotext.tools.skoseditor.repositories.ConceptsRepository;
 import com.ontotext.tools.skoseditor.repositories.ValidationRepository;
 import com.ontotext.tools.skoseditor.services.ConceptsService;
+import com.ontotext.tools.skoseditor.util.IdUtils;
 import org.openrdf.model.URI;
 import org.openrdf.model.impl.URIImpl;
 import org.openrdf.model.vocabulary.SKOS;
@@ -69,19 +70,12 @@ public class ConceptsServiceImpl implements ConceptsService {
         if (conceptsRepository.findConceptByLabel(prefLabel) != null) {
             throw new IllegalArgumentException("A concept with this label already exists.");
         }
-        URI id = label2id(prefLabel);
+        URI id = IdUtils.label2id(prefLabel);
         if (conceptsRepository.hasConcept(id)) {
             throw new IllegalArgumentException("A concept with such ID already exists: " + id);
         }
         return conceptsRepository.addConcept(id, prefLabel);
     }
-
-    private URI label2id(String label) {
-        label = label.replaceAll("[^a-zA-Z0-9]", "-");
-        return new URIImpl(SKOS.NAMESPACE + label);
-    }
-
-
 
     @Override
     public Concept getConcept(URI id) {
