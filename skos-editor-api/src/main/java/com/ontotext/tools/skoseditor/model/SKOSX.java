@@ -11,12 +11,18 @@ public class SKOSX {
     public static final URI ABBREVIATION;
     public static final URI SYNONYM;
 
+    public static final URI FACET;
+    public static final URI HAS_FACET_CONCEPT;
+
     static {
         final ValueFactory f = ValueFactoryImpl.getInstance();
 
         ACRONYM = f.createURI(SKOS.NAMESPACE, "acronym");
         ABBREVIATION = f.createURI(SKOS.NAMESPACE, "abbreviation");
         SYNONYM = f.createURI(SKOS.NAMESPACE, "synonym");
+
+        FACET = f.createURI(SKOS.NAMESPACE, "Facet");
+        HAS_FACET_CONCEPT = f.createURI(SKOS.NAMESPACE, "hasFacetConcept");
     }
 
 }

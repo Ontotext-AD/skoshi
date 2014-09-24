@@ -1,6 +1,7 @@
 package com.ontotext.tools.skoseditor.services.impl;
 
 import com.google.common.io.Files;
+import com.ontotext.tools.skoseditor.error.AlreadyExistsException;
 import com.ontotext.tools.skoseditor.model.Concept;
 import com.ontotext.tools.skoseditor.model.NamedEntity;
 import com.ontotext.tools.skoseditor.repositories.ConceptsRepository;
@@ -71,8 +72,10 @@ public class ConceptsServiceImpl implements ConceptsService {
             throw new IllegalArgumentException("A concept with this label already exists.");
         }
         URI id = IdUtils.label2id(prefLabel);
-        if (conceptsRepository.hasConcept(id)) {
-            throw new IllegalArgumentException("A concept with such ID already exists: " + id);
+        try {
+            validationRepository.validateDoesNotExist(id);
+        } catch (AlreadyExistsException e) {
+            throw new IllegalArgumentException("A concept with such ID already exists: " + id, e);
         }
         return conceptsRepository.addConcept(id, prefLabel);
     }

@@ -9,8 +9,6 @@ import java.util.Collection;
 
 public interface ConceptsRepository {
 
-    boolean hasConcept(URI id);
-
     void importConcepts(File conceptsRdfFile);
 
     String exportConcepts();

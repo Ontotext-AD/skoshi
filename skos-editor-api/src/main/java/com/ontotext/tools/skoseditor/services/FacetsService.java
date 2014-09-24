@@ -8,7 +8,7 @@ import java.util.Collection;
 
 public interface FacetsService {
 
-    void createFacet(String label);
+    URI createFacet(String label);
 
     Collection<NamedEntity> getFacets();
 

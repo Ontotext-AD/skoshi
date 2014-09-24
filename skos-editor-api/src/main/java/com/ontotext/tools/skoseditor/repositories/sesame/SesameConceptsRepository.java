@@ -33,24 +33,6 @@ public class SesameConceptsRepository implements ConceptsRepository {
     }
 
     @Override
-    public boolean hasConcept(URI id) {
-        boolean hasConcept = false;
-        try {
-            RepositoryConnection connection = repository.getConnection();
-            try {
-                hasConcept = connection.hasStatement(id, RDF.TYPE, SKOS.CONCEPT, false);
-            } catch (Exception e) {
-                throw new IllegalStateException("Failed to import concepts.", e);
-            } finally {
-                connection.close();
-            }
-        } catch (RepositoryException re) {
-            throw new IllegalStateException(re);
-        }
-        return hasConcept;
-    }
-
-    @Override
     public void importConcepts(File conceptsRdfFile) {
         RDFFormat format = RDFFormat.forFileName(conceptsRdfFile.getName(), RDFFormat.TURTLE);
         try {

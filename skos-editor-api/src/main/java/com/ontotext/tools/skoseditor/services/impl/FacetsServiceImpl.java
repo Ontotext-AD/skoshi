@@ -21,10 +21,11 @@ public class FacetsServiceImpl implements FacetsService {
     }
 
     @Override
-    public void createFacet(String label) {
+    public URI createFacet(String label) {
         URI id = IdUtils.label2id(label);
         validationRepository.validateDoesNotExist(id);
         facetsRepository.createFacet(id, label);
+        return id;
     }
 
     @Override
