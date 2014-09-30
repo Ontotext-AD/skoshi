@@ -1,5 +1,7 @@
 package com.ontotext.tools.skoseditor.model;
 
+import com.ontotext.openpolicy.entity.NamedEntity;
+
 import java.util.Collection;
 
 public interface Concept extends NamedEntity {

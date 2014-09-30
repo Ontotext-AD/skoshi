@@ -1,12 +1,12 @@
 package com.ontotext.tools.skoseditor.repositories;
 
-import com.ontotext.tools.skoseditor.error.AlreadyExistsException;
-import com.ontotext.tools.skoseditor.error.DoesNotExistException;
+import com.ontotext.openpolicy.error.AlreadyExistsException;
+import com.ontotext.openpolicy.error.NotFoundException;
 import org.openrdf.model.URI;
 
 public interface ValidationRepository {
 
-    void validateExists(URI id) throws DoesNotExistException;
+    void validateExists(URI id) throws NotFoundException;
 
     void validateDoesNotExist(URI id) throws AlreadyExistsException;
 

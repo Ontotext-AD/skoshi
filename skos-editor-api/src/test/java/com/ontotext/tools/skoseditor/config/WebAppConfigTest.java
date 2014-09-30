@@ -67,7 +67,7 @@ public class WebAppConfigTest {
                 .andExpect(status().isOk())
 
                 .andExpect(jsonPath("[0].id").value(concept1id))
-                .andExpect(jsonPath("[0].prefLabel").value("test concept"));
+                .andExpect(jsonPath("[0].label").value("test concept"));
 
         mockMvc.perform(get("/concepts/" + concept1id))
                 .andDo(print())

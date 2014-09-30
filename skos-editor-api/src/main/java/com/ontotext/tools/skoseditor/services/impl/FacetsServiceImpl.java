@@ -1,7 +1,8 @@
 package com.ontotext.tools.skoseditor.services.impl;
 
+import com.ontotext.openpolicy.entity.NamedEntity;
+import com.ontotext.openpolicy.tree.Tree;
 import com.ontotext.tools.skoseditor.model.Concept;
-import com.ontotext.tools.skoseditor.model.NamedEntity;
 import com.ontotext.tools.skoseditor.repositories.FacetsRepository;
 import com.ontotext.tools.skoseditor.repositories.ValidationRepository;
 import com.ontotext.tools.skoseditor.services.FacetsService;
@@ -34,7 +35,7 @@ public class FacetsServiceImpl implements FacetsService {
     }
 
     @Override
-    public Object getFacet(URI id) {
+    public Tree<Concept> getFacet(URI id) {
         validationRepository.validateExists(id);
         return facetsRepository.findFacet(id);
     }

@@ -1,5 +1,7 @@
 package com.ontotext.tools.skoseditor.model;
 
+import com.ontotext.openpolicy.entity.NamedEntity;
+import com.ontotext.openpolicy.entity.NamedEntityImpl;
 import org.openrdf.model.URI;
 
 import java.util.Collection;

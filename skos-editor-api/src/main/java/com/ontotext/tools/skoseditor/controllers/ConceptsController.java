@@ -1,7 +1,7 @@
 package com.ontotext.tools.skoseditor.controllers;
 
+import com.ontotext.openpolicy.entity.NamedEntity;
 import com.ontotext.tools.skoseditor.model.Concept;
-import com.ontotext.tools.skoseditor.model.NamedEntity;
 import com.ontotext.tools.skoseditor.services.ConceptsService;
 import com.ontotext.tools.skoseditor.util.WebUtils;
 import com.wordnik.swagger.annotations.Api;

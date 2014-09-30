@@ -1,9 +1,12 @@
 package com.ontotext.tools.skoseditor.repositories.sesame;
 
+import com.ontotext.openpolicy.entity.NamedEntity;
+import com.ontotext.openpolicy.entity.NamedEntityImpl;
+import com.ontotext.openpolicy.ontologyconstants.openpolicy.SKOSX;
+import com.ontotext.openpolicy.tree.Tree;
 import com.ontotext.tools.skoseditor.model.*;
 import com.ontotext.tools.skoseditor.repositories.FacetsRepository;
 import com.ontotext.tools.skoseditor.util.SparqlUtils;
-import org.apache.commons.lang.NotImplementedException;
 import org.openrdf.model.URI;
 import org.openrdf.model.vocabulary.RDF;
 import org.openrdf.model.vocabulary.SKOS;
@@ -21,6 +24,10 @@ import java.util.Collection;
 public class SesameFacetsRepository implements FacetsRepository {
 
     private Repository repository;
+
+    public SesameFacetsRepository(Repository repository) {
+        this.repository = repository;
+    }
 
     @Override
     public URI createFacet(URI id, String label) {
@@ -67,8 +74,8 @@ public class SesameFacetsRepository implements FacetsRepository {
     }
 
     @Override
-    public Object findFacet(URI id) {
-        throw new NotImplementedException();
+    public Tree<Concept> findFacet(URI id) {
+        return null;
     }
 
     @Override

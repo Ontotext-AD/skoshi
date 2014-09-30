@@ -1,7 +1,6 @@
 package com.ontotext.tools.skoseditor.repositories.sesame;
 
-import com.ontotext.tools.skoseditor.error.AlreadyExistsException;
-import com.ontotext.tools.skoseditor.error.DoesNotExistException;
+import com.ontotext.openpolicy.error.NotFoundException;
 import com.ontotext.tools.skoseditor.repositories.ValidationRepository;
 import org.openrdf.model.URI;
 import org.openrdf.repository.Repository;
@@ -17,13 +16,13 @@ public class SesameValidationRepository implements ValidationRepository {
     }
 
     @Override
-    public void validateExists(URI id) throws DoesNotExistException {
+    public void validateExists(URI id) throws NotFoundException {
         try {
             RepositoryConnection connection = repository.getConnection();
             try {
                 boolean exists = connection.hasStatement(id, null, null, false);
                 if (!exists)
-                    throw new DoesNotExistException();
+                    throw new NotFoundException();
             } catch (RepositoryException re) {
                 throw new IllegalStateException("Failed to import concepts.", re);
             } finally {
@@ -35,13 +34,13 @@ public class SesameValidationRepository implements ValidationRepository {
     }
 
     @Override
-    public void validateDoesNotExist(URI id) throws AlreadyExistsException {
+    public void validateDoesNotExist(URI id) throws NotFoundException {
         try {
             RepositoryConnection connection = repository.getConnection();
             try {
                 boolean exists = connection.hasStatement(id, null, null, false);
                 if (exists)
-                    throw new AlreadyExistsException();
+                    throw new NotFoundException();
             } catch (RepositoryException re) {
                 throw new IllegalStateException("Failed to import concepts.", re);
             } finally {

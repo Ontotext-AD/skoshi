@@ -1,16 +1,14 @@
 package com.ontotext.tools.skoseditor.services.impl;
 
 import com.google.common.io.Files;
-import com.ontotext.tools.skoseditor.error.AlreadyExistsException;
+import com.ontotext.openpolicy.entity.NamedEntity;
+import com.ontotext.openpolicy.error.AlreadyExistsException;
 import com.ontotext.tools.skoseditor.model.Concept;
-import com.ontotext.tools.skoseditor.model.NamedEntity;
 import com.ontotext.tools.skoseditor.repositories.ConceptsRepository;
 import com.ontotext.tools.skoseditor.repositories.ValidationRepository;
 import com.ontotext.tools.skoseditor.services.ConceptsService;
 import com.ontotext.tools.skoseditor.util.IdUtils;
 import org.openrdf.model.URI;
-import org.openrdf.model.impl.URIImpl;
-import org.openrdf.model.vocabulary.SKOS;
 
 import java.io.File;
 import java.io.IOException;

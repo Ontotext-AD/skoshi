@@ -14,7 +14,7 @@
 
 	<dependencies>
 
-		<!-- LOGGING -->
+        <!-- LOGGING -->
 		<!-- provide the common slf4j interface -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -39,6 +39,12 @@
 			<artifactId>log4j-over-slf4j</artifactId>
 			<version>${slf4j.version}</version>
 		</dependency>
+
+        <dependency>
+            <groupId>com.ontotext.openpolicy</groupId>
+            <artifactId>openpolicy-model</artifactId>
+            <version>2.3-SNAPSHOT</version>
+        </dependency>
 
 		<dependency>
 			<groupId>org.springframework</groupId>
