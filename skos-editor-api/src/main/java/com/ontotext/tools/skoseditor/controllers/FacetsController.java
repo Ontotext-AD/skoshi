@@ -41,7 +41,6 @@ public class FacetsController {
     @RequestMapping(method = GET, value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Tree<TreeNode> retrieveFacet(@PathVariable URI id) {
-        // TODO: get the facet tree
         return facetsService.getFacet(id);
     }
 
