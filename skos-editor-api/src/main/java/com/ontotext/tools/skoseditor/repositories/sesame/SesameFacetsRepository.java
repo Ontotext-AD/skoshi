@@ -2,7 +2,9 @@ package com.ontotext.tools.skoseditor.repositories.sesame;
 
 import com.ontotext.openpolicy.entity.NamedEntity;
 import com.ontotext.openpolicy.entity.NamedEntityImpl;
+import com.ontotext.openpolicy.navigation.TreeNode;
 import com.ontotext.openpolicy.ontologyconstants.openpolicy.SKOSX;
+import com.ontotext.openpolicy.semanticstoreutils.facets.RdfFacetsRetriever;
 import com.ontotext.openpolicy.tree.Tree;
 import com.ontotext.tools.skoseditor.model.*;
 import com.ontotext.tools.skoseditor.repositories.FacetsRepository;
@@ -74,8 +76,19 @@ public class SesameFacetsRepository implements FacetsRepository {
     }
 
     @Override
-    public Tree<Concept> findFacet(URI id) {
-        return null;
+    public Tree<TreeNode> findFacet(URI id) {
+        Tree<TreeNode> facet;
+        try {
+            RepositoryConnection connection = repository.getConnection();
+            try {
+                facet = new RdfFacetsRetriever(connection).getFacetTree(id);
+            } finally {
+                connection.close();
+            }
+        } catch (RepositoryException re) {
+            throw new IllegalStateException(re);
+        }
+        return facet;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.ontotext.tools.skoseditor.services.impl;
 
 import com.ontotext.openpolicy.entity.NamedEntity;
+import com.ontotext.openpolicy.navigation.TreeNode;
 import com.ontotext.openpolicy.tree.Tree;
 import com.ontotext.tools.skoseditor.model.Concept;
 import com.ontotext.tools.skoseditor.repositories.FacetsRepository;
@@ -10,6 +11,7 @@ import com.ontotext.tools.skoseditor.util.IdUtils;
 import org.openrdf.model.URI;
 
 import java.util.Collection;
+import java.util.Map;
 
 public class FacetsServiceImpl implements FacetsService {
 
@@ -35,7 +37,7 @@ public class FacetsServiceImpl implements FacetsService {
     }
 
     @Override
-    public Tree<Concept> getFacet(URI id) {
+    public Tree<TreeNode> getFacet(URI id) {
         validationRepository.validateExists(id);
         return facetsRepository.findFacet(id);
     }

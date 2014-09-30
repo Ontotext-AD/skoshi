@@ -1,6 +1,7 @@
 package com.ontotext.tools.skoseditor.controllers;
 
 import com.ontotext.openpolicy.entity.NamedEntity;
+import com.ontotext.openpolicy.navigation.TreeNode;
 import com.ontotext.openpolicy.tree.Tree;
 import com.ontotext.tools.skoseditor.model.Concept;
 import com.ontotext.tools.skoseditor.services.FacetsService;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
+import java.util.Map;
 
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
@@ -38,7 +40,7 @@ public class FacetsController {
 
     @RequestMapping(method = GET, value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Tree<Concept> retrieveFacet(@PathVariable URI id) {
+    public Tree<TreeNode> retrieveFacet(@PathVariable URI id) {
         // TODO: get the facet tree
         return facetsService.getFacet(id);
     }

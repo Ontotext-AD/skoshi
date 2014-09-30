@@ -1,11 +1,13 @@
 package com.ontotext.tools.skoseditor.services;
 
 import com.ontotext.openpolicy.entity.NamedEntity;
+import com.ontotext.openpolicy.navigation.TreeNode;
 import com.ontotext.openpolicy.tree.Tree;
 import com.ontotext.tools.skoseditor.model.Concept;
 import org.openrdf.model.URI;
 
 import java.util.Collection;
+import java.util.Map;
 
 public interface FacetsService {
 
@@ -13,7 +15,7 @@ public interface FacetsService {
 
     Collection<NamedEntity> getFacets();
 
-    Tree<Concept> getFacet(URI id);
+    Tree<TreeNode> getFacet(URI id);
 
     void deleteFacet(URI id);
 
