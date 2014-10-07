@@ -1,13 +1,12 @@
 package com.ontotext.tools.skoseditor.repositories;
 
+import com.ontotext.openpolicy.concept.Concept;
 import com.ontotext.openpolicy.entity.NamedEntity;
 import com.ontotext.openpolicy.navigation.TreeNode;
 import com.ontotext.openpolicy.tree.Tree;
-import com.ontotext.tools.skoseditor.model.Concept;
 import org.openrdf.model.URI;
 
 import java.util.Collection;
-import java.util.Map;
 
 public interface FacetsRepository {
 
@@ -23,5 +22,5 @@ public interface FacetsRepository {
 
     void removeConceptFromFacet(URI facetId, URI conceptId);
 
-    Collection<Concept> findAvailableConceptsForFacet(URI id);
+    Collection<Concept> findAvailableConceptsForFacet(URI id, String prefix, int limit, int offset);
 }

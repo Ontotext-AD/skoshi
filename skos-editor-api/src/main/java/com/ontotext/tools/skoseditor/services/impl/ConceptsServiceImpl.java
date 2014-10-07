@@ -1,9 +1,9 @@
 package com.ontotext.tools.skoseditor.services.impl;
 
 import com.google.common.io.Files;
-import com.ontotext.openpolicy.entity.NamedEntity;
+import com.ontotext.openpolicy.concept.Concept;
+import com.ontotext.openpolicy.concept.ConceptDescription;
 import com.ontotext.openpolicy.error.AlreadyExistsException;
-import com.ontotext.tools.skoseditor.model.Concept;
 import com.ontotext.tools.skoseditor.repositories.ConceptsRepository;
 import com.ontotext.tools.skoseditor.repositories.ValidationRepository;
 import com.ontotext.tools.skoseditor.services.ConceptsService;
@@ -50,12 +50,12 @@ public class ConceptsServiceImpl implements ConceptsService {
     }
 
     @Override
-    public Collection<NamedEntity> getConceptsWithPrefix(String prefix, int limit, int offset) {
+    public Collection<Concept> getConceptsWithPrefix(String prefix, int limit, int offset) {
         return conceptsRepository.findConceptsWithPrefix(prefix, limit, offset);
     }
 
     @Override
-    public Collection<NamedEntity> getAllConcepts(int limit, int offset) {
+    public Collection<Concept> getAllConcepts(int limit, int offset) {
         return conceptsRepository.findAllConcepts(limit, offset);
     }
 
@@ -79,7 +79,7 @@ public class ConceptsServiceImpl implements ConceptsService {
     }
 
     @Override
-    public Concept getConcept(URI id) {
+    public ConceptDescription getConcept(URI id) {
         validationRepository.validateExists(id);
         return conceptsRepository.findConcept(id);
     }
@@ -193,7 +193,7 @@ public class ConceptsServiceImpl implements ConceptsService {
     }
 
     @Override
-    public Collection<NamedEntity> getRelated(URI id) {
+    public Collection<Concept> getRelated(URI id) {
         validationRepository.validateExists(id);
         return conceptsRepository.findRelated(id);
     }
@@ -213,7 +213,7 @@ public class ConceptsServiceImpl implements ConceptsService {
     }
 
     @Override
-    public Collection<NamedEntity> getSynonyms(URI id) {
+    public Collection<Concept> getSynonyms(URI id) {
         validationRepository.validateExists(id);
         return conceptsRepository.findSynonyms(id);
     }
@@ -233,7 +233,7 @@ public class ConceptsServiceImpl implements ConceptsService {
     }
 
     @Override
-    public Collection<NamedEntity> getBroader(URI id) {
+    public Collection<Concept> getBroader(URI id) {
         validationRepository.validateExists(id);
         return conceptsRepository.findBroader(id);
     }
@@ -253,7 +253,7 @@ public class ConceptsServiceImpl implements ConceptsService {
     }
 
     @Override
-    public Collection<NamedEntity> getNarrower(URI id) {
+    public Collection<Concept> getNarrower(URI id) {
         validationRepository.validateExists(id);
         return conceptsRepository.findNarrower(id);
     }

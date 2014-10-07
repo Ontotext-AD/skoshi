@@ -1,12 +1,14 @@
 package com.ontotext.tools.skoseditor.repositories.sesame;
 
+import com.ontotext.openpolicy.concept.Concept;
+import com.ontotext.openpolicy.concept.ConceptImpl;
 import com.ontotext.openpolicy.entity.NamedEntity;
 import com.ontotext.openpolicy.entity.NamedEntityImpl;
 import com.ontotext.openpolicy.navigation.TreeNode;
 import com.ontotext.openpolicy.ontologyconstants.openpolicy.SKOSX;
 import com.ontotext.openpolicy.semanticstoreutils.facets.RdfFacetsRetriever;
+import com.ontotext.openpolicy.semanticstoreutils.sparql.SparqlQueryUtils;
 import com.ontotext.openpolicy.tree.Tree;
-import com.ontotext.tools.skoseditor.model.*;
 import com.ontotext.tools.skoseditor.repositories.FacetsRepository;
 import com.ontotext.tools.skoseditor.util.SparqlUtils;
 import org.openrdf.model.URI;
@@ -19,11 +21,15 @@ import org.openrdf.query.TupleQueryResult;
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
 public class SesameFacetsRepository implements FacetsRepository {
+
+    private Logger log = LoggerFactory.getLogger(SesameFacetsRepository.class);
 
     private Repository repository;
 
@@ -134,23 +140,52 @@ public class SesameFacetsRepository implements FacetsRepository {
     }
 
     @Override
-    public Collection<Concept> findAvailableConceptsForFacet(URI id) {
+    public Collection<Concept> findAvailableConceptsForFacet(URI id, String prefix, int limit, int offset) {
         Collection<Concept> concepts = new ArrayList<>();
         try {
-            String sparql = SparqlUtils.getPrefix("skos", SKOS.NAMESPACE) +
-                    "select ?concept ?label where { \n" +
-                    "   ?concept a skos:Concept; skos:prefLabel ?label . \n" +
-                    "   FILTER NOT EXISTS { <"+id+"> <"+SKOSX.HAS_FACET_CONCEPT+"> ?concept } \n" +
-                    "}\n";
+            String limit_and_offset = ( (limit != 0) ? "limit "+limit+" offset "+offset+"\n" : "" );
+            final String query =
+                    prefix != null ?
+                            SparqlQueryUtils.getLuceneConnectorPrefix() + "\n" +
+                            SparqlQueryUtils.getLuceneConnectorInstancePrefix() + "\n" +
+                            SparqlQueryUtils.getRdfsPrefix() + "\n" +
+                            SparqlQueryUtils.getOpenPolicyPrefix() + "\n" +
+                            "select distinct ?concept ?snippetText (MAX(?lbl_len) as ?max_lbl_len) where { \n" +
+                            "  ?search a inst:ConceptsIndex ;\n" +
+                            "       con:snippetSpanOpen \"<b>\" ;\n" +
+                            "       con:snippetSpanClose \"</b>\" ;\n" +
+                            "       con:query \"text:" + prefix + "*\" ;\n" +
+                            "       con:entities ?concept .\n" +
+                            "  ?concept con:snippets _:s .\n" +
+                            "  _:s con:snippetField ?snippetField ;\n" +
+                            "       con:snippetText ?snippetText .\n" +
+                            "  ?concept rdfs:label ?label .\n" +
+                            "  bind(strlen(?label) as ?lbl_len) .\n" +
+                            "  FILTER NOT EXISTS { <"+id+"> <"+SKOSX.HAS_FACET_CONCEPT+"> ?concept } \n" +
+                            "} \n" +
+                            "group by ?concept ?snippetText\n" +
+                            "order by ?snippetText\n" +
+                            limit_and_offset
+                    :
+                            SparqlUtils.getPrefix("skos", SKOS.NAMESPACE) +
+                            "select ?concept ?label where { \n" +
+                            "   ?concept a skos:Concept; skos:prefLabel ?label . \n" +
+                            "   FILTER NOT EXISTS { <"+id+"> <"+SKOSX.HAS_FACET_CONCEPT+"> ?concept } \n" +
+                            "}\n" +
+                            limit_and_offset;
+            log.debug("Query: \n" + query);
             RepositoryConnection connection = repository.getConnection();
             try {
-                TupleQuery tupleQuery = connection.prepareTupleQuery(QueryLanguage.SPARQL, sparql);
+                TupleQuery tupleQuery = connection.prepareTupleQuery(QueryLanguage.SPARQL, query);
                 TupleQueryResult result = tupleQuery.evaluate();
                 while (result.hasNext()) {
                     BindingSet row = result.next();
-                    URI conceptId = (URI) row.getValue("concept");
-                    String conceptLabel = row.getValue("label").stringValue();
-                    concepts.add(new ConceptImpl(conceptId, conceptLabel));
+
+                    if (row.hasBinding("concept") && row.hasBinding("snippetText")) {
+                        URI conceptId = (URI) row.getValue("concept");
+                        String conceptLabel = row.getValue("snippetText").stringValue();
+                        concepts.add(new ConceptImpl(conceptId, conceptLabel));
+                    }
                 }
                 result.close();
             } catch (Exception e) {

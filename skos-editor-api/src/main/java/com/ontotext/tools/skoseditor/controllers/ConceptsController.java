@@ -1,7 +1,8 @@
 package com.ontotext.tools.skoseditor.controllers;
 
+import com.ontotext.openpolicy.concept.Concept;
+import com.ontotext.openpolicy.concept.ConceptDescription;
 import com.ontotext.openpolicy.entity.NamedEntity;
-import com.ontotext.tools.skoseditor.model.Concept;
 import com.ontotext.tools.skoseditor.services.ConceptsService;
 import com.ontotext.tools.skoseditor.util.WebUtils;
 import com.wordnik.swagger.annotations.Api;
@@ -74,7 +75,7 @@ public class ConceptsController {
 
     @RequestMapping(method = GET)
     @ResponseStatus(HttpStatus.OK)
-    public Collection<NamedEntity> getConcepts(
+    public Collection<Concept> getConcepts(
                 @RequestParam(required = false) String prefix,
                 @RequestParam(required = false, defaultValue = "0") int limit,
                 @RequestParam(required = false, defaultValue = "0") int offset) {
@@ -100,7 +101,7 @@ public class ConceptsController {
 
     @RequestMapping(method = GET, value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Concept getConcept(@PathVariable URI id) {
+    public ConceptDescription getConcept(@PathVariable URI id) {
         return conceptsService.getConcept(id);
     }
 
@@ -238,7 +239,7 @@ public class ConceptsController {
 
     @RequestMapping(method = GET, value = "/{id}/related")
     @ResponseStatus(HttpStatus.OK)
-    public Collection<NamedEntity> getRelated(@PathVariable URI id) {
+    public Collection<Concept> getRelated(@PathVariable URI id) {
         return conceptsService.getRelated(id);
     }
 
@@ -260,7 +261,7 @@ public class ConceptsController {
 
     @RequestMapping(method = GET, value = "/{id}/synonyms")
     @ResponseStatus(HttpStatus.OK)
-    public Collection<NamedEntity> getSynonyms(@PathVariable URI id) {
+    public Collection<Concept> getSynonyms(@PathVariable URI id) {
         return conceptsService.getSynonyms(id);
     }
 
@@ -282,7 +283,7 @@ public class ConceptsController {
 
     @RequestMapping(method = GET, value = "/{id}/broader")
     @ResponseStatus(HttpStatus.OK)
-    public Collection<NamedEntity> getBroader(@PathVariable URI id) {
+    public Collection<Concept> getBroader(@PathVariable URI id) {
         return conceptsService.getBroader(id);
     }
 
@@ -304,7 +305,7 @@ public class ConceptsController {
 
     @RequestMapping(method = GET, value = "/{id}/narrower")
     @ResponseStatus(HttpStatus.OK)
-    public Collection<NamedEntity> getNarrower(@PathVariable URI id) {
+    public Collection<Concept> getNarrower(@PathVariable URI id) {
         return conceptsService.getNarrower(id);
     }
 

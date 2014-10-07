@@ -1,10 +1,10 @@
 package com.ontotext.tools.skoseditor.repositories.sesame;
 
-import com.ontotext.openpolicy.entity.NamedEntity;
-import com.ontotext.openpolicy.entity.NamedEntityImpl;
+import com.ontotext.openpolicy.concept.Concept;
+import com.ontotext.openpolicy.concept.ConceptDescription;
+import com.ontotext.openpolicy.concept.ConceptDescriptionImpl;
+import com.ontotext.openpolicy.concept.ConceptImpl;
 import com.ontotext.openpolicy.ontologyconstants.openpolicy.SKOSX;
-import com.ontotext.tools.skoseditor.model.Concept;
-import com.ontotext.tools.skoseditor.model.ConceptImpl;
 import com.ontotext.tools.skoseditor.repositories.ConceptsRepository;
 import com.ontotext.tools.skoseditor.util.SparqlUtils;
 import org.openrdf.model.Statement;
@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 public class SesameConceptsRepository implements ConceptsRepository {
 
@@ -71,8 +72,8 @@ public class SesameConceptsRepository implements ConceptsRepository {
     }
 
     @Override
-    public Collection<NamedEntity> findConceptsWithPrefix(String prefix, int limit, int offset) {
-        Collection<NamedEntity> concepts = new ArrayList<>();
+    public Collection<Concept> findConceptsWithPrefix(String prefix, int limit, int offset) {
+        Collection<Concept> concepts = new ArrayList<>();
         try {
             String sparql = SparqlUtils.getPrefix("skos", SKOS.NAMESPACE) +
                     "select ?concept ?label where \n" +
@@ -92,7 +93,7 @@ public class SesameConceptsRepository implements ConceptsRepository {
                     BindingSet row = result.next();
                     URI id = (URI) row.getValue("concept");
                     String prefLabel = row.getValue("label").stringValue();
-                    concepts.add(new NamedEntityImpl(id, prefLabel));
+                    concepts.add(new ConceptImpl(id, prefLabel));
                 }
                 result.close();
             } catch (Exception e) {
@@ -107,8 +108,8 @@ public class SesameConceptsRepository implements ConceptsRepository {
     }
 
     @Override
-    public Collection<NamedEntity> findAllConcepts(int limit, int offset) {
-        Collection<NamedEntity> concepts = new ArrayList<>();
+    public Collection<Concept> findAllConcepts(int limit, int offset) {
+        Collection<Concept> concepts = new ArrayList<>();
         try {
             String sparql = SparqlUtils.getPrefix("skos", SKOS.NAMESPACE) +
                     "select ?concept ?label where { ?concept a skos:Concept; skos:prefLabel ?label }\n";
@@ -122,7 +123,7 @@ public class SesameConceptsRepository implements ConceptsRepository {
                     BindingSet row = result.next();
                     URI id = (URI) row.getValue("concept");
                     String prefLabel = row.getValue("label").stringValue();
-                    concepts.add(new NamedEntityImpl(id, prefLabel));
+                    concepts.add(new ConceptImpl(id, prefLabel));
                 }
                 result.close();
             } catch (Exception e) {
@@ -153,8 +154,8 @@ public class SesameConceptsRepository implements ConceptsRepository {
     }
 
     @Override
-    public NamedEntity findConceptByLabel(String label) {
-        NamedEntity concept = null;
+    public Concept findConceptByLabel(String label) {
+        Concept concept = null;
         try {
             String sparql = SparqlUtils.getPrefix("skos", SKOS.NAMESPACE) +
                     "select ?concept ?prefLabel where { ?concept a skos:Concept; skos:prefLabel ?prefLabel; rdfs:label '"+label+"' }";
@@ -170,7 +171,7 @@ public class SesameConceptsRepository implements ConceptsRepository {
                         throw new IllegalArgumentException(
                                 String.format("Two concepts with the same label exist %s  %s", concept.getId(), id));
                     }
-                    concept = new NamedEntityImpl(id, prefLabel);
+                    concept = new ConceptImpl(id, prefLabel);
                 }
                 result.close();
             } catch (Exception e) {
@@ -201,11 +202,11 @@ public class SesameConceptsRepository implements ConceptsRepository {
     }
 
     @Override
-    public Concept findConcept(URI id) {
+    public ConceptDescription findConcept(URI id) {
         String prefLabel = findPrefLabel(id);
-        Concept concept = new ConceptImpl(id, prefLabel);
+        ConceptDescription concept = new ConceptDescriptionImpl(id, prefLabel);
 
-        concept.setAltLabels(findAltLabels(id));
+        concept.setAlternativeLabels(findAltLabels(id));
         concept.setAcronyms(findAcronyms(id));
         concept.setAbbreviations(findAbbreviations(id));
 
@@ -297,7 +298,7 @@ public class SesameConceptsRepository implements ConceptsRepository {
     }
 
     @Override
-    public Collection<String> findAltLabels(URI id) {
+    public List<String> findAltLabels(URI id) {
         return findConceptDataPropertyValues(id, SKOS.ALT_LABEL);
     }
 
@@ -312,7 +313,7 @@ public class SesameConceptsRepository implements ConceptsRepository {
     }
 
     @Override
-    public Collection<String> findAcronyms(URI id) {
+    public List<String> findAcronyms(URI id) {
         return findConceptDataPropertyValues(id, SKOSX.ACRONYM);
     }
 
@@ -372,7 +373,7 @@ public class SesameConceptsRepository implements ConceptsRepository {
     }
 
     @Override
-    public Collection<NamedEntity> findRelated(URI id) {
+    public Collection<Concept> findRelated(URI id) {
         return findConceptObjectPropertyValues(id, SKOS.RELATED);
     }
 
@@ -387,7 +388,7 @@ public class SesameConceptsRepository implements ConceptsRepository {
     }
 
     @Override
-    public Collection<NamedEntity> findSynonyms(URI id) {
+    public Collection<Concept> findSynonyms(URI id) {
         return findConceptObjectPropertyValues(id, SKOSX.SYNONYM);
     }
 
@@ -402,7 +403,7 @@ public class SesameConceptsRepository implements ConceptsRepository {
     }
 
     @Override
-    public Collection<NamedEntity> findBroader(URI id) {
+    public Collection<Concept> findBroader(URI id) {
         return findConceptObjectPropertyValues(id, SKOS.BROADER);
     }
 
@@ -417,7 +418,7 @@ public class SesameConceptsRepository implements ConceptsRepository {
     }
 
     @Override
-    public Collection<NamedEntity> findNarrower(URI id) {
+    public Collection<Concept> findNarrower(URI id) {
         return findConceptObjectPropertyValues(id, SKOS.NARROWER);
     }
 
@@ -433,8 +434,8 @@ public class SesameConceptsRepository implements ConceptsRepository {
 
 
 
-    private Collection<String> findConceptDataPropertyValues(URI id, URI predicate) {
-        Collection<String> values = new ArrayList<>();
+    private List<String> findConceptDataPropertyValues(URI id, URI predicate) {
+        List<String> values = new ArrayList<>();
         try {
             RepositoryConnection connection = repository.getConnection();
             try {
@@ -453,8 +454,8 @@ public class SesameConceptsRepository implements ConceptsRepository {
         return values;
     }
 
-    private Collection<NamedEntity> findConceptObjectPropertyValues(URI id, URI predicate) {
-        Collection<NamedEntity> values = new ArrayList<>();
+    private Collection<Concept> findConceptObjectPropertyValues(URI id, URI predicate) {
+        Collection<Concept> values = new ArrayList<>();
         try {
             RepositoryConnection connection = repository.getConnection();
             try {
@@ -463,7 +464,7 @@ public class SesameConceptsRepository implements ConceptsRepository {
                     Statement st = result.next();
                     URI objectId = (URI) st.getObject();
                     String objectLabel = connection.getStatements(objectId, SKOS.PREF_LABEL, null, false).next().getObject().stringValue();
-                    NamedEntity object = new NamedEntityImpl(objectId, objectLabel);
+                    Concept object = new ConceptImpl(objectId, objectLabel);
                     values.add(object);
                 }
             } finally {

@@ -1,7 +1,7 @@
 package com.ontotext.tools.skoseditor.repositories;
 
-import com.ontotext.openpolicy.entity.NamedEntity;
-import com.ontotext.tools.skoseditor.model.Concept;
+import com.ontotext.openpolicy.concept.Concept;
+import com.ontotext.openpolicy.concept.ConceptDescription;
 import org.openrdf.model.URI;
 
 import java.io.File;
@@ -13,17 +13,17 @@ public interface ConceptsRepository {
 
     String exportConcepts();
 
-    Collection<NamedEntity> findConceptsWithPrefix(String prefix, int limit, int offset);
+    Collection<Concept> findConceptsWithPrefix(String prefix, int limit, int offset);
 
-    Collection<NamedEntity> findAllConcepts(int limit, int offset);
+    Collection<Concept> findAllConcepts(int limit, int offset);
 
     void clearRepository();
 
-    NamedEntity findConceptByLabel(String label);
+    Concept findConceptByLabel(String label);
 
     URI addConcept(URI id, String prefLabel);
 
-    Concept findConcept(URI id);
+    ConceptDescription findConcept(URI id);
 
     void deleteConcept(URI id);
 
@@ -61,25 +61,25 @@ public interface ConceptsRepository {
 
     void deleteNote(URI id);
 
-    Collection<NamedEntity> findRelated(URI id);
+    Collection<Concept> findRelated(URI id);
 
     void addRelated(URI id, URI relatedId);
 
     void deleteRelated(URI id, URI relatedId);
 
-    Collection<NamedEntity> findSynonyms(URI id);
+    Collection<Concept> findSynonyms(URI id);
 
     void addSynonym(URI id, URI synonymId);
 
     void deleteSynonym(URI id, URI synonymId);
 
-    Collection<NamedEntity> findBroader(URI id);
+    Collection<Concept> findBroader(URI id);
 
     void addBroader(URI id, URI broaderId);
 
     void deleteBroader(URI id, URI broaderId);
 
-    Collection<NamedEntity> findNarrower(URI id);
+    Collection<Concept> findNarrower(URI id);
 
     void addNarrower(URI id, URI narrowerId);
 

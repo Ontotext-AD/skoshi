@@ -1,9 +1,9 @@
 package com.ontotext.tools.skoseditor.controllers;
 
+import com.ontotext.openpolicy.concept.Concept;
 import com.ontotext.openpolicy.entity.NamedEntity;
 import com.ontotext.openpolicy.navigation.TreeNode;
 import com.ontotext.openpolicy.tree.Tree;
-import com.ontotext.tools.skoseditor.model.Concept;
 import com.ontotext.tools.skoseditor.services.FacetsService;
 import com.wordnik.swagger.annotations.Api;
 import org.openrdf.model.URI;
@@ -67,7 +67,11 @@ public class FacetsController {
 
     @RequestMapping(method = GET, value = "/{id}/available")
     @ResponseStatus(HttpStatus.OK)
-    public Collection<Concept> getAvailableConceptsForFacet(@PathVariable URI id) {
-        return facetsService.getAvailableConceptsForFacet(id);
+    public Collection<Concept> getAvailableConceptsForFacet(
+            @PathVariable URI id,
+            @RequestParam(required = false) String prefix,
+            @RequestParam(required = false, defaultValue = "0") int limit,
+            @RequestParam(required = false, defaultValue = "0") int offset) {
+        return facetsService.getAvailableConceptsForFacet(id, prefix, limit, offset);
     }
 }
