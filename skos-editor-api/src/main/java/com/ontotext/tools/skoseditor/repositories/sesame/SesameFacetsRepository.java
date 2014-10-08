@@ -172,9 +172,13 @@ public class SesameFacetsRepository implements FacetsRepository {
                 TupleQueryResult result = tupleQuery.evaluate();
                 while (result.hasNext()) {
                     BindingSet row = result.next();
-                    URI conceptId = (URI) row.getValue("concept");
-                    String conceptLabel = row.getValue("label").stringValue();
-                    concepts.add(new ConceptImpl(conceptId, conceptLabel));
+                    // this check is necessary, because the group by clause produces
+                    // one result even when there are none
+                    if (row.hasBinding("concept") && row.hasBinding("label")) {
+                        URI conceptId = (URI) row.getValue("concept");
+                        String conceptLabel = row.getValue("label").stringValue();
+                        concepts.add(new ConceptImpl(conceptId, conceptLabel));
+                    }
                 }
                 result.close();
             } catch (Exception e) {
