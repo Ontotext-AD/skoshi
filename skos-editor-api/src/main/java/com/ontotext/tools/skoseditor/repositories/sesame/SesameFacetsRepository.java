@@ -158,22 +158,23 @@ public class SesameFacetsRepository implements FacetsRepository {
             sparqlQuery.append("group by ?concept ?label\n");
             sparqlQuery.append("order by ?label\n");
             if (limit != 0) {
-                sparqlQuery.append("limit "+limit+" offset "+offset+"\n");
+                sparqlQuery.append("limit ").append(limit).append("\n");
+            }
+            if (offset != 0) {
+                sparqlQuery.append("offset ").append(offset).append("\n");
             }
 
             log.debug("Query: \n" + sparqlQuery);
+
             RepositoryConnection connection = repository.getConnection();
             try {
                 TupleQuery tupleQuery = connection.prepareTupleQuery(QueryLanguage.SPARQL, sparqlQuery.toString());
                 TupleQueryResult result = tupleQuery.evaluate();
                 while (result.hasNext()) {
                     BindingSet row = result.next();
-
-                    if (row.hasBinding("concept") && row.hasBinding("label")) {
-                        URI conceptId = (URI) row.getValue("concept");
-                        String conceptLabel = row.getValue("label").stringValue();
-                        concepts.add(new ConceptImpl(conceptId, conceptLabel));
-                    }
+                    URI conceptId = (URI) row.getValue("concept");
+                    String conceptLabel = row.getValue("label").stringValue();
+                    concepts.add(new ConceptImpl(conceptId, conceptLabel));
                 }
                 result.close();
             } catch (Exception e) {
