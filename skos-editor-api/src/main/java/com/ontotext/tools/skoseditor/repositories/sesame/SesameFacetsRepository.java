@@ -143,47 +143,35 @@ public class SesameFacetsRepository implements FacetsRepository {
     public Collection<Concept> findAvailableConceptsForFacet(URI id, String prefix, int limit, int offset) {
         Collection<Concept> concepts = new ArrayList<>();
         try {
-            String limit_and_offset = ( (limit != 0) ? "limit "+limit+" offset "+offset+"\n" : "" );
-            final String query =
-                    prefix != null ?
-                            SparqlQueryUtils.getLuceneConnectorPrefix() + "\n" +
-                            SparqlQueryUtils.getLuceneConnectorInstancePrefix() + "\n" +
-                            SparqlQueryUtils.getRdfsPrefix() + "\n" +
-                            SparqlQueryUtils.getOpenPolicyPrefix() + "\n" +
-                            "select distinct ?concept ?snippetText (MAX(?lbl_len) as ?max_lbl_len) where { \n" +
-                            "  ?search a inst:ConceptsIndex ;\n" +
-                            "       con:snippetSpanOpen \"<b>\" ;\n" +
-                            "       con:snippetSpanClose \"</b>\" ;\n" +
-                            "       con:query \"text:" + prefix + "*\" ;\n" +
-                            "       con:entities ?concept .\n" +
-                            "  ?concept con:snippets _:s .\n" +
-                            "  _:s con:snippetField ?snippetField ;\n" +
-                            "       con:snippetText ?snippetText .\n" +
-                            "  ?concept rdfs:label ?label .\n" +
-                            "  bind(strlen(?label) as ?lbl_len) .\n" +
-                            "  FILTER NOT EXISTS { <"+id+"> <"+SKOSX.HAS_FACET_CONCEPT+"> ?concept } \n" +
-                            "} \n" +
-                            "group by ?concept ?snippetText\n" +
-                            "order by ?snippetText\n" +
-                            limit_and_offset
-                    :
-                            SparqlUtils.getPrefix("skos", SKOS.NAMESPACE) +
-                            "select ?concept ?label where { \n" +
-                            "   ?concept a skos:Concept; skos:prefLabel ?label . \n" +
-                            "   FILTER NOT EXISTS { <"+id+"> <"+SKOSX.HAS_FACET_CONCEPT+"> ?concept } \n" +
-                            "}\n" +
-                            limit_and_offset;
-            log.debug("Query: \n" + query);
+            final StringBuffer sparqlQuery = new StringBuffer();
+            SparqlQueryUtils.appendRdfsPrefix(sparqlQuery);
+            SparqlQueryUtils.appendSkosPrefix(sparqlQuery);
+            sparqlQuery.append("select distinct ?concept ?label (MAX(?lbl_len) as ?max_lbl_len) where { \n");
+            sparqlQuery.append("    ?concept a skos:Concept; \n");
+            sparqlQuery.append("        rdfs:label ?label .\n");
+            sparqlQuery.append("    FILTER NOT EXISTS { <").append(id).append("> <").append(SKOSX.HAS_FACET_CONCEPT).append("> ?concept } \n");
+            if (prefix != null) {
+                sparqlQuery.append("    FILTER REGEX(?label, \"(^|\\\\W)").append(prefix).append("\", \"i\") .\n");
+            }
+            sparqlQuery.append("    bind(strlen(?label) as ?lbl_len) .\n");
+            sparqlQuery.append("} \n");
+            sparqlQuery.append("group by ?concept ?label\n");
+            sparqlQuery.append("order by ?label\n");
+            if (limit != 0) {
+                sparqlQuery.append("limit "+limit+" offset "+offset+"\n");
+            }
+
+            log.debug("Query: \n" + sparqlQuery);
             RepositoryConnection connection = repository.getConnection();
             try {
-                TupleQuery tupleQuery = connection.prepareTupleQuery(QueryLanguage.SPARQL, query);
+                TupleQuery tupleQuery = connection.prepareTupleQuery(QueryLanguage.SPARQL, sparqlQuery.toString());
                 TupleQueryResult result = tupleQuery.evaluate();
                 while (result.hasNext()) {
                     BindingSet row = result.next();
 
-                    if (row.hasBinding("concept") && row.hasBinding("snippetText")) {
+                    if (row.hasBinding("concept") && row.hasBinding("label")) {
                         URI conceptId = (URI) row.getValue("concept");
-                        String conceptLabel = row.getValue("snippetText").stringValue();
+                        String conceptLabel = row.getValue("label").stringValue();
                         concepts.add(new ConceptImpl(conceptId, conceptLabel));
                     }
                 }
