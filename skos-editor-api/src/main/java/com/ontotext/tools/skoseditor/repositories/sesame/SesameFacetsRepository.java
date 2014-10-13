@@ -143,20 +143,29 @@ public class SesameFacetsRepository implements FacetsRepository {
     public Collection<Concept> findAvailableConceptsForFacet(URI id, String prefix, int limit, int offset) {
         Collection<Concept> concepts = new ArrayList<>();
         try {
+
             final StringBuffer sparqlQuery = new StringBuffer();
-            SparqlQueryUtils.appendRdfsPrefix(sparqlQuery);
-            SparqlQueryUtils.appendSkosPrefix(sparqlQuery);
-            sparqlQuery.append("select distinct ?concept ?label (MAX(?lbl_len) as ?max_lbl_len) where { \n");
-            sparqlQuery.append("    ?concept a skos:Concept; \n");
-            sparqlQuery.append("        rdfs:label ?label .\n");
-            sparqlQuery.append("    FILTER NOT EXISTS { <").append(id).append("> <").append(SKOSX.HAS_FACET_CONCEPT).append("> ?concept } \n");
+
             if (prefix != null) {
-                sparqlQuery.append("    FILTER REGEX(?label, \"(^|\\\\W)").append(prefix).append("\", \"i\") .\n");
+                SparqlQueryUtils.appendRdfsPrefix(sparqlQuery);
+                SparqlQueryUtils.appendSkosPrefix(sparqlQuery);
+                sparqlQuery.append("select distinct ?concept (MAX(?altLabel) as ?label) where { \n");
+                sparqlQuery.append("    ?concept a skos:Concept; \n");
+                sparqlQuery.append("        rdfs:label ?altLabel .\n");
+                sparqlQuery.append("    FILTER NOT EXISTS { <").append(id).append("> <").append(SKOSX.HAS_FACET_CONCEPT).append("> ?concept } \n");
+                sparqlQuery.append("    FILTER REGEX(?altLabel, \"(^|\\\\W)").append(prefix).append("\", \"i\") .\n");
+                sparqlQuery.append("} \n");
+                sparqlQuery.append("group by ?concept\n");
+                sparqlQuery.append("order by ?altLabel\n");
+            } else {
+                SparqlQueryUtils.appendSkosPrefix(sparqlQuery);
+                sparqlQuery.append("select distinct ?concept ?label where { \n");
+                sparqlQuery.append("    ?concept a skos:Concept; \n");
+                sparqlQuery.append("        skos:prefLabel ?label .\n");
+                sparqlQuery.append("    FILTER NOT EXISTS { <").append(id).append("> <").append(SKOSX.HAS_FACET_CONCEPT).append("> ?concept } \n");
+                sparqlQuery.append("} \n");
+                sparqlQuery.append("order by ?label\n");
             }
-            sparqlQuery.append("    bind(strlen(?label) as ?lbl_len) .\n");
-            sparqlQuery.append("} \n");
-            sparqlQuery.append("group by ?concept ?label\n");
-            sparqlQuery.append("order by ?label\n");
             if (limit != 0) {
                 sparqlQuery.append("limit ").append(limit).append("\n");
             }
