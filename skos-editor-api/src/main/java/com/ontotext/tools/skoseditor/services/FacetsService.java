@@ -16,6 +16,8 @@ public interface FacetsService {
 
     Tree<TreeNode> getFacet(URI id);
 
+    void updateFacetLabel(URI id, String lbl);
+
     void deleteFacet(URI id);
 
     void addConceptToFacet(URI facetId, URI conceptId);

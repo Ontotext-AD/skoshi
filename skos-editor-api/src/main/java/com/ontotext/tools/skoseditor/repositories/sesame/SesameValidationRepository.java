@@ -1,5 +1,6 @@
 package com.ontotext.tools.skoseditor.repositories.sesame;
 
+import com.ontotext.openpolicy.error.AlreadyExistsException;
 import com.ontotext.openpolicy.error.NotFoundException;
 import com.ontotext.tools.skoseditor.repositories.ValidationRepository;
 import org.openrdf.model.URI;
@@ -17,32 +18,23 @@ public class SesameValidationRepository implements ValidationRepository {
 
     @Override
     public void validateExists(URI id) throws NotFoundException {
-        try {
-            RepositoryConnection connection = repository.getConnection();
-            try {
-                boolean exists = connection.hasStatement(id, null, null, false);
-                if (!exists)
-                    throw new NotFoundException();
-            } catch (RepositoryException re) {
-                throw new IllegalStateException("Failed to import concepts.", re);
-            } finally {
-                connection.close();
-            }
-        } catch (RepositoryException re) {
-            throw new IllegalStateException(re);
-        }
+        if (!exists(id)) throw new NotFoundException();
     }
 
     @Override
-    public void validateDoesNotExist(URI id) throws NotFoundException {
+    public void validateDoesNotExist(URI id) throws AlreadyExistsException {
+        if (exists(id)) throw new AlreadyExistsException();
+    }
+
+    @Override
+    public boolean exists(URI id) {
         try {
             RepositoryConnection connection = repository.getConnection();
             try {
                 boolean exists = connection.hasStatement(id, null, null, false);
-                if (exists)
-                    throw new NotFoundException();
+                return exists;
             } catch (RepositoryException re) {
-                throw new IllegalStateException("Failed to import concepts.", re);
+                throw new IllegalStateException("Failed to validate if object " + id + " exists.", re);
             } finally {
                 connection.close();
             }

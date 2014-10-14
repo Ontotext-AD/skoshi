@@ -16,6 +16,8 @@ public interface FacetsRepository {
 
     Tree<TreeNode> findFacet(URI id);
 
+    void updateFacetLabel(URI id, String lbl);
+
     void deleteFacet(URI id);
 
     void addConceptToFacet(URI facetId, URI conceptId);
@@ -23,4 +25,5 @@ public interface FacetsRepository {
     void removeConceptFromFacet(URI facetId, URI conceptId);
 
     Collection<Concept> findAvailableConceptsForFacet(URI id, String prefix, int limit, int offset);
+
 }

@@ -44,6 +44,13 @@ public class FacetsController {
         return facetsService.getFacet(id);
     }
 
+    @RequestMapping(method = PUT, value = "/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public String updateFacetLabel(@PathVariable URI id, @RequestParam String lbl) {
+        facetsService.updateFacetLabel(id, lbl);
+        return "Facet label updated successfully.";
+    }
+
     @RequestMapping(method = DELETE, value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
     public String deleteFacet(@PathVariable URI id) {

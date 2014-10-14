@@ -10,4 +10,6 @@ public interface ValidationRepository {
 
     void validateDoesNotExist(URI id) throws AlreadyExistsException;
 
+    boolean exists(URI id);
+
 }

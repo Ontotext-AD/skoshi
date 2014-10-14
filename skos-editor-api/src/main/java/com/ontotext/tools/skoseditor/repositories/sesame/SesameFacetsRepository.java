@@ -98,6 +98,21 @@ public class SesameFacetsRepository implements FacetsRepository {
     }
 
     @Override
+    public void updateFacetLabel(URI id, String lbl) {
+        try {
+            RepositoryConnection connection = repository.getConnection();
+            try {
+                connection.remove(id, SKOS.PREF_LABEL, null);
+                connection.add(id, SKOS.PREF_LABEL, repository.getValueFactory().createLiteral(lbl));
+            } finally {
+                connection.close();
+            }
+        } catch (RepositoryException re) {
+            throw new IllegalStateException(re);
+        }
+    }
+
+    @Override
     public void deleteFacet(URI id) {
         try {
             RepositoryConnection connection = repository.getConnection();

@@ -2,6 +2,7 @@ package com.ontotext.tools.skoseditor.services.impl;
 
 import com.ontotext.openpolicy.concept.Concept;
 import com.ontotext.openpolicy.entity.NamedEntity;
+import com.ontotext.openpolicy.error.AlreadyExistsException;
 import com.ontotext.openpolicy.navigation.TreeNode;
 import com.ontotext.openpolicy.tree.Tree;
 import com.ontotext.tools.skoseditor.repositories.FacetsRepository;
@@ -9,9 +10,12 @@ import com.ontotext.tools.skoseditor.repositories.ValidationRepository;
 import com.ontotext.tools.skoseditor.services.FacetsService;
 import com.ontotext.tools.skoseditor.util.IdUtils;
 import org.openrdf.model.URI;
+import org.openrdf.model.impl.URIImpl;
+import org.openrdf.model.vocabulary.SKOS;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.UUID;
 
 public class FacetsServiceImpl implements FacetsService {
 
@@ -26,7 +30,9 @@ public class FacetsServiceImpl implements FacetsService {
     @Override
     public URI createFacet(String label) {
         URI id = IdUtils.label2id(label);
-        validationRepository.validateDoesNotExist(id);
+        if (validationRepository.exists(id)){
+            id = new URIImpl(SKOS.NAMESPACE + "Facet_" + UUID.randomUUID());
+        }
         facetsRepository.createFacet(id, label);
         return id;
     }
@@ -40,6 +46,12 @@ public class FacetsServiceImpl implements FacetsService {
     public Tree<TreeNode> getFacet(URI id) {
         validationRepository.validateExists(id);
         return facetsRepository.findFacet(id);
+    }
+
+    @Override
+    public void updateFacetLabel(URI id, String lbl) {
+        validationRepository.validateExists(id);
+        facetsRepository.updateFacetLabel(id, lbl);
     }
 
     @Override
