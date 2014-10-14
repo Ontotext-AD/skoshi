@@ -14,10 +14,7 @@ import com.ontotext.tools.skoseditor.util.SparqlUtils;
 import org.openrdf.model.URI;
 import org.openrdf.model.vocabulary.RDF;
 import org.openrdf.model.vocabulary.SKOS;
-import org.openrdf.query.BindingSet;
-import org.openrdf.query.QueryLanguage;
-import org.openrdf.query.TupleQuery;
-import org.openrdf.query.TupleQueryResult;
+import org.openrdf.query.*;
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
@@ -102,6 +99,9 @@ public class SesameFacetsRepository implements FacetsRepository {
         try {
             RepositoryConnection connection = repository.getConnection();
             try {
+                if (existsFacetLabel(lbl))
+                    throw new IllegalArgumentException("A facet with label '" + lbl + "' already exists.");
+
                 connection.remove(id, SKOS.PREF_LABEL, null);
                 connection.add(id, SKOS.PREF_LABEL, repository.getValueFactory().createLiteral(lbl));
             } finally {
@@ -214,5 +214,24 @@ public class SesameFacetsRepository implements FacetsRepository {
             throw new IllegalStateException(re);
         }
         return concepts;
+    }
+
+    @Override
+    public boolean existsFacetLabel(String lbl) {
+        boolean exists;
+        try {
+            RepositoryConnection connection = repository.getConnection();
+            try {
+                String askQuery = SparqlQueryUtils.getSkosPrefix() + "\nASK { [] a skos:Facet; skos:prefLabel " + connection.getValueFactory().createLiteral(lbl) + " }";
+                exists = connection.prepareBooleanQuery(QueryLanguage.SPARQL, askQuery).evaluate();
+            } catch (MalformedQueryException|QueryEvaluationException e) {
+                throw new RuntimeException("Illegal query. Fix it!", e);
+            } finally {
+                connection.close();
+            }
+        } catch (RepositoryException re) {
+            throw new IllegalStateException(re);
+        }
+        return exists;
     }
 }

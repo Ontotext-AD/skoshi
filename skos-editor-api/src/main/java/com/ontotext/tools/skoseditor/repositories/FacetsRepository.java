@@ -26,4 +26,6 @@ public interface FacetsRepository {
 
     Collection<Concept> findAvailableConceptsForFacet(URI id, String prefix, int limit, int offset);
 
+    boolean existsFacetLabel(String lbl);
+
 }
