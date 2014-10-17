@@ -6,7 +6,7 @@
                     http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
 
 
-    <bean id="repository" factory-method="newInstance" class="com.ontotext.tools.skoseditor.util.RepositoryProvider">
+    <bean id="repository" factory-method="newInstance" class="com.ontotext.tools.skoseditor.util.RepositoryProvider" destroy-method="shutDown">
         <constructor-arg name="dataFolderPath" value="#{ systemProperties['skosedit.home'] }"/>
     </bean>
 
