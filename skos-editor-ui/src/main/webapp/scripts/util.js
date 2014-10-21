@@ -157,9 +157,9 @@ function autoSuggestRenderer(url, textValue) {
           dataID = dataID.slice(0, -1);
         }
         if (id && id != null && id == dataID) {
-          $('#conceptsContainer').append('<a href="javascript:void(0)" class="list-group-item active" data-id="' + l.id + '">' + l.prefLabel + ' <span class="glyphicon glyphicon-asterisk"></span></a>');
+          $('#conceptsContainer').append('<a href="javascript:void(0)" class="list-group-item active" data-id="' + l.id + '">' + l.label + ' <span class="glyphicon glyphicon-asterisk"></span></a>');
         } else {
-          $('#conceptsContainer').append('<a href="javascript:void(0)" class="list-group-item tt" data-id="' + l.id + '">' + l.prefLabel + '</a>');
+          $('#conceptsContainer').append('<a href="javascript:void(0)" class="list-group-item tt" data-id="' + l.id + '">' + l.label + '</a>');
         }
         if (textValue.length > 1) {
           $('#conceptsContainer').highlight(textValue);
@@ -210,41 +210,45 @@ function addRemoveRSNB(http, type, conceptID, itemID) {
 	});
 }
 
-function getConcepts(limit, offset) {
+function getConcepts(val, limit, offset) {
 	if (limit == 0 && offset == 0) {
 		$('#conceptsContainer').html('');	
 	}
-	
-	/* var cl = new CanvasLoader('concepts-loader');
-	cl.setDiameter(25);
-	cl.setDensity(80);
-	cl.setRange(1);
-	cl.setFPS(45);
-	cl.show(); */
 
 	$('#concepts-loader').html('Loading next 50 concepts...');
 
 	var txt = '';
+	var url = '';
+	if (val.length > 1) {
+		url = service + "/concepts?prefix=" + val + "&limit=" + limit + "&offset=" + offset;
+	} else {
+		url = service + "/concepts?limit=" + limit + "&offset=" + offset;
+	}
 	var xhr = $.ajax({
-		url: service + "/concepts?limit=" + limit + "&offset=" + offset,
+		url: url,
 		type: "GET"
 	}).done(function(result) {
 		$.each(result, function(i, l) {
 			var dataID = encodeURIComponent(l.id);
-			if (id && id != null && id == dataID) {
-				txt += '<a href="javascript:void(0)" class="list-group-item active c' + offset + '" data-id="' + l.id + '">' + l.prefLabel + '</a>';
-				//$('#conceptsContainer').append('<a href="javascript:void(0)" class="list-group-item active" data-id="' + l.id + '">' + l.prefLabel + '</a>');
-			} else {
-				txt += '<a href="javascript:void(0)" class="list-group-item tt c' + offset + '" data-id="' + l.id + '">' + l.prefLabel + '</a>';
-				//$('#conceptsContainer').append('<a href="javascript:void(0)" class="list-group-item tt" data-id="' + l.id + '">' + l.prefLabel + '</a>');
-			}
+
+			if (window.location.href.indexOf("facets") > -1) {
+		       txt += '<a href="javascript:void(0)" class="list-group-item facet" data-id="' + l.id + '">' + l.label + '</a>';
+		    } else {
+		    	if (id && id != null && id == dataID) {
+					txt += '<a href="javascript:void(0)" class="list-group-item active c' + offset + '" data-id="' + l.id + '">' + l.label + '</a>';
+				} else {
+					txt += '<a href="javascript:void(0)" class="list-group-item tt c' + offset + '" data-id="' + l.id + '">' + l.label + '</a>';
+				}
+		    }
+			
 		});
 		$('#conceptsContainer').append(txt);
-		if (result.length <= 0) {
-			$('#conceptsContainer').html('No concepts.');
+		//if (result.length <= 0) {
+		//	$('#conceptsContainer').html('No concepts.');
+		//}
+		if (window.location.href.indexOf("facets") == -1) {
+			tooltip('c' + offset);
 		}
-		tooltip('c' + offset);
-		//cl.hide();
 		$('#concepts-loader').html('');
 	});
 	
@@ -257,7 +261,7 @@ function getConceptDetails(id) {
 	}).done(function(result) {
 		var pl = '';
 		$.each(result, function(i, l) {
-			if (i == 'prefLabel') {
+			if (i == 'label') {
 				pl = l;
 				$('#preflabel').val(l);
 				$('#deleteConcept').css('display', 'inline-block');
@@ -275,7 +279,7 @@ function getConceptDetails(id) {
 			if (i == 'related' || i == 'synonyms' || i == 'broader' || i == 'narrower') {
 				$('#' + i + '-list').html('');
 				$.each(l, function(synIndex, synValue) {
-					$('#' + i + '-list').append('<a href="javascript:void(0)" class="list-group-item RSNB" id="' + synValue.id + '">' + synValue.prefLabel + '<span style="float: right" data-type="' + i + '" data-id="' + synValue.id + '" class="glyphicon glyphicon-remove deleteRSBA"></span></a>');
+					$('#' + i + '-list').append('<a href="javascript:void(0)" class="list-group-item RSNB" id="' + synValue.id + '">' + synValue.label + '<span style="float: right" data-type="' + i + '" data-id="' + synValue.id + '" class="glyphicon glyphicon-remove deleteRSBA"></span></a>');
 				});
 				if (l.length <= 0) {
 					$('#' + i + '-list').append('N/A for ' + pl);
@@ -291,7 +295,7 @@ function getConceptDetails(id) {
 							}).done(function(result) {
 
 								$.each(result, function(i, l) {
-									if (i == 'prefLabel') {
+									if (i == 'label') {
 										detailInfo += '<div><b>Main label:</b> ' + l + '</div>';
 									}
 									if (i == 'altLabels' && l != null && l.length > 0) {
@@ -311,9 +315,9 @@ function getConceptDetails(id) {
 										var len = $(l).length;
 										$.each(l, function(synIndex, synValue) {
 											if (synIndex == len - 1) {
-												detailInfo += synValue.prefLabel;
+												detailInfo += synValue.label;
 											} else {
-												detailInfo += synValue.prefLabel + ', ';
+												detailInfo += synValue.label + ', ';
 											}
 										});
 										detailInfo += '</div>';
@@ -323,9 +327,9 @@ function getConceptDetails(id) {
 										var len = $(l).length;
 										$.each(l, function(synIndex, synValue) {
 											if (synIndex == len - 1) {
-												detailInfo += synValue.prefLabel;
+												detailInfo += synValue.label;
 											} else {
-												detailInfo += synValue.prefLabel + ', ';
+												detailInfo += synValue.label + ', ';
 											}
 										});
 										detailInfo += '</div>';
@@ -335,9 +339,9 @@ function getConceptDetails(id) {
 										var len = $(l).length;
 										$.each(l, function(synIndex, synValue) {
 											if (synIndex == len - 1) {
-												detailInfo += synValue.prefLabel;
+												detailInfo += synValue.label;
 											} else {
-												detailInfo += synValue.prefLabel + ', ';
+												detailInfo += synValue.label + ', ';
 											}
 										});
 										detailInfo += '</div>';
@@ -347,9 +351,9 @@ function getConceptDetails(id) {
 										var len = $(l).length;
 										$.each(l, function(synIndex, synValue) {
 											if (synIndex == len - 1) {
-												detailInfo += synValue.prefLabel;
+												detailInfo += synValue.label;
 											} else {
-												detailInfo += synValue.prefLabel + ', ';
+												detailInfo += synValue.label + ', ';
 											}
 										});
 										detailInfo += '</div>';

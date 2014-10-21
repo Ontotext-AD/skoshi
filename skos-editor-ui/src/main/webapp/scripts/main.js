@@ -4,6 +4,9 @@ $(function() {
 
   var limit = 50;
   var offset = 0;
+  var autoSuggestEnabled = false;
+  var selected = false;
+  var selectedCategory;
 
   (function() {
     if (id && id != null) {
@@ -12,7 +15,7 @@ $(function() {
     if ($('#conceptsSearchBox').val().length > 0) {
       autoSuggestService();
     } else {
-      getConcepts(50, 0);
+      getConcepts('', 50, 0);
     }
     $('#conceptsSearchBox').focusTextToEnd();
     $("#importForm").attr("action", service + "/concepts/import");
@@ -24,29 +27,10 @@ $(function() {
   $('#conceptsContainer').bind('scroll', function(){
      if($(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight){
         offset = offset + 50;
-        getConcepts(limit, offset);
+        var val = $('#conceptsSearchBox').val();
+        getConcepts(val, limit, offset);
      }
   });
-
-  /* $(document).on('mouseover', '.tt, .active', function() {
-    var className = $(this).attr('class');
-
-          if (className == 'list-group-item tt') {
-            if (id && id != null) {
-              $(this).append('<ul class="nav nav-pills nav-stacked" data-ttipid="' + $(this).attr('data-id') + '"><li><a href="javascript:void(0)" id="synonyms">Add to synonyms</a></li><li><a href="javascript:void(0)" id="related">Add to related</a></li><li><a href="javascript:void(0)" id="broader">Add to broader</a></li><li><a href="javascript:void(0)" id="narrower">Add to narrower</a></li><li><a href="javascript:void(0)" id="deleteConceptFromList">Delete</a></li></ul>');
-            } else {
-              $(this).append('<ul class="nav nav-pills nav-stacked" data-ttipid="' + $(this).attr('data-id') + '"><li><a href="javascript:void(0)" id="deleteConceptFromList">Delete</a></li></ul>');
-            }
-          } else {
-            $(this).append('<ul class="nav nav-pills nav-stacked" data-ttipid="' + $(this).attr('data-id') + '"><li><a href="javascript:void(0)" id="deleteConceptFromList">Delete</a></li></ul>');
-          }
-
-  });
-
-$(document).on('mouseout', '.tt, .active', function() {
-    $('#tooltip').hide();
-
-  }); */
 
   $('#conceptsSearchBox').keyup(function() {
     autoSuggestService();
@@ -55,6 +39,15 @@ $(document).on('mouseout', '.tt, .active', function() {
   $('#newConceptButton').on('keypress', function() {
     $('#newConcept').modal({
       keyboard: true
+    });
+  });
+
+  $('#newConcept').on('shown.bs.modal', function () {
+    $('#newConceptInput').focus();
+    $('#newConceptInput').keypress(function(e) {
+        if (e.which == '13') {
+            $('#saveNewConcept').click();
+        }
     });
   });
 
@@ -85,7 +78,7 @@ $(document).on('mouseout', '.tt, .active', function() {
     };
     $("#importForm").ajaxForm(options);
     $('#import').modal('hide');
-    getConcepts(50, 0);
+    getConcepts('', 50, 0);
   });
 
   $(document).on('click', '.tt', function() {
@@ -129,7 +122,7 @@ $(document).on('mouseout', '.tt, .active', function() {
       } else {
         alertify.success(result);
       }
-      getConcepts(50, 0);
+      getConcepts('', 50, 0);
     }).fail(function(result) {
       alertify.error('Error');
     });
