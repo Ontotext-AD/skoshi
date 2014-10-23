@@ -21,6 +21,19 @@ $(function() {
     $("#importForm").attr("action", service + "/concepts/import");
   }());
 
+  $('input').each(function(){
+    var self = $(this),
+      label = self.next(),
+      label_text = label.text();
+
+    label.remove();
+    self.iCheck({
+      checkboxClass: 'icheckbox_line',
+      radioClass: 'iradio_line',
+      insert: '<div class="icheck_line-icon"></div>' + label_text
+    });
+  });
+
 
   /* EVENT HANDLERS */
 
@@ -36,21 +49,6 @@ $(function() {
     autoSuggestService();
   });
 
-  $('#newConceptButton').on('keypress', function() {
-    $('#newConcept').modal({
-      keyboard: true
-    });
-  });
-
-  $('#newConcept').on('shown.bs.modal', function () {
-    $('#newConceptInput').focus();
-    $('#newConceptInput').keypress(function(e) {
-        if (e.which == '13') {
-            $('#saveNewConcept').click();
-        }
-    });
-  });
-
   $('#saveNewConcept').on('click', function() {
     $.ajax({
       url: service + "/concepts/" + $('#newConceptInput').val(),
@@ -58,7 +56,6 @@ $(function() {
     }).done(function(result) {
       location.href = 'index.html?id=' + result;
     }).fail(function(result) {
-      $('#newConcept').modal('hide');
       alertify.error('Error');
     });
   });
@@ -67,6 +64,10 @@ $(function() {
     $('#import').modal({
       keyboard: true
     });
+  });
+
+  $('#exportButton').on('click', function() {
+    window.open(service + "/concepts/export");
   });
 
   $('#importButtonInside').on('click', function() {

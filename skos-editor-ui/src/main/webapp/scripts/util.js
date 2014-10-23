@@ -266,6 +266,7 @@ function getConceptDetails(id) {
 				$('#preflabel').val(l);
 				$('#deleteConcept').css('display', 'inline-block');
 				$('#activeUser').html(l);
+				$('#stemming').css('display', 'inline-block');
 				$('#deleteConcept').html('Delete ' + l);
 			}
 			if (i == 'altLabels' || i == 'abbreviations') {
