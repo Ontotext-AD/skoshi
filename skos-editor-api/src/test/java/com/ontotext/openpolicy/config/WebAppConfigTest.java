@@ -200,7 +200,7 @@ public class WebAppConfigTest {
 
     private String createConcept(final String label) throws Exception {
 
-        final String id = mockMvc.perform(post("/concepts/" + label))
+        final String id = mockMvc.perform(post("/concepts").param("lbl", label))
                 .andExpect(status().isCreated())
                 .andReturn().getResponse().getContentAsString();
 
@@ -217,14 +217,14 @@ public class WebAppConfigTest {
 
         final String newPrefLabel = "New Pref Label";
 
-        mockMvc.perform(get("/concepts/" + conceptId+ "/preflabel"))
+        mockMvc.perform(get("/concepts/" + conceptId + "/preflabel"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(quote(prefLabel)));
 
-        mockMvc.perform(put("/concepts/" + conceptId+ "/preflabel?value=" + newPrefLabel))
+        mockMvc.perform(put("/concepts/" + conceptId + "/preflabel?value=" + newPrefLabel))
                 .andExpect(status().isOk());
 
-        mockMvc.perform(get("/concepts/" + conceptId+ "/preflabel"))
+        mockMvc.perform(get("/concepts/" + conceptId + "/preflabel"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(quote(newPrefLabel)));
     }

@@ -32,44 +32,15 @@ public class ConceptsController {
     @Autowired
     private ConceptsService conceptsService;
 
-    @RequestMapping(method = POST, value = "/import")
-    @ResponseStatus(HttpStatus.CREATED)
-    public String importConcepts(@RequestParam MultipartFile conceptsRdf) {
-        File conceptsRdfFile;
-        try {
-            conceptsRdfFile = WebUtils.getFileFromParam(conceptsRdf);
-        } catch (IOException e) {
-            throw new IllegalArgumentException("Failed to get file.");
-        }
-        conceptsService.importConcepts(conceptsRdfFile);
-        conceptsRdfFile.delete();
-        return "Resumed from saved state.";
-    }
-
-    @RequestMapping(method = GET, value = "/export")
-    @ResponseStatus(HttpStatus.OK)
-    public String exportConcepts(HttpServletResponse response) {
-        String conceptsRdf = conceptsService.exportConcepts();
-
-        String timestamp = new SimpleDateFormat("yyyyMMdd-HHmm").format(new Date());
-        String filename = "concepts-" + timestamp + ".ttl";
-        WebUtils.appendFileToResponse(filename, "text/turtle", conceptsRdf, response);
-
-        return "Concepts exported successfully.";
-    }
-
     @RequestMapping(method = POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public String addPhrases(@RequestParam MultipartFile phrases) {
-        File phrasesFile ;
-        try {
-            phrasesFile = WebUtils.getFileFromParam(phrases);
-        } catch (IOException e) {
-            throw new IllegalArgumentException("Failed to get file.");
+    public URI createConcept(@RequestParam String lbl) {
+
+        if (lbl != null) {
+            return conceptsService.createConcept(lbl);
+        } else {
+            throw new IllegalArgumentException("Invalid arguments, provide either 'conceptsRdf' or 'phrases'.");
         }
-        conceptsService.addPhrases(phrasesFile);
-        phrasesFile.delete();
-        return "Added phrases.";
     }
 
     @RequestMapping(method = GET)
@@ -92,11 +63,57 @@ public class ConceptsController {
         return "Removed all concepts.";
     }
 
-    @RequestMapping(method = POST, value = "/{prefLabel}")
+
+    @RequestMapping(method = POST, value = "/import")
     @ResponseStatus(HttpStatus.CREATED)
-    public URI createConcept(@PathVariable String prefLabel) {
-        return conceptsService.createConcept(prefLabel);
+    public String importConcepts(@RequestParam(required = false) MultipartFile conceptsRdf,
+                                 @RequestParam(required = false) MultipartFile phrases) {
+
+        if (conceptsRdf != null && phrases == null) {
+            return importRdf(conceptsRdf);
+        } else if (conceptsRdf == null && phrases != null) {
+            return importPhrases(phrases);
+        } else {
+            throw new IllegalArgumentException("Invalid arguments, provide either 'conceptsRdf' or 'phrases'.");
+        }
     }
+
+    private String importRdf(MultipartFile conceptsRdf) {
+        File conceptsRdfFile;
+        try {
+            conceptsRdfFile = WebUtils.getFileFromParam(conceptsRdf);
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Failed to get file.");
+        }
+        conceptsService.importConcepts(conceptsRdfFile);
+        conceptsRdfFile.delete();
+        return "Resumed from saved state.";
+    }
+
+    private String importPhrases(MultipartFile phrases) {
+        File phrasesFile ;
+        try {
+            phrasesFile = WebUtils.getFileFromParam(phrases);
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Failed to get file.");
+        }
+        conceptsService.addPhrases(phrasesFile);
+        phrasesFile.delete();
+        return "Added phrases.";
+    }
+
+    @RequestMapping(method = GET, value = "/export")
+    @ResponseStatus(HttpStatus.OK)
+    public String exportConcepts(HttpServletResponse response) {
+        String conceptsRdf = conceptsService.exportConcepts();
+
+        String timestamp = new SimpleDateFormat("yyyyMMdd-HHmm").format(new Date());
+        String filename = "concepts-" + timestamp + ".ttl";
+        WebUtils.appendFileToResponse(filename, "text/turtle", conceptsRdf, response);
+
+        return "Concepts exported successfully.";
+    }
+
 
     @RequestMapping(method = GET, value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
@@ -321,6 +338,5 @@ public class ConceptsController {
         conceptsService.deleteNarrower(id, narrowerId);
         return "Deleted narrower concept.";
     }
-
 
 }
