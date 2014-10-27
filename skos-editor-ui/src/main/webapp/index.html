@@ -17,6 +17,10 @@
     <link rel="stylesheet" href="components/alertify/css/alertify.default.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="styles/tabs.css" />
     <link rel="stylesheet" type="text/css" href="styles/tabstyles.css" />
+    <link rel="stylesheet" type="text/css" href="components/boddhiCheck/all.css" />
+    <link rel="stylesheet" type="text/css" href="components/boddhiCheck/line/green.css" />
+    <link rel="stylesheet" type="text/css" href="components/boddhiModal/css/default.css" />
+    <link rel="stylesheet" type="text/css" href="components/boddhiModal/css/component.css" />
 
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
@@ -36,7 +40,7 @@
         </div>
 
   <h3><span>Active concept: <span id="activeUser">none</span></span><div class="buttons">
-      <a href="javascript:void(0)" class="btn btn-primary btn-sm" id="newConceptButton" data-toggle="modal" data-target="#newConcept">Add new</a>&nbsp;<a href="javascript:void(0)" class="btn btn-danger btn-sm" id="deleteConcept">Delete</a>
+      <a href="javascript:void(0)" class="btn btn-primary btn-sm md-trigger" id="newConceptButton" data-modal="modal-9">Add new</a>&nbsp;<a href="javascript:void(0)" class="btn btn-danger btn-sm" id="deleteConcept">Delete</a><div id="stemming"><input type="checkbox" id="line-checkbox-1"><label for="line-checkbox-1">Stemming</label></div>
     </div></h3>
 
     <div class="section group">
@@ -150,26 +154,6 @@
       <button type="button" class="btn btn-primary" id="exportButton">Export</button>
     </div>
 
-    <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="newConcept" id="newConcept" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-            <h4 class="modal-title" id="myModalLabel">Add new concept</h4>
-          </div>
-          <div class="modal-body">
-            <div>
-                <input type='text' id="newConceptInput" class="form-control" placeholder="Add new concept">
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-            <button type="button" class="btn btn-primary" id="saveNewConcept">Save changes</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="import" id="import" aria-hidden="true">
       <form name="importForm" id="importForm" method="post" enctype="multipart/form-data">
       <div class="modal-dialog">
@@ -198,9 +182,22 @@
       </form>
     </div>
 
+    <div class="md-modal md-effect-9" id="modal-9">
+      <div class="md-content">
+        <h3>Add new concept</h3>
+        <div>
+          <div><input type="text" id="newConceptInput" placeholder="Enter a concept name" /><a></a><button class="md-close" id="saveNewConcept">Save</button></div>
+        </div>
+      </div>
+    </div>
+    <div class="md-overlay"></div>
+
     <script src="vendor/jquery-2.1.1.min.js"></script>
+    <script src="components/boddhiModal/js/classie.js"></script>
+    <script src="components/boddhiModal/js/modalEffects.js"></script>
     <script src="components/jquery.scrollTo.js"></script>
     <script src="components/canvasloader.js"></script>
+    <script src="components/boddhiCheck/boddhi.check.js"></script>
     <script src="scripts/util.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.js"></script>
     <script src="components/textBubble/bootstrap-tagsinput.js"></script>

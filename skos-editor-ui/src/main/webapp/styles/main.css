@@ -170,7 +170,7 @@ h2 {
     float: left;
     margin-right: 20px;
     min-width: 320px;
-    max-width: 320px;
+    width: 320px;
 }
 .category-content {
   overflow: auto;
@@ -180,7 +180,7 @@ h2 {
 .buttons {
   float: right;
 }
-.removeFacet {
+.remove {
   float: right;
 }
 @-webkit-keyframes 'blink' {
@@ -277,17 +277,17 @@ h2 {
   vertical-align: top;
   font-size: 11px;
 }
-.tokenfield .token .close {
-  font-family: Arial;
+.tokenfield .token .removeFacet {
   display: inline-block;
   line-height: 100%;
-  font-size: 1.1em;
-  line-height: 1.20em;
+  font-size: 1em;
+  line-height: 1.1em;
   margin-left: 5px;
   float: none;
   height: 100%;
   vertical-align: top;
   padding-right: 4px;
+  text-decoration: none !important;
 }
 .tokenfield .token-input {
   background: none;
@@ -393,5 +393,34 @@ h2 {
   margin-top: -10px !important;
 }
 .level3 {
+  margin-top: -10px !important;
   margin-left: 30px !important;
+}
+.popover-title {
+  color: #333 !important;
+}
+#stemming {
+  display: none;
+  float: left;
+  margin-right: 7px;
+}
+.icheckbox_line {
+  padding: 8px 15px 5px 38px !important;
+  margin-top: 1px !important;
+}
+#newFacetInput, #newConceptInput {
+    border: medium none !important;
+    color: #555 !important;
+    line-height: 38px;
+    width: 470px;
+    padding: 0 10px;
+}
+.md-content button {
+    display: inline-block;
+    font-size: 0.8em;
+    margin: 12px auto !important;
+    padding-top: 10px;
+}
+#saveNewFacet, #saveNewConcept {
+  font-size: 15px !important;
 }

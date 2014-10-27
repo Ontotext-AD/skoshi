@@ -204,9 +204,8 @@ Editableform is linked with one of input types, e.g. 'text', 'select' etc.
             var newValue = this.input.input2value();
 
             $.ajax({
-                url: service + "/facets/",
-                type: "POST",
-                data: 'lbl=' + newValue
+                url: service + "/facets/" + this.options.name + "/?lbl=" + newValue,
+                type: "PUT"
               }).done(function(result) {
                 alertify.success(result);
               }).fail(function(result) {

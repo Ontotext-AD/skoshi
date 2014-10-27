@@ -15,6 +15,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 
 public class RepositoryProvider {
 
@@ -41,11 +43,19 @@ public class RepositoryProvider {
         try {
             repo.initialize();
             RepositoryConnection connection = repo.getConnection();
-            if (!dataDirExists) {
-                connection.setNamespace("skos", SKOS.NAMESPACE);
-                connection.add(RepositoryProvider.class.getClassLoader().getResource("kb/skos.rdf"), SKOS.NAMESPACE, RDFFormat.RDFXML);
-                connection.add(RepositoryProvider.class.getClassLoader().getResource("kb/skos-x.ttl"), SKOS.NAMESPACE, RDFFormat.TURTLE);
-            }
+
+            log.debug("Adding SKOS as axioms.");
+            connection.setNamespace("skos", SKOS.NAMESPACE);
+
+            URL skosUrl = RepositoryProvider.class.getClassLoader().getResource("kb/skos.rdf");
+            if (!new File(skosUrl.toURI()).exists()) throw new IllegalStateException("Could not find skos.rdf in the classpath.");
+            connection.add(skosUrl, SKOS.NAMESPACE, RDFFormat.RDFXML);
+
+            URL skosXUrl = RepositoryProvider.class.getClassLoader().getResource("kb/skos-x.ttl");
+            if (!new File(skosXUrl.toURI()).exists()) throw new IllegalStateException("Could not find skos.rdf in the classpath.");
+            connection.add(skosXUrl, SKOS.NAMESPACE, RDFFormat.TURTLE);
+        } catch (URISyntaxException use) {
+            throw new IllegalStateException("Invalid file location.", use);
         } catch (RepositoryException re) {
             throw new IllegalStateException("Failed to initialize repository.", re);
         } catch (RDFParseException|IOException rpe) {

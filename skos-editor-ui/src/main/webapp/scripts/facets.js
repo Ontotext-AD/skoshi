@@ -53,9 +53,11 @@ $(function() {
   var txt = '';
   var url = '';
   if (!selected) {
-    $('#conceptsContainer').append('<div class="badge" style="margin: 20px auto !important;">Please select a facet to be able to add concepts.</div>');
+    $('#conceptsSearchBox').hide();
+    $('#conceptsContainer').append('Please select a facet to be able to add concepts.');
     $('#concepts-loader').html('');
   } else {
+    $('#conceptsSearchBox').show();
     url = service + "/facets/" + $(selectedCategory).attr('data-id') + "/available";
     var xhr = $.ajax({
       url: url,
@@ -84,7 +86,7 @@ $(function() {
       type: "GET"
     }).done(function(result) {
       $.each(result, function(i, l) {
-        $("#right-content").append('<div class="form-group category"><div class="panel panel-default"><div class="panel-heading"><a class="panel-title categoryName" id=' + l.id + '>' + l.label + '</a><a href="javascript:void(0)" class="removeFacet" data-label="' + l.label + '" title="Remove facet" data-id="' + l.id + '"><span class="glyphicon glyphicon-remove" style="color: #000"></span></a></div><div class="panel-body category-content tokenfield" data-label="' + l.label + '" data-id="' + l.id + '"></div></div></div>');
+        $("#right-content").append('<div class="form-group category item"><div class="panel panel-default"><div class="panel-heading"><a class="panel-title categoryName" id=' + l.id + '>' + l.label + '</a><a href="javascript:void(0)" class="remove" data-label="' + l.label + '" title="Remove facet" data-id="' + l.id + '"><span class="glyphicon glyphicon-remove" style="color: #000"></span></a></div><div class="panel-body category-content tokenfield" data-label="' + l.label + '" data-id="' + l.id + '"></div></div></div>');
         $('.categoryName').editable({
             type: 'text',
             title: 'Enter facet name',
@@ -97,13 +99,13 @@ $(function() {
           $.each(result, function(i, l) {
             if (i == 'subTrees') {
               $.each(l, function(x, y) {
-                $('.category-content[data-id="' + facetid + '"]').append('<div class="token"><span class="token-label">' + y.label + '</span><a href="#" class="close" data-cid="' + y.id + '" data-fid="' + facetid + '" tabindex="-1">×</a></div><br />');
+                $('.category-content[data-id="' + facetid + '"]').append('<div class="token"><span class="token-label">' + y.label + '</span><a href="#" class="removeFacet" data-cid="' + y.id + '" data-fid="' + facetid + '" tabindex="-1">×</a></div><br />');
                 if (y.hasChildren) {
                   $.each(y.subTrees, function(x, y) {
-                    $('.category-content[data-id="' + facetid + '"]').append('<div class="token level2"><span class="token-label">' + y.label + '</span><a href="#" class="close" data-cid="' + y.id + '" data-fid="' + facetid + '" tabindex="-1">×</a></div><br />');
+                    $('.category-content[data-id="' + facetid + '"]').append('<div class="token level2"><span class="token-label">' + y.label + '</span><a href="#" class="removeFacet" data-cid="' + y.id + '" data-fid="' + facetid + '" tabindex="-1">×</a></div><br />');
                     if (y.hasChildren) {
                       $.each(y.subTrees, function(x, y) {
-                        $('.category-content[data-id="' + facetid + '"]').append('<div class="token level3"><span class="token-label">' + y.label + '</span><a href="#" class="close" data-cid="' + y.id + '" data-fid="' + facetid + '" tabindex="-1">×</a></div><br />');
+                        $('.category-content[data-id="' + facetid + '"]').append('<div class="token level3"><span class="token-label">' + y.label + '</span><a href="#" class="removeFacet" data-cid="' + y.id + '" data-fid="' + facetid + '" tabindex="-1">×</a></div><br />');
                       });
                     }
                   });
@@ -115,6 +117,156 @@ $(function() {
           alertify.error(result);
         });     
       });
+    }).fail(function(result) {
+      alertify.error(result);
+    });
+  }
+
+  var getFacetsAfterAdd = function() {
+    $("#right-content").html('');
+    $.ajax({
+      url: service + "/facets/",
+      type: "GET"
+    }).done(function(result) {
+      $.each(result, function(i, l) {
+        $("#right-content").append('<div class="form-group category item data-id="' + l.id + '""><div class="panel panel-default"><div class="panel-heading"><a class="panel-title categoryName" id=' + l.id + '>' + l.label + '</a><a href="javascript:void(0)" class="remove" data-label="' + l.label + '" title="Remove facet" data-id="' + l.id + '"><span class="glyphicon glyphicon-remove" style="color: #000"></span></a></div><div class="panel-body category-content tokenfield" data-label="' + l.label + '" data-id="' + l.id + '"></div></div></div>');
+        $('.categoryName').editable({
+            type: 'text',
+            title: 'Enter facet name',
+        });
+        var facetid = l.id;
+        $.ajax({
+          url: service + "/facets/" + l.id,
+          type: "GET"
+        }).done(function(result) {
+          $.each(result, function(i, l) {
+            if (i == 'subTrees') {
+              $.each(l, function(x, y) {
+                $('.category-content[data-id="' + facetid + '"]').append('<div class="token"><span class="token-label">' + y.label + '</span><a href="#" class="removeFacet" data-cid="' + y.id + '" data-fid="' + facetid + '" tabindex="-1">×</a></div><br />');
+                if (y.hasChildren) {
+                  $.each(y.subTrees, function(x, y) {
+                    $('.category-content[data-id="' + facetid + '"]').append('<div class="token level2"><span class="token-label">' + y.label + '</span><a href="#" class="removeFacet" data-cid="' + y.id + '" data-fid="' + facetid + '" tabindex="-1">×</a></div><br />');
+                    if (y.hasChildren) {
+                      $.each(y.subTrees, function(x, y) {
+                        $('.category-content[data-id="' + facetid + '"]').append('<div class="token level3"><span class="token-label">' + y.label + '</span><a href="#" class="removeFacet" data-cid="' + y.id + '" data-fid="' + facetid + '" tabindex="-1">×</a></div><br />');
+                      });
+                    }
+                  });
+                }
+              });
+            }
+          });
+        }).fail(function(result) {
+          alertify.error(result);
+        });     
+      });
+      var len = $('.category').length;
+      $('.category').each(function(i, obj) {
+        thisVal = $(this).val();
+        var $this = $(this);
+        if (parseInt(thisVal) != 0) {
+            if (i == len - 1) {
+                $(this).trigger('click');
+            }
+        }
+      });
+
+    }).fail(function(result) {
+      alertify.error(result);
+    });
+  }
+
+  var getFacetsAfterRemove = function() {
+    $("#right-content").html('');
+    $.ajax({
+      url: service + "/facets/",
+      type: "GET"
+    }).done(function(result) {
+      $.each(result, function(i, l) {
+        $("#right-content").append('<div class="form-group category item" data-id="' + l.id + '"><div class="panel panel-default"><div class="panel-heading"><a class="panel-title categoryName" id=' + l.id + '>' + l.label + '</a><a href="javascript:void(0)" class="remove" data-label="' + l.label + '" title="Remove facet" data-id="' + l.id + '"><span class="glyphicon glyphicon-remove" style="color: #000"></span></a></div><div class="panel-body category-content tokenfield" data-label="' + l.label + '" data-id="' + l.id + '"></div></div></div>');
+        $('.categoryName').editable({
+            type: 'text',
+            title: 'Enter facet name',
+        });
+        var facetid = l.id;
+        $.ajax({
+          url: service + "/facets/" + l.id,
+          type: "GET"
+        }).done(function(result) {
+          $.each(result, function(i, l) {
+            if (i == 'subTrees') {
+              $.each(l, function(x, y) {
+                $('.category-content[data-id="' + facetid + '"]').append('<div class="token"><span class="token-label">' + y.label + '</span><a href="#" class="removeFacet" data-cid="' + y.id + '" data-fid="' + facetid + '" tabindex="-1">×</a></div><br />');
+                if (y.hasChildren) {
+                  $.each(y.subTrees, function(x, y) {
+                    $('.category-content[data-id="' + facetid + '"]').append('<div class="token level2"><span class="token-label">' + y.label + '</span><a href="#" class="removeFacet" data-cid="' + y.id + '" data-fid="' + facetid + '" tabindex="-1">×</a></div><br />');
+                    if (y.hasChildren) {
+                      $.each(y.subTrees, function(x, y) {
+                        $('.category-content[data-id="' + facetid + '"]').append('<div class="token level3"><span class="token-label">' + y.label + '</span><a href="#" class="removeFacet" data-cid="' + y.id + '" data-fid="' + facetid + '" tabindex="-1">×</a></div><br />');
+                      });
+                    }
+                  });
+                }
+              });
+            }
+          });
+        }).fail(function(result) {
+          alertify.error(result);
+        });     
+      });
+
+      var len = $('.category').length;
+      var found = false;
+      $('.category').each(function(i, obj) {
+
+        thisVal = $(this).val();
+        var $this = $(this);
+        
+        if (typeof selectedCategory != 'undefined' && selectedCategory != null) {
+          if ($(this).attr('data-id') == $(selectedCategory).attr('data-id')) {
+            $(this).trigger('click');
+            found = true;
+          }
+        }
+      });
+
+      if (!found) {
+        selectedCategory = null;
+        selected = false;
+        $('.category').attr('data-selected', null);
+      }
+
+      $('#conceptsContainer').html('');
+      //getConceptsAvailable();
+
+    }).fail(function(result) {
+      alertify.error(result);
+    });
+  }
+
+  var getFacet = function(id, container) {
+    $(container).html('');
+    $.ajax({
+      url: service + "/facets/" + id,
+      type: "GET"
+    }).done(function(result) {
+      $.each(result, function(i, l) {
+            if (i == 'subTrees') {
+              $.each(l, function(x, y) {
+                $(container).append('<div class="token"><span class="token-label">' + y.label + '</span><a href="#" class="removeFacet" data-cid="' + y.id + '" data-fid="' + id + '" tabindex="-1">×</a></div><br />');
+                if (y.hasChildren) {
+                  $.each(y.subTrees, function(x, y) {
+                    $(container).append('<div class="token level2"><span class="token-label">' + y.label + '</span><a href="#" class="removeFacet" data-cid="' + y.id + '" data-fid="' + id + '" tabindex="-1">×</a></div><br />');
+                    if (y.hasChildren) {
+                      $.each(y.subTrees, function(x, y) {
+                        $(container).append('<div class="token level3"><span class="token-label">' + y.label + '</span><a href="#" class="removeFacet" data-cid="' + y.id + '" data-fid="' + id + '" tabindex="-1">×</a></div><br />');
+                      });
+                    }
+                  });
+                }
+              });
+            }
+          });
     }).fail(function(result) {
       alertify.error(result);
     });
@@ -141,57 +293,73 @@ $(function() {
     facetsAutosuggestService(selectedCategory);
   });
 
-  $(document).on('click', '.removeFacet', function() {
+  $(document).on('click', '.remove', function(e) {
+    e.stopPropagation();
     $.ajax({
       url: service + "/facets/" + $(this).attr('data-id'),
       type: "DELETE"
     }).done(function(result) {
-      getFacets();
+      getFacetsAfterRemove();
     }).fail(function(result) {
       alertify.error(result);
     });
   });
 
   $(document).on('click', '.facet', function() {
-    var cLabel = $(this).text();
     if (typeof selected != 'undefined' && selected) {
       var fId = $(selectedCategory).attr('data-id');
       var cId = $(this).attr('data-id');
-      if ($(selectedCategory).find("[data-cid='" + cId + "']").size() == 0) {
         $.ajax({
           url: service + "/facets/" + fId + '/concepts/' + cId,
           type: "POST"
         }).done(function(result) {
           alertify.success(result);
-          $(selectedCategory).append('<div class="token"><span class="token-label">' + cLabel + '</span><a href="#" class="close" data-cid="' + cId + '" data-fid="' + fId + '" tabindex="-1">×</a></div>');
+
+          $('#conceptsContainer').html('');
+          getFacet($(selectedCategory).attr('data-id'), selectedCategory);
+
+          getConceptsAvailable();
         }).fail(function(result) {
           alertify.error(result);
         });
-      } else {
-        alertify.error('The concept was already added in this category.');
-      }
-      
     } else {
       alertify.error('Please select a facet.');
     }
   });
 
-  $(document).on('click', '#newCategoryButton', function() {
-    $("#right-content").append('<div class="form-group category"><div class="panel panel-default"><div class="panel-heading"><a class="panel-title categoryName">New category</a></div><div class="panel-body category-content"></div></div></div>');
-    $('.categoryName').editable({
-        type: 'text',
-        title: 'Enter facet name',
+  $('#newFacetInput').focus();
+  $(document).on('keypress', '#newFacetInput', function(e) {
+      if (e.which == '13') {
+          $('#saveNewFacet').click();
+      }
+  });
+
+  $(document).on('click', '#saveNewFacet', function() {
+    $.ajax({
+      url: service + "/facets/",
+      type: "POST",
+      data: 'lbl=' + $('#newFacetInput').val()
+    }).done(function(result) {
+      $('#newFacetInput').val('');
+      alertify.success(result);
+      getFacetsAfterAdd();
+    }).fail(function(result) {
+      alertify.error(result);
     });
   });
 
-  $(document).on('click', '.close', function() {
+  $(document).on('click', '.removeFacet', function() {
     var parent = $(this).parent();
+    var container = $(this).parents('.category-content');
+    var facetId = $(this).attr('data-fid');
     $.ajax({
       url: service + "/facets/" + $(this).attr('data-fid') + '/concepts/' + $(this).attr('data-cid'),
       type: "DELETE"
     }).done(function(result) {
       alertify.success(result);
-      $(parent).remove();
+      $('#conceptsContainer').html('');
+      getFacet(facetId, container);
+      getConceptsAvailable();
     }).fail(function(result) {
       alertify.error(result);
     });
