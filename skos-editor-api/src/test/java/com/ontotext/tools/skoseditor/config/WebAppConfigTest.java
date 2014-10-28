@@ -1,15 +1,19 @@
 package com.ontotext.tools.skoseditor.config;
 
+import com.google.common.net.MediaType;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+
+import java.io.InputStream;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -279,4 +283,31 @@ public class WebAppConfigTest {
 
 
     private static final String quote(final String s) { return "\"" + s + "\""; }
+
+    @Test
+    public void testImportPhrases() throws Exception {
+
+        clearConcepts();
+
+        InputStream phrasesStream = WebAppConfigTest.class.getClassLoader().getResourceAsStream("phrases.txt");
+        MockMultipartFile phrasesFile = new MockMultipartFile("phrases", "phrases.txt", "text/plain", phrasesStream);
+
+        mockMvc.perform(fileUpload("/concepts/import").file(phrasesFile))
+                .andExpect(status().isCreated())
+                .andDo(print());
+    }
+
+    @Test
+    public void testImportRdf() throws Exception {
+
+        clearConcepts();
+
+        InputStream conceptsRdfStream = WebAppConfigTest.class.getClassLoader().getResourceAsStream("concepts.ttl");
+        MockMultipartFile conceptsRdfFile = new MockMultipartFile("conceptsRdf", "concepts.ttl", "application/x-turtle", conceptsRdfStream);
+
+        mockMvc.perform(fileUpload("/concepts/import").file(conceptsRdfFile))
+                .andExpect(status().isCreated())
+                .andDo(print());
+
+    }
 }
