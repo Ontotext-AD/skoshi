@@ -203,7 +203,7 @@ public class WebAppConfigTest {
 
     private String createConcept(final String label) throws Exception {
 
-        final String id = mockMvc.perform(post("/concepts/" + label))
+        final String id = mockMvc.perform(post("/concepts").param("lbl", label))
                 .andExpect(status().isCreated())
                 .andReturn().getResponse().getContentAsString();
 
