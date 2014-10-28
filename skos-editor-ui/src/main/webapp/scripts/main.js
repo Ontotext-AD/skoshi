@@ -18,7 +18,7 @@ $(function() {
       getConcepts('', 50, 0);
     }
     $('#conceptsSearchBox').focusTextToEnd();
-    $("#importForm").attr("action", service + "/concepts/import");
+    $("#importForm, #importForm2").attr("action", service + "/concepts/import");
   }());
 
   $('input').each(function(){
@@ -51,7 +51,7 @@ $(function() {
 
   $('#saveNewConcept').on('click', function() {
     $.ajax({
-      url: service + "/concepts/" + $('#newConceptInput').val(),
+      url: service + "/concepts/?lbl=" + $('#newConceptInput').val(),
       type: "POST"
     }).done(function(result) {
       location.href = 'index.html?id=' + result;
@@ -79,6 +79,20 @@ $(function() {
     };
     $("#importForm").ajaxForm(options);
     $('#import').modal('hide');
+    $('#conceptsContainer').html('');
+    getConcepts('', 50, 0);
+  });
+
+  $('#keyphrasesImportButtonInside').on('click', function() {
+    var options = {
+      beforeSend: function() {
+        $("#messageinfo").html("<span class='icon-spin icon-spinner'></span>");
+      },
+      dataType: 'json'
+    };
+    $("#importForm2").ajaxForm(options);
+    $('#phrasesimport').modal('hide');
+    $('#conceptsContainer').html('');
     getConcepts('', 50, 0);
   });
 
