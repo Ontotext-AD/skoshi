@@ -10,6 +10,7 @@ import com.ontotext.tools.skoseditor.util.SparqlUtils;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
 import org.openrdf.model.vocabulary.RDF;
+import org.openrdf.model.vocabulary.RDFS;
 import org.openrdf.model.vocabulary.SKOS;
 import org.openrdf.query.*;
 import org.openrdf.repository.Repository;
@@ -19,6 +20,8 @@ import org.openrdf.repository.RepositoryResult;
 import org.openrdf.rio.RDFFormat;
 import org.openrdf.rio.RDFWriter;
 import org.openrdf.rio.turtle.TurtleWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.StringWriter;
@@ -27,6 +30,8 @@ import java.util.Collection;
 import java.util.List;
 
 public class SesameConceptsRepository implements ConceptsRepository {
+
+    private static final Logger log = LoggerFactory.getLogger(SesameConceptsRepository.class);
 
     private Repository repository;
 
@@ -75,16 +80,17 @@ public class SesameConceptsRepository implements ConceptsRepository {
     public Collection<Concept> findConceptsWithPrefix(String prefix, int limit, int offset) {
         Collection<Concept> concepts = new ArrayList<>();
         try {
-            String sparql = SparqlUtils.getPrefix("skos", SKOS.NAMESPACE) +
+            String sparql = SparqlUtils.getPrefix("rdfs", RDFS.NAMESPACE) +
                     "select ?concept ?label where \n" +
                     "{\n" +
-                    "    { ?concept skos:prefLabel ?label }\n" +
-                    "    union \n" +
-                    "    { ?concept skos:altLabel ?label }\n" +
-                    "    FILTER(STRSTARTS(UCASE(?label), '"+prefix.toUpperCase()+"')) \n" +
+                    "    ?concept rdfs:label ?label . \n" +
+                    "    FILTER REGEX(?label, \"(^|\\\\W)" + prefix + "\", \"i\") . \n" +
                     "}";
             if (limit != 0) sparql += "limit " + limit + "\n";
             if (offset != 0) sparql += "offset " + offset + "\n";
+
+            log.debug("findConceptsWithPrefix query:\n" + sparql);
+
             RepositoryConnection connection = repository.getConnection();
             try {
                 TupleQuery tupleQuery = connection.prepareTupleQuery(QueryLanguage.SPARQL, sparql);

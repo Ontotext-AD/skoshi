@@ -116,6 +116,7 @@ public class ConceptsController {
         } catch (IOException e) {
             throw new IllegalArgumentException("Failed to get multites skos.", e);
         }
+        conceptsService.importConcepts(multitesSkosFile);
         multitesSkosFile.delete();
         return "Imported MultiTes files.";
     }

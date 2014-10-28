@@ -1,10 +1,14 @@
 package com.ontotext.tools.skoseditor.util;
 
 import org.apache.commons.lang.StringUtils;
+import org.openrdf.model.Statement;
+import org.openrdf.model.impl.URIImpl;
+import org.openrdf.model.vocabulary.RDFS;
 import org.openrdf.model.vocabulary.SKOS;
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
+import org.openrdf.repository.RepositoryResult;
 import org.openrdf.repository.sail.SailRepository;
 import org.openrdf.rio.RDFFormat;
 import org.openrdf.rio.RDFParseException;
@@ -67,6 +71,13 @@ public class RepositoryProvider {
     public static void main(String[] args) throws Exception {
         Repository r = newInstance(null);
         System.out.println("OK");
+
+        RepositoryConnection connection = r.getConnection();
+
+        RepositoryResult<Statement> statements = connection.getStatements(new URIImpl(SKOS.NAMESPACE + "Test-Concept"), null, null, true);
+        while (statements.hasNext()) {
+            System.out.println("--> " + statements.next());
+        }
     }
 
 }

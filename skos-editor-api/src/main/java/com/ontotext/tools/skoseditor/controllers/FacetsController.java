@@ -26,9 +26,8 @@ public class FacetsController {
 
     @RequestMapping(method = POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public String createFacet(@RequestParam String lbl) {
-        facetsService.createFacet(lbl);
-        return "Facet '" + lbl + "' created successfully.";
+    public URI createFacet(@RequestParam String lbl) {
+        return facetsService.createFacet(lbl);
     }
 
     @RequestMapping(method = GET)

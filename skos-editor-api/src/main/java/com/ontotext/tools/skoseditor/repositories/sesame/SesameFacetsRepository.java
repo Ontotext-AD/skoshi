@@ -164,14 +164,14 @@ public class SesameFacetsRepository implements FacetsRepository {
             if (prefix != null) {
                 SparqlQueryUtils.appendRdfsPrefix(sparqlQuery);
                 SparqlQueryUtils.appendSkosPrefix(sparqlQuery);
-                sparqlQuery.append("select distinct ?concept (MAX(?altLabel) as ?label) where { \n");
+                sparqlQuery.append("select distinct ?concept (MAX(?aLabel) as ?label) where { \n");
                 sparqlQuery.append("    ?concept a skos:Concept; \n");
-                sparqlQuery.append("        rdfs:label ?altLabel .\n");
+                sparqlQuery.append("        rdfs:label ?aLabel .\n");
                 sparqlQuery.append("    FILTER NOT EXISTS { <").append(id).append("> <").append(SKOSX.HAS_FACET_CONCEPT).append("> ?concept } \n");
-                sparqlQuery.append("    FILTER REGEX(?altLabel, \"(^|\\\\W)").append(prefix).append("\", \"i\") .\n");
+                sparqlQuery.append("    FILTER REGEX(?aLabel, \"(^|\\\\W)").append(prefix).append("\", \"i\") .\n");
                 sparqlQuery.append("} \n");
                 sparqlQuery.append("group by ?concept\n");
-                sparqlQuery.append("order by ?altLabel\n");
+                sparqlQuery.append("order by ?aLabel\n");
             } else {
                 SparqlQueryUtils.appendSkosPrefix(sparqlQuery);
                 sparqlQuery.append("select distinct ?concept ?label where { \n");
