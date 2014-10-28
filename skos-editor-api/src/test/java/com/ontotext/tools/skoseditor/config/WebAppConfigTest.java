@@ -308,6 +308,18 @@ public class WebAppConfigTest {
         mockMvc.perform(fileUpload("/concepts/import").file(conceptsRdfFile))
                 .andExpect(status().isCreated())
                 .andDo(print());
+    }
 
+    @Test
+    public void testImportMultitesSkos() throws Exception {
+
+        clearConcepts();
+
+        InputStream multitesSkosStream = WebAppConfigTest.class.getClassLoader().getResourceAsStream("multites-export.rdf");
+        MockMultipartFile multitesSkosFile = new MockMultipartFile("multitesRdf", "multites-export.rdf", "application/rdf+xml", multitesSkosStream);
+
+        mockMvc.perform(fileUpload("/concepts/import").file(multitesSkosFile))
+                .andExpect(status().isCreated())
+                .andDo(print());
     }
 }

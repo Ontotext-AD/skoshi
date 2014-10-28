@@ -2,20 +2,24 @@ package com.ontotext.tools.skoseditor.controllers;
 
 import com.ontotext.openpolicy.concept.Concept;
 import com.ontotext.openpolicy.concept.ConceptDescription;
+import com.ontotext.openpolicy.skosfixer.MultitesSkosFixer;
+import com.ontotext.openpolicy.skosfixer.RdfFixerException;
 import com.ontotext.tools.skoseditor.services.ConceptsService;
 import com.ontotext.tools.skoseditor.util.WebUtils;
 import com.wordnik.swagger.annotations.Api;
+import org.apache.commons.io.input.ReaderInputStream;
 import org.openrdf.model.URI;
+import org.openrdf.rio.RDFFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
@@ -67,14 +71,17 @@ public class ConceptsController {
     @RequestMapping(method = POST, value = "/import")
     @ResponseStatus(HttpStatus.CREATED)
     public String importConcepts(@RequestParam(required = false) MultipartFile conceptsRdf,
-                                 @RequestParam(required = false) MultipartFile phrases) {
+                                 @RequestParam(required = false) MultipartFile phrases,
+                                 @RequestParam(required = false) MultipartFile multitesRdf) {
 
-        if (conceptsRdf != null && phrases == null) {
+        if (conceptsRdf != null && phrases == null && multitesRdf == null) {
             return importRdf(conceptsRdf);
-        } else if (conceptsRdf == null && phrases != null) {
+        } else if (conceptsRdf == null && phrases != null && multitesRdf == null) {
             return importPhrases(phrases);
+        } else if (conceptsRdf == null && phrases == null && multitesRdf != null) {
+            return importMultitesRdf(multitesRdf);
         } else {
-            throw new IllegalArgumentException("Invalid arguments, provide either 'conceptsRdf' or 'phrases'.");
+            throw new IllegalArgumentException("Invalid arguments, provide one of 'conceptsRdf', 'phrases', 'multitesRdf'.");
         }
     }
 
@@ -83,7 +90,7 @@ public class ConceptsController {
         try {
             conceptsRdfFile = WebUtils.getFileFromParam(conceptsRdf);
         } catch (IOException e) {
-            throw new IllegalArgumentException("Failed to get file.");
+            throw new IllegalArgumentException("Failed to get file.", e);
         }
         conceptsService.importConcepts(conceptsRdfFile);
         conceptsRdfFile.delete();
@@ -95,11 +102,22 @@ public class ConceptsController {
         try {
             phrasesFile = WebUtils.getFileFromParam(phrases);
         } catch (IOException e) {
-            throw new IllegalArgumentException("Failed to get file.");
+            throw new IllegalArgumentException("Failed to get file.", e);
         }
         conceptsService.addPhrases(phrasesFile);
         phrasesFile.delete();
         return "Added phrases.";
+    }
+
+    private String importMultitesRdf(MultipartFile multitesSkos) {
+        File multitesSkosFile;
+        try {
+            multitesSkosFile = WebUtils.getFileFromParam(multitesSkos);
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Failed to get multites skos.", e);
+        }
+        multitesSkosFile.delete();
+        return "Imported MultiTes files.";
     }
 
     @RequestMapping(method = GET, value = "/export")

@@ -9,10 +9,13 @@ import java.util.Collection;
 
 public interface ConceptsService {
 
-    void importConcepts(File conceptsRdfFile);
+    void importConcepts(File conceptsTtlFile);
     String exportConcepts();
 
+    void importMultitesSkos(File multitesSkos);
+
     void addPhrases(File phrasesFile);
+
     Collection<Concept> getConceptsWithPrefix(String prefix, int limit, int offset);
     Collection<Concept> getAllConcepts(int limit, int offset);
     void deleteConcepts();
