@@ -5,6 +5,7 @@ import com.ontotext.openpolicy.concept.ConceptDescription;
 import com.ontotext.openpolicy.concept.ConceptDescriptionImpl;
 import com.ontotext.openpolicy.concept.ConceptImpl;
 import com.ontotext.openpolicy.ontologyconstants.openpolicy.SKOSX;
+import com.ontotext.openpolicy.semanticstoreutils.sparql.SparqlQueryUtils;
 import com.ontotext.tools.skoseditor.repositories.ConceptsRepository;
 import com.ontotext.tools.skoseditor.util.SparqlUtils;
 import org.openrdf.model.Statement;
@@ -80,10 +81,13 @@ public class SesameConceptsRepository implements ConceptsRepository {
     public Collection<Concept> findConceptsWithPrefix(String prefix, int limit, int offset) {
         Collection<Concept> concepts = new ArrayList<>();
         try {
-            String sparql = SparqlUtils.getPrefix("rdfs", RDFS.NAMESPACE) +
+            String sparql =
+                    SparqlQueryUtils.getRdfsPrefix() + "\n" +
+                    SparqlQueryUtils.getSkosPrefix() + "\n" +
                     "select ?concept ?label where \n" +
                     "{\n" +
-                    "    ?concept rdfs:label ?label . \n" +
+//                    "    ?concept rdfs:label ?label . \n" +
+                    "    ?concept skos:prefLabel|skos:altLabel ?label . \n" +
                     "    FILTER REGEX(?label, \"(^|\\\\W)" + prefix + "\", \"i\") . \n" +
                     "}";
             if (limit != 0) sparql += "limit " + limit + "\n";
