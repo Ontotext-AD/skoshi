@@ -30,6 +30,8 @@ public class RepositoryProvider {
 
     public static Repository newInstance(String dataFolderPath) {
 
+        System.setProperty("org.openrdf.repository.debug", "true");
+
         if (StringUtils.isEmpty(dataFolderPath)) {
             dataFolderPath = System.getProperty("user.home") + "/.skosedit/data";
         }
