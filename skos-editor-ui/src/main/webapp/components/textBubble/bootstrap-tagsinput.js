@@ -309,9 +309,13 @@
               
               if ($.inArray($input.val(), self.itemsArray) == -1) {
                 var id = getUrlParameter('id');
-                if (id && id != null) {      
+                if (id && id != null) { 
+                var el = self.$element.attr("id");
+                if (el == 'alternativelabels') {
+                  el = 'altlabels';
+                }    
                   $.ajax({
-                    url: service + "/concepts/" + id + "/" + self.$element.attr("id") + "?value=" + $input.val(),
+                    url: service + "/concepts/" + id + "/" + el + "?value=" + $input.val(),
                     type: "POST"
                   }).done(function(result) {
                     //alertify.success(result);
@@ -332,9 +336,13 @@
 
       self.$container.on('click', '[data-role=remove]', $.proxy(function(event) {
         var id = getUrlParameter('id');
-        if (id && id != null) {      
+        if (id && id != null) {
+        var el = self.$element.attr("id");
+        if (el == 'alternativelabels') {
+          el = 'altlabels';
+        }      
           $.ajax({
-            url: service + "/concepts/" + id + "/" + self.$element.attr("id") + "?value=" + $(event.target).closest('.tag').data('item'),
+            url: service + "/concepts/" + id + "/" + el + "?value=" + $(event.target).closest('.tag').data('item'),
             type: "DELETE"
           }).done(function(result) {
             //alertify.success(result);
