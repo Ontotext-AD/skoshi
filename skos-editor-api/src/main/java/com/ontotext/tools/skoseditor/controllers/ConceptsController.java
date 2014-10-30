@@ -368,7 +368,7 @@ public class ConceptsController {
     @ResponseStatus(HttpStatus.OK)
     public String getStemming(@PathVariable URI id, @RequestParam boolean v) {
         conceptsService.setStemming(id, v);
-        return "The concept " + (v?"will":"will not") + " use stemming.";
+        return (v?"Will":"Will not") + " use stemming when matching labels for this concept.";
     }
 
 }
