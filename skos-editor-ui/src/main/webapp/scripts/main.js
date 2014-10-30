@@ -23,21 +23,63 @@ $(function() {
     $("#importForm, #importForm2").attr("action", service + "/concepts/import");
   }());
 
-  $('#line-checkbox-1').each(function(){
-    var self = $(this),
-      label = self.next(),
-      label_text = label.text();
+    $.when($.get(service + "/concepts/" + id + "/stemming"))
+      .then(function(value) {
+          if (value) {
+            $("#line-checkbox-1").prop("checked", true);
+            $('#line-checkbox-1').iCheck('check');
+          } else {
+            $("#line-checkbox-1").prop("checked", false);
+            $('#line-checkbox-1').iCheck('uncheck');
+          }
+          $('#line-checkbox-1').each(function(){
+          var self = $(this),
+            label = self.next(),
+            label_text = label.text();
 
-    label.remove();
-    self.iCheck({
-      checkboxClass: 'icheckbox_line',
-      radioClass: 'iradio_line',
-      insert: '<div class="icheck_line-icon"></div>' + label_text
-    });
-  });
+          label.remove();
+          self.iCheck({
+            checkboxClass: 'icheckbox_line',
+            radioClass: 'iradio_line',
+            insert: '<div class="icheck_line-icon"></div>' + label_text
+          });
+        });
+
+        if ($('#line-checkbox-1').prop('checked')) {
+          $('.icheckbox_line').css('background', '#27AE60');
+        } else {
+          $('.icheckbox_line').css('background', '#BDC3C7');
+        }
+      }, function(error) {
+          alertify.error(error);
+      });
 
 
   /* EVENT HANDLERS */
+
+  $('#line-checkbox-1').on('ifChecked', function(event){
+    $('.icheckbox_line').css('background', '#27AE60');
+    $.ajax({
+      url: service + "/concepts/" + id + "/stemming/?v=true",
+      type: "PUT"
+    }).done(function(result) {
+      alertify.success(result);
+    }).fail(function(result) {
+      alertify.error(result);
+    });
+  });
+
+  $('#line-checkbox-1').on('ifUnchecked', function(event){
+    $('.icheckbox_line').css('background', '#BDC3C7');
+    $.ajax({
+      url: service + "/concepts/" + id + "/stemming/?v=false",
+      type: "PUT"
+    }).done(function(result) {
+      alertify.success(result);
+    }).fail(function(result) {
+      alertify.error(result);
+    });
+  });
 
   $('#conceptsContainer').bind('scroll', function(){
      if($(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight){

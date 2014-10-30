@@ -424,3 +424,6 @@ h2 {
 #saveNewFacet, #saveNewConcept {
   font-size: 15px !important;
 }
+.label-success {
+  background: #34495E !important;
+}
