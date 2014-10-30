@@ -3,7 +3,6 @@ package com.ontotext.tools.skoseditor.util;
 import org.apache.commons.lang.StringUtils;
 import org.openrdf.model.Statement;
 import org.openrdf.model.impl.URIImpl;
-import org.openrdf.model.vocabulary.RDFS;
 import org.openrdf.model.vocabulary.SKOS;
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryConnection;
@@ -26,52 +25,60 @@ public class RepositoryProvider {
 
     private static final Logger log = LoggerFactory.getLogger(RepositoryProvider.class);
 
+    private static Repository REPO;
+
     private RepositoryProvider() {}
 
-    public static Repository newInstance(String dataFolderPath) {
+    public static Repository get(String dataFolderPath) {
 
-        System.setProperty("org.openrdf.repository.debug", "true");
+        if (REPO == null) {
 
-        if (StringUtils.isEmpty(dataFolderPath)) {
-            dataFolderPath = System.getProperty("user.home") + "/.skosedit/data";
+            System.setProperty("org.openrdf.repository.debug", "true");
+
+            if (StringUtils.isEmpty(dataFolderPath)) {
+                dataFolderPath = System.getProperty("user.home") + "/.skosedit/data";
+            }
+
+            log.debug("Sesame Repository data folder: " + dataFolderPath);
+
+            File dataDir = new File(dataFolderPath);
+
+            boolean dataDirExists = dataDir.exists();
+
+            if (!dataDirExists) {
+                dataDir.mkdirs();
+            }
+            REPO = new SailRepository(new ForwardChainingRDFSInferencer(new MemoryStore(dataDir)));
+            try {
+                REPO.initialize();
+                RepositoryConnection connection = REPO.getConnection();
+
+                log.debug("Adding SKOS as axioms.");
+                connection.setNamespace("skos", SKOS.NAMESPACE);
+
+                URL skosUrl = RepositoryProvider.class.getClassLoader().getResource("kb/skos.rdf");
+                if (!new File(skosUrl.toURI()).exists())
+                    throw new IllegalStateException("Could not find skos.rdf in the classpath.");
+                connection.add(skosUrl, SKOS.NAMESPACE, RDFFormat.RDFXML);
+
+                URL skosXUrl = RepositoryProvider.class.getClassLoader().getResource("kb/skos-x.ttl");
+                if (!new File(skosXUrl.toURI()).exists())
+                    throw new IllegalStateException("Could not find skos.rdf in the classpath.");
+                connection.add(skosXUrl, SKOS.NAMESPACE, RDFFormat.TURTLE);
+            } catch (URISyntaxException use) {
+                throw new IllegalStateException("Invalid file location.", use);
+            } catch (RepositoryException re) {
+                throw new IllegalStateException("Failed to initialize repository.", re);
+            } catch (RDFParseException | IOException rpe) {
+                throw new IllegalStateException("Failed to parse rdf.", rpe);
+            }
         }
 
-        log.debug("Sesame Repository data folder: " + dataFolderPath);
-
-        File dataDir = new File(dataFolderPath);
-
-        boolean dataDirExists = dataDir.exists();
-
-        if (!dataDirExists) {
-            dataDir.mkdirs();
-        }
-        Repository repo = new SailRepository( new ForwardChainingRDFSInferencer(new MemoryStore(dataDir)) );
-        try {
-            repo.initialize();
-            RepositoryConnection connection = repo.getConnection();
-
-            log.debug("Adding SKOS as axioms.");
-            connection.setNamespace("skos", SKOS.NAMESPACE);
-
-            URL skosUrl = RepositoryProvider.class.getClassLoader().getResource("kb/skos.rdf");
-            if (!new File(skosUrl.toURI()).exists()) throw new IllegalStateException("Could not find skos.rdf in the classpath.");
-            connection.add(skosUrl, SKOS.NAMESPACE, RDFFormat.RDFXML);
-
-            URL skosXUrl = RepositoryProvider.class.getClassLoader().getResource("kb/skos-x.ttl");
-            if (!new File(skosXUrl.toURI()).exists()) throw new IllegalStateException("Could not find skos.rdf in the classpath.");
-            connection.add(skosXUrl, SKOS.NAMESPACE, RDFFormat.TURTLE);
-        } catch (URISyntaxException use) {
-            throw new IllegalStateException("Invalid file location.", use);
-        } catch (RepositoryException re) {
-            throw new IllegalStateException("Failed to initialize repository.", re);
-        } catch (RDFParseException|IOException rpe) {
-            throw new IllegalStateException("Failed to parse rdf.", rpe);
-        }
-        return repo;
+        return REPO;
     }
 
     public static void main(String[] args) throws Exception {
-        Repository r = newInstance(null);
+        Repository r = get(null);
         System.out.println("OK");
 
         RepositoryConnection connection = r.getConnection();
