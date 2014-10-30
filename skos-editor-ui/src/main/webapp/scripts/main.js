@@ -8,6 +8,8 @@ $(function() {
   var selected = false;
   var selectedCategory;
 
+  $('#alternativelabels').tagsinput();
+
   (function() {
     if (id && id != null) {
       getConceptDetails(id);
@@ -21,7 +23,7 @@ $(function() {
     $("#importForm, #importForm2").attr("action", service + "/concepts/import");
   }());
 
-  $('input').each(function(){
+  $('#line-checkbox-1').each(function(){
     var self = $(this),
       label = self.next(),
       label_text = label.text();
