@@ -83,4 +83,6 @@ public interface ConceptsService {
     void addNarrower(URI id, URI narrowerId);
     void deleteNarrower(URI id, URI narrowerId);
 
+    boolean getStemming(URI id);
+    void setStemming(URI id, boolean v);
 }

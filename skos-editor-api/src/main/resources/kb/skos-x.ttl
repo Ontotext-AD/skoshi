@@ -3,9 +3,27 @@
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 
-skos:abbreviation rdfs:subPropertyOf skos:altLabel .
+skos:abbreviation a rdf:Property;
+                a owl:AnnotationProperty;
+                rdfs:subPropertyOf skos:altLabel;
+                rdfs:label "abbreviation";
+                skos:definition "An abbreviation of the resource." .
 
-skos:acronym rdfs:subPropertyOf skos:altLabel .
+skos:acronym a rdf:Property;
+                a owl:AnnotationProperty;
+                rdfs:subPropertyOf skos:altLabel;
+                rdfs:label "acronym";
+                skos:definition "An acronym of the resource." .
 
-skos:synonym a owl:SymmetricProperty ;
-	rdfs:subPropertyOf skos:semanticRelation .
+skos:synonym a rdf:Property;
+                a owl:ObjectProperty;
+                a owl:SymmetricProperty;
+	            rdfs:subPropertyOf skos:semanticRelation;
+	            rdfs:label "synonym";
+	            skos:definition "Links two synonyms symmetrically." .
+
+
+skos:stemming a rdf:Property;
+                a owl:AnnotationProperty;
+                rdfs:label "stemming";
+                skos:definition "Should stemming be used when matching this resource in texts." .

@@ -442,7 +442,25 @@ public class SesameConceptsRepository implements ConceptsRepository {
         deleteConceptObjectPropertyValue(id, SKOS.NARROWER, narrowerId);
     }
 
+    @Override
+    public boolean findStemming(URI id) {
+        return Boolean.valueOf(findConceptDataPropertySingleValue(id, SKOSX.STEMMING));
+    }
 
+    @Override
+    public void setStemming(URI id, boolean v) {
+        try {
+            RepositoryConnection connection = repository.getConnection();
+            try {
+                connection.remove(id, SKOSX.STEMMING, null);
+                connection.add(id, SKOSX.STEMMING, repository.getValueFactory().createLiteral(v));
+            } finally {
+                connection.close();
+            }
+        } catch (RepositoryException re) {
+            throw new IllegalStateException(re);
+        }
+    }
 
     private List<String> findConceptDataPropertyValues(URI id, URI predicate) {
         List<String> values = new ArrayList<>();

@@ -358,4 +358,17 @@ public class ConceptsController {
         return "Deleted narrower concept.";
     }
 
+    @RequestMapping(method = GET, value = "/{id}/stemming")
+    @ResponseStatus(HttpStatus.OK)
+    public boolean getStemming(@PathVariable URI id) {
+        return conceptsService.getStemming(id);
+    }
+
+    @RequestMapping(method = PUT, value = "/{id}/stemming")
+    @ResponseStatus(HttpStatus.OK)
+    public String getStemming(@PathVariable URI id, @RequestParam boolean v) {
+        conceptsService.setStemming(id, v);
+        return "The concept " + (v?"will":"will not") + " use stemming.";
+    }
+
 }

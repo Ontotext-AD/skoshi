@@ -297,4 +297,15 @@ public class ConceptsServiceImpl implements ConceptsService {
         conceptsRepository.deleteNarrower(id, narrowerId);
     }
 
+    @Override
+    public boolean getStemming(URI id) {
+        validationRepository.validateExists(id);
+        return conceptsRepository.findStemming(id);
+    }
+
+    @Override
+    public void setStemming(URI id, boolean v) {
+        validationRepository.validateExists(id);
+        conceptsRepository.setStemming(id, v);
+    }
 }
