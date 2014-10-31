@@ -229,6 +229,8 @@ public class SesameConceptsRepository implements ConceptsRepository {
         concept.setBroader(findBroader(id));
         concept.setNarrower(findNarrower(id));
 
+        concept.setStemLabels(findStemming(id));
+
         return concept;
     }
 
@@ -444,7 +446,12 @@ public class SesameConceptsRepository implements ConceptsRepository {
 
     @Override
     public boolean findStemming(URI id) {
-        return Boolean.valueOf(findConceptDataPropertySingleValue(id, SKOSX.STEMMING));
+        String stemLabels = findConceptDataPropertySingleValue(id, SKOSX.STEMMING);
+        if (stemLabels == null) {
+            return true;
+        } else {
+            return Boolean.valueOf(stemLabels);
+        }
     }
 
     @Override

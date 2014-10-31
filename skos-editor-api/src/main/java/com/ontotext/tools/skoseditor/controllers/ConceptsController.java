@@ -2,19 +2,14 @@ package com.ontotext.tools.skoseditor.controllers;
 
 import com.ontotext.openpolicy.concept.Concept;
 import com.ontotext.openpolicy.concept.ConceptDescription;
-import com.ontotext.openpolicy.skosfixer.MultitesSkosFixer;
-import com.ontotext.openpolicy.skosfixer.RdfFixerException;
 import com.ontotext.tools.skoseditor.services.ConceptsService;
 import com.ontotext.tools.skoseditor.util.WebUtils;
 import com.wordnik.swagger.annotations.Api;
-import org.apache.commons.io.input.ReaderInputStream;
 import org.openrdf.model.URI;
-import org.openrdf.rio.RDFFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
