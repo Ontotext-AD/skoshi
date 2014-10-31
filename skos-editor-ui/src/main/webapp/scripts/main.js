@@ -1,7 +1,5 @@
 $(function() {
 
-  /* retrieve concepts and the selected concept if any */
-
   var limit = 50;
   var offset = 0;
   var autoSuggestEnabled = false;
@@ -23,7 +21,8 @@ $(function() {
     $("#importForm, #importForm2").attr("action", service + "/concepts/import");
   }());
 
-    $.when($.get(service + "/concepts/" + id + "/stemming"))
+    if (id && id != null) {
+      $.when($.get(service + "/concepts/" + id + "/stemming"))
       .then(function(value) {
           if (value) {
             $("#line-checkbox-1").prop("checked", true);
@@ -53,7 +52,7 @@ $(function() {
       }, function(error) {
           alertify.error(error);
       });
-
+    }
 
   /* EVENT HANDLERS */
 
