@@ -131,6 +131,12 @@ public class ConceptsController {
         return "Concepts exported successfully.";
     }
 
+    @RequestMapping(method = GET, value = "/count")
+    @ResponseStatus(HttpStatus.OK)
+    public int getConceptsCount() {
+        return conceptsService.getConceptsCount();
+    }
+
 
     @RequestMapping(method = GET, value = "/{id}")
     @ResponseStatus(HttpStatus.OK)

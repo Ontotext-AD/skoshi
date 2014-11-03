@@ -14,23 +14,23 @@
         <constructor-arg ref="repository"/>
     </bean>
 
-    <bean id="extractionService" class="com.ontotext.tools.skoseditor.services.impl.ExtractionServiceImpl"/>
-
     <bean id="conceptsRepository" class="com.ontotext.tools.skoseditor.repositories.sesame.SesameConceptsRepository">
         <constructor-arg ref="repository"/>
-    </bean>
-
-    <bean id="conceptsService" class="com.ontotext.tools.skoseditor.services.impl.ConceptsServiceImpl">
-        <constructor-arg ref="conceptsRepository"/>
-        <constructor-arg ref="validationRepository"/>
     </bean>
 
     <bean id="facetsRepository" class="com.ontotext.tools.skoseditor.repositories.sesame.SesameFacetsRepository">
         <constructor-arg ref="repository"/>
     </bean>
 
+    <bean id="extractionService" class="com.ontotext.tools.skoseditor.services.impl.ExtractionServiceImpl"/>
+
     <bean id="facetsService" class="com.ontotext.tools.skoseditor.services.impl.FacetsServiceImpl">
         <constructor-arg ref="facetsRepository"/>
+        <constructor-arg ref="validationRepository"/>
+    </bean>
+
+    <bean id="conceptsService" class="com.ontotext.tools.skoseditor.services.impl.ConceptsServiceImpl">
+        <constructor-arg ref="conceptsRepository"/>
         <constructor-arg ref="validationRepository"/>
     </bean>
 

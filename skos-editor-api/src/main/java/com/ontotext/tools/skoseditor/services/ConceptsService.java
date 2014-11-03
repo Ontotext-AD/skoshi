@@ -20,6 +20,8 @@ public interface ConceptsService {
     Collection<Concept> getAllConcepts(int limit, int offset);
     void deleteConcepts();
 
+    int getConceptsCount();
+
     URI createConcept(String prefLabel);
     ConceptDescription getConcept(URI id);
     void deleteConcept(URI id);

@@ -5,6 +5,7 @@ import com.ontotext.openpolicy.concept.ConceptDescription;
 import com.ontotext.openpolicy.concept.ConceptDescriptionImpl;
 import com.ontotext.openpolicy.concept.ConceptImpl;
 import com.ontotext.openpolicy.ontologyconstants.openpolicy.SKOSX;
+import com.ontotext.openpolicy.semanticstoreutils.SemanticStoreHelper;
 import com.ontotext.openpolicy.semanticstoreutils.sparql.SparqlQueryUtils;
 import com.ontotext.tools.skoseditor.repositories.ConceptsRepository;
 import com.ontotext.tools.skoseditor.util.SparqlUtils;
@@ -161,6 +162,28 @@ public class SesameConceptsRepository implements ConceptsRepository {
         } catch (RepositoryException re) {
             throw new IllegalStateException(re);
         }
+    }
+
+    @Override
+    public int findConceptsCount() {
+        int count;
+        try {
+            String sparql =
+                    "select *\n" +
+                    SparqlQueryUtils.getFromCountGraph() + "\n" +
+                    "{ ?concept a skos:Concepts }";
+            RepositoryConnection connection = repository.getConnection();
+            try {
+                count = new SemanticStoreHelper(connection).query(sparql).getCount();
+            } catch (Exception e) {
+                throw new IllegalStateException("Failed to get concepts.", e);
+            } finally {
+                connection.close();
+            }
+        } catch (RepositoryException re) {
+            throw new IllegalStateException(re);
+        }
+        return count;
     }
 
     @Override

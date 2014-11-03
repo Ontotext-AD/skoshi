@@ -19,6 +19,8 @@ public interface ConceptsRepository {
 
     void clearRepository();
 
+    int findConceptsCount();
+
     Concept findConceptByLabel(String label);
 
     URI addConcept(URI id, String prefLabel);

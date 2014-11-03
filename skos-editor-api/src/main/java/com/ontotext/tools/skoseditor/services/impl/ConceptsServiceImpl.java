@@ -10,8 +10,6 @@ import com.ontotext.tools.skoseditor.repositories.ConceptsRepository;
 import com.ontotext.tools.skoseditor.repositories.ValidationRepository;
 import com.ontotext.tools.skoseditor.services.ConceptsService;
 import com.ontotext.tools.skoseditor.util.IdUtils;
-import com.ontotext.tools.skoseditor.util.WebUtils;
-import org.apache.commons.io.input.ReaderInputStream;
 import org.openrdf.model.URI;
 import org.openrdf.rio.RDFFormat;
 import org.springframework.util.StreamUtils;
@@ -87,6 +85,11 @@ public class ConceptsServiceImpl implements ConceptsService {
     @Override
     public void deleteConcepts() {
         conceptsRepository.clearRepository();
+    }
+
+    @Override
+    public int getConceptsCount() {
+        return conceptsRepository.findConceptsCount();
     }
 
     @Override
