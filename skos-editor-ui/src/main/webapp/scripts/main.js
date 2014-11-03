@@ -8,6 +8,56 @@ $(function() {
 
   $('#alternativelabels').tagsinput();
 
+  key('a', function(){ 
+    var overlay = document.querySelector( '.md-overlay' );
+
+    [].slice.call( document.querySelectorAll( '.md-trigger' ) ).forEach( function( el, i ) {
+
+      var modal = document.querySelector( '#' + el.getAttribute( 'data-modal' ) ),
+        close = modal.querySelector( '.md-close' );
+
+      function removeModal( hasPerspective ) {
+        classie.remove( modal, 'md-show' );
+
+        if( hasPerspective ) {
+          classie.remove( document.documentElement, 'md-perspective' );
+        }
+      }
+
+      function removeModalHandler() {
+        removeModal( classie.has( el, 'md-setperspective' ) ); 
+      }
+
+      el.addEventListener( 'keydown', function( ev ) {
+        if (ev.keyCode == 27) {
+              removeModalHandler();
+          }
+      });
+
+      key('esc', function(){
+        removeModalHandler();
+      });
+
+        classie.add( modal, 'md-show' );
+        $('#newFacetInput').focus();
+        overlay.removeEventListener( 'click', removeModalHandler );
+        overlay.addEventListener( 'click', removeModalHandler );
+
+        if( classie.has( el, 'md-setperspective' ) ) {
+          setTimeout( function() {
+            classie.add( document.documentElement, 'md-perspective' );
+          }, 25 );
+        }
+        $('#newFacetInput').focus();
+
+      close.addEventListener( 'click', function( ev ) {
+        removeModalHandler();
+      });
+
+    } );
+
+  });
+
   (function() {
     if (id && id != null) {
       getConceptDetails(id);
@@ -18,7 +68,7 @@ $(function() {
       getConcepts('', 50, 0);
     }
     $('#conceptsSearchBox').focusTextToEnd();
-    $("#importForm, #importForm2").attr("action", service + "/concepts/import");
+    $("#importForm, #importForm2, #importForm3").attr("action", service + "/concepts/import");
   }());
 
     if (id && id != null) {
@@ -116,31 +166,56 @@ $(function() {
   $('#importButtonInside').on('click', function() {
     var options = {
       beforeSend: function() {
-        $("#messageinfo").html("<span class='icon-spin icon-spinner'></span>");
+        spinInit($('#importButtonInside').prev().prev()[0], '333');
       },
-      dataType: 'json'
+      dataType: 'json',
+      complete: function(xhr) {
+        location.href = 'index.html';
+      },
+      error: function(xhr) {
+        alertify.error(xhr);
+      }
     };
     $("#importForm").ajaxForm(options);
-    $('#import').modal('hide');
-    $('#conceptsContainer').html('');
-    getConcepts('', 50, 0);
   });
 
   $('#keyphrasesImportButtonInside').on('click', function() {
     var options = {
       beforeSend: function() {
-        $("#messageinfo").html("<span class='icon-spin icon-spinner'></span>");
+        spinInit($('#keyphrasesImportButtonInside').prev().prev()[0], '333');
       },
-      dataType: 'json'
+      dataType: 'json',
+      complete: function(xhr) {
+        location.href = 'index.html';
+      },
+      error: function(xhr) {
+        alertify.error(xhr);
+      }
     };
     $("#importForm2").ajaxForm(options);
-    $('#phrasesimport').modal('hide');
-    $('#conceptsContainer').html('');
-    getConcepts('', 50, 0);
+  });
+
+  $('#multitestImportButton').on('click', function() {
+    var options = {
+      beforeSend: function() {
+        spinInit($('#multitestImportButton').prev().prev()[0], '333');
+      },
+      dataType: 'json',
+      complete: function(xhr) {
+        location.href = 'index.html';
+      },
+      success: function(result) {
+        alertify.success(xhr.responseText);
+      },
+      error: function(xhr) {
+        alertify.error(xhr.responseText);
+      }
+    };
+    $("#importForm3").ajaxForm(options);
   });
 
   $(document).on('click', '.tt', function() {
-    var url = $(this).attr('data-id');
+    var url = encodeURIComponent($(this).attr('data-id'));
     location.href = 'index.html?id=' + url;
   });
 

@@ -23,6 +23,12 @@ var ModalEffects = (function() {
 				removeModal( classie.has( el, 'md-setperspective' ) ); 
 			}
 
+			el.addEventListener( 'keydown', function( ev ) {
+				if (ev.keyCode == 27) {
+			        removeModalHandler();
+			    }
+			});
+
 			el.addEventListener( 'click', function( ev ) {
 				classie.add( modal, 'md-show' );
 				$('#newFacetInput').focus();
