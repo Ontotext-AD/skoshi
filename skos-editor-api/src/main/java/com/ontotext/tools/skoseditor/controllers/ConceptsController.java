@@ -72,7 +72,6 @@ public class ConceptsController {
         if (conceptsRdf != null && phrases == null && multitesRdf == null) {
             log.debug("Importing concepts from RDF ...");
             return importRdf(conceptsRdf);
-//            return importMultitesRdf(conceptsRdf);
         } else if (conceptsRdf == null && phrases != null && multitesRdf == null) {
             log.debug("Importing concepts from Phrases ...");
             return importPhrases(phrases);

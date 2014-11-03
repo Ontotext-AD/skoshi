@@ -63,6 +63,7 @@ public class ConceptsServiceImpl implements ConceptsService {
 
     @Override
     public void addPhrases(File phrasesFile) {
+        deleteConcepts();
         try {
             List<String> lines = Files.readLines(phrasesFile, Charset.defaultCharset());
             for (String line : lines) {
