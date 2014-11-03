@@ -1,6 +1,5 @@
 package com.ontotext.tools.skoseditor.config;
 
-import com.google.common.net.MediaType;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
-@ContextConfiguration({ "/applicationContext.xml", "/webmvc-config.xml" })
+@ContextConfiguration({ "/repository-config-test.xml", "/applicationContext.xml", "/webmvc-config.xml" })
 public class WebAppConfigTest {
 
     private MockMvc mockMvc;

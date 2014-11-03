@@ -6,10 +6,6 @@
                     http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
 
 
-    <bean id="repository" factory-method="get" class="com.ontotext.tools.skoseditor.util.RepositoryProvider" destroy-method="shutDown">
-        <constructor-arg name="dataFolderPath" value="#{ systemProperties['skosedit.home'] }"/>
-    </bean>
-
     <bean id="infoRepository" class="com.ontotext.tools.skoseditor.repositories.sesame.SesameInfoRepository">
         <constructor-arg ref="repository"/>
     </bean>
