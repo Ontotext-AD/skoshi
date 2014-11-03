@@ -39,7 +39,7 @@
           </nav>
         </div>
 
-  <h3><span>Active concept: <span id="activeUser">none</span></span><div class="buttons">
+  <h3><span id="activeUser"></span><div class="buttons">
       <a href="javascript:void(0)" class="btn btn-primary btn-sm md-trigger" id="newConceptButton" data-modal="modal-9">Add new</a>&nbsp;<a href="javascript:void(0)" class="btn btn-danger btn-sm" id="deleteConcept">Delete</a><div id="stemming"><input type="checkbox" id="line-checkbox-1"><label for="line-checkbox-1">Stemming</label></div>
     </div></h3>
 
@@ -102,7 +102,7 @@
                 <h3 class="panel-title">Main label</h3>
               </div>
               <div class="panel-body">
-                <input type="text" class="form-control" name="preflabel" id="preflabel" data-placement="left" data-toggle="tooltip" data-trigger="manual">
+                <input type="text" class="form-control" name="preflabel" accesskey="m" id="preflabel" data-placement="left" data-toggle="tooltip" data-trigger="manual">
               </div>
             </div>
           </div>
@@ -151,6 +151,7 @@
     </div>
     <div class="right">
       <button type="button" class="btn btn-primary" id="importButton" data-toggle="modal" data-target="#import">RDF Import</button>&nbsp;
+      <button type="button" class="btn btn-primary" id="imultitestButton" data-toggle="modal" data-target="#multitestImport">MultiTes Import</button>&nbsp;
       <button type="button" class="btn btn-primary" id="phrasesImport" data-toggle="modal" data-target="#phrasesimport">Keyphrases Import</button>&nbsp;
       <button type="button" class="btn btn-primary" id="exportButton">Export</button>
     </div>
@@ -161,22 +162,61 @@
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-            <h4 class="modal-title" id="importModalLabel">Import</h4>
+            <h4 class="modal-title" id="importModalLabel">RDF import</h4>
           </div>
           <div class="modal-body">
             <div>
-            <div>RDF import:</div>
             <div class="fileinput fileinput-new input-group" data-provides="fileinput">
             
-              <div class="form-control" data-trigger="fileinput"><i class="glyphicon glyphicon-file fileinput-exists"></i> <span class="fileinput-filename"></span></div>
+              <div class="form-control" data-trigger="fileinput">
+
+              
+              <i class="glyphicon glyphicon-file fileinput-exists"></i> <span class="fileinput-filename"></span></div>
               <span class="input-group-addon btn btn-default btn-file"><span class="fileinput-new">Select file</span><span class="fileinput-exists">Change</span><input type="file" id="conceptsRdf" name="conceptsRdf"></span>
               <a href="#" class="input-group-addon btn btn-default fileinput-exists" data-dismiss="fileinput">Remove</a>
             </div>
+
             </div>
+            <div style="color: #C0392B">This import will rewrite the current state of the concept definitions. Please export first, if you want to preserve your work.</div>
           </div>
           <div class="modal-footer">
+          <div class="loadingIndicator"></div>
             <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
             <button type="submit" class="btn btn-primary" id="importButtonInside">Import</button>
+          </div>
+        </div>
+      </div>
+      </form>
+    </div>
+
+    <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="multitestImport" id="multitestImport" aria-hidden="true">
+      <form name="importForm3" id="importForm3" method="post" enctype="multipart/form-data">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <h4 class="modal-title" id="importModalLabel">MultiТes import</h4>
+          </div>
+          <div class="modal-body">
+            <div>
+
+            <div class="fileinput fileinput-new input-group" data-provides="fileinput">
+            
+              <div class="form-control" data-trigger="fileinput">
+
+              
+              <i class="glyphicon glyphicon-file fileinput-exists"></i> <span class="fileinput-filename"></span></div>
+              <span class="input-group-addon btn btn-default btn-file"><span class="fileinput-new">Select file</span><span class="fileinput-exists">Change</span><input type="file" id="multitesRdf" name="multitesRdf"></span>
+              <a href="#" class="input-group-addon btn btn-default fileinput-exists" data-dismiss="fileinput">Remove</a>
+            </div>
+
+            </div>
+            <div style="color: #C0392B">This import will rewrite the current state of the concept definitions. Please export first, if you want to preserve your work.</div>
+          </div>
+          <div class="modal-footer">
+          <div class="loadingIndicator"></div>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="multitestImportButton">Import</button>
           </div>
         </div>
       </div>
@@ -189,11 +229,10 @@
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-            <h4 class="modal-title" id="importModalLabel2">Import</h4>
+            <h4 class="modal-title" id="importModalLabel2">Keyphrases import</h4>
           </div>
           <div class="modal-body">
             <div>
-            <div>Keyphrases import:</div>
             <div class="fileinput fileinput-new input-group" data-provides="fileinput">
             
               <div class="form-control" data-trigger="fileinput"><i class="glyphicon glyphicon-file fileinput-exists"></i> <span class="fileinput-filename"></span></div>
@@ -201,8 +240,10 @@
               <a href="#" class="input-group-addon btn btn-default fileinput-exists" data-dismiss="fileinput">Remove</a>
             </div>
             </div>
+            <div style="color: #C0392B">This import will rewrite the current state of the concept definitions. Please export first, if you want to preserve your work.</div>
           </div>
           <div class="modal-footer">
+            <div class="loadingIndicator"></div>
             <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
             <button type="submit" class="btn btn-primary" id="keyphrasesImportButtonInside">Import</button>
           </div>
@@ -225,6 +266,8 @@
     <script src="components/boddhiModal/js/classie.js"></script>
     <script src="components/boddhiModal/js/modalEffects.js"></script>
     <script src="components/jquery.scrollTo.js"></script>
+    <script src="components/spin.min.js"></script>
+    <script src="components/boddhiKeymaster.js"></script>
     <script src="components/canvasloader.js"></script>
     <script src="components/boddhiCheck/boddhi.check.js"></script>
     <script src="scripts/util.js"></script>

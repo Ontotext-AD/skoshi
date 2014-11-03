@@ -145,6 +145,7 @@ h2 {
 }
 .right {
    float: right;
+   margin-bottom: 20px;
 }
 
 .qtip-default {
