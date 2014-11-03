@@ -10,6 +10,10 @@
         <constructor-arg name="dataFolderPath" value="#{ systemProperties['skosedit.home'] }"/>
     </bean>
 
+    <bean id="infoRepository" class="com.ontotext.tools.skoseditor.repositories.sesame.SesameInfoRepository">
+        <constructor-arg ref="repository"/>
+    </bean>
+
     <bean id="validationRepository" class="com.ontotext.tools.skoseditor.repositories.sesame.SesameValidationRepository">
         <constructor-arg ref="repository"/>
     </bean>
@@ -20,6 +24,11 @@
 
     <bean id="facetsRepository" class="com.ontotext.tools.skoseditor.repositories.sesame.SesameFacetsRepository">
         <constructor-arg ref="repository"/>
+    </bean>
+
+
+    <bean id="infoService" class="com.ontotext.tools.skoseditor.services.impl.InfoServiceImpl">
+        <constructor-arg ref="infoRepository"/>
     </bean>
 
     <bean id="extractionService" class="com.ontotext.tools.skoseditor.services.impl.ExtractionServiceImpl"/>

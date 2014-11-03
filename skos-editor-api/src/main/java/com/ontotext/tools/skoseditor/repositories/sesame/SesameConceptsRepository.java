@@ -20,6 +20,7 @@ import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.RepositoryResult;
 import org.openrdf.rio.RDFFormat;
+import org.openrdf.rio.RDFHandlerException;
 import org.openrdf.rio.RDFWriter;
 import org.openrdf.rio.turtle.TurtleWriter;
 import org.slf4j.Logger;
@@ -48,13 +49,11 @@ public class SesameConceptsRepository implements ConceptsRepository {
             RepositoryConnection connection = repository.getConnection();
             try {
                 connection.add(conceptsRdfFile, SKOS.NAMESPACE, format);
-            } catch (Exception e) {
-                throw new IllegalStateException("Failed to import concepts.", e);
             } finally {
                 connection.close();
             }
-        } catch (RepositoryException re) {
-            throw new IllegalStateException(re);
+        } catch (Exception re) {
+            throw new IllegalStateException("Failed to import concepts.", re);
         }
     }
 
@@ -68,13 +67,11 @@ public class SesameConceptsRepository implements ConceptsRepository {
                 connection.export(rdfWriter);
                 stringWriter.flush();
                 return stringWriter.toString();
-            } catch (Exception e) {
-                throw new IllegalStateException("Failed to export concepts.", e);
             } finally {
                 connection.close();
             }
-        } catch (RepositoryException re) {
-            throw new IllegalStateException(re);
+        } catch (RepositoryException|RDFHandlerException e) {
+            throw new IllegalStateException("Failed to export concepts.", e);
         }
     }
 
@@ -100,20 +97,21 @@ public class SesameConceptsRepository implements ConceptsRepository {
             try {
                 TupleQuery tupleQuery = connection.prepareTupleQuery(QueryLanguage.SPARQL, sparql);
                 TupleQueryResult result = tupleQuery.evaluate();
-                while (result.hasNext()) {
-                    BindingSet row = result.next();
-                    URI id = (URI) row.getValue("concept");
-                    String prefLabel = row.getValue("label").stringValue();
-                    concepts.add(new ConceptImpl(id, prefLabel));
+                try {
+                    while (result.hasNext()) {
+                        BindingSet row = result.next();
+                        URI id = (URI) row.getValue("concept");
+                        String prefLabel = row.getValue("label").stringValue();
+                        concepts.add(new ConceptImpl(id, prefLabel));
+                    }
+                } finally {
+                    result.close();
                 }
-                result.close();
-            } catch (Exception e) {
-                throw new IllegalStateException("Failed to get concepts.", e);
             } finally {
                 connection.close();
             }
-        } catch (RepositoryException re) {
-            throw new IllegalStateException(re);
+        } catch (Exception e) {
+            throw new IllegalStateException("Failed to get concepts.", e);
         }
         return concepts;
     }
@@ -130,20 +128,21 @@ public class SesameConceptsRepository implements ConceptsRepository {
             try {
                 TupleQuery tupleQuery = connection.prepareTupleQuery(QueryLanguage.SPARQL, sparql);
                 TupleQueryResult result = tupleQuery.evaluate();
-                while (result.hasNext()) {
-                    BindingSet row = result.next();
-                    URI id = (URI) row.getValue("concept");
-                    String prefLabel = row.getValue("label").stringValue();
-                    concepts.add(new ConceptImpl(id, prefLabel));
+                try {
+                    while (result.hasNext()) {
+                        BindingSet row = result.next();
+                        URI id = (URI) row.getValue("concept");
+                        String prefLabel = row.getValue("label").stringValue();
+                        concepts.add(new ConceptImpl(id, prefLabel));
+                    }
+                } finally {
+                    result.close();
                 }
-                result.close();
-            } catch (Exception e) {
-                throw new IllegalStateException("Failed to get concepts.", e);
             } finally {
                 connection.close();
             }
-        } catch (RepositoryException re) {
-            throw new IllegalStateException(re);
+        } catch (Exception e) {
+            throw new IllegalStateException("Failed to get concepts.", e);
         }
         return concepts;
     }
@@ -154,13 +153,11 @@ public class SesameConceptsRepository implements ConceptsRepository {
             RepositoryConnection connection = repository.getConnection();
             try {
                 connection.clear();
-            } catch (RepositoryException e) {
-                throw new IllegalStateException("Failed to clear repository.", e);
             } finally {
                 connection.close();
             }
         } catch (RepositoryException re) {
-            throw new IllegalStateException(re);
+            throw new IllegalStateException("Failed to clear repository.", re);
         }
     }
 
@@ -175,13 +172,11 @@ public class SesameConceptsRepository implements ConceptsRepository {
             RepositoryConnection connection = repository.getConnection();
             try {
                 count = new SemanticStoreHelper(connection).query(sparql).getCount();
-            } catch (Exception e) {
-                throw new IllegalStateException("Failed to get concepts.", e);
             } finally {
                 connection.close();
             }
         } catch (RepositoryException re) {
-            throw new IllegalStateException(re);
+            throw new IllegalStateException("Failed to get concepts count.", re);
         }
         return count;
     }
@@ -196,24 +191,25 @@ public class SesameConceptsRepository implements ConceptsRepository {
             try {
                 TupleQuery tupleQuery = connection.prepareTupleQuery(QueryLanguage.SPARQL, sparql);
                 TupleQueryResult result = tupleQuery.evaluate();
-                while (result.hasNext()) {
-                    BindingSet row = result.next();
-                    URI id = (URI) row.getValue("concept");
-                    String prefLabel = row.getValue("label").stringValue();
-                    if (concept != null) {
-                        throw new IllegalArgumentException(
-                                String.format("Two concepts with the same label exist %s  %s", concept.getId(), id));
+                try {
+                    while (result.hasNext()) {
+                        BindingSet row = result.next();
+                        URI id = (URI) row.getValue("concept");
+                        String prefLabel = row.getValue("label").stringValue();
+                        if (concept != null) {
+                            throw new IllegalArgumentException(
+                                    String.format("Two concepts with the same label exist %s  %s", concept.getId(), id));
+                        }
+                        concept = new ConceptImpl(id, prefLabel);
                     }
-                    concept = new ConceptImpl(id, prefLabel);
+                } finally {
+                    result.close();
                 }
-                result.close();
-            } catch (Exception e) {
-                throw new IllegalStateException("Failed to get concepts.", e);
             } finally {
                 connection.close();
             }
-        } catch (RepositoryException re) {
-            throw new IllegalStateException(re);
+        } catch (Exception e) {
+            throw new IllegalStateException("Failed to get concepts.", e);
         }
         return concept;
     }
@@ -263,16 +259,20 @@ public class SesameConceptsRepository implements ConceptsRepository {
             RepositoryConnection connection = repository.getConnection();
             try {
                 RepositoryResult<Statement> result = connection.getStatements(id, SKOS.PREF_LABEL, null, false);
-                while (result.hasNext()) {
-                    String label = result.next().getObject().stringValue();
-                    if (prefLabel != null) {
-                        throw new IllegalStateException(
-                                String.format("More than one pref label for concept %s: %s  , %s",
-                                        id.stringValue(),
-                                        prefLabel,
-                                        label));
+                try {
+                    while (result.hasNext()) {
+                        String label = result.next().getObject().stringValue();
+                        if (prefLabel != null) {
+                            throw new IllegalStateException(
+                                    String.format("More than one pref label for concept %s: %s  , %s",
+                                            id.stringValue(),
+                                            prefLabel,
+                                            label));
+                        }
+                        prefLabel = label;
                     }
-                    prefLabel = label;
+                } finally {
+                    result.close();
                 }
             } finally {
                 connection.close();
@@ -304,10 +304,13 @@ public class SesameConceptsRepository implements ConceptsRepository {
             RepositoryConnection connection = repository.getConnection();
             try {
                 RepositoryResult<Statement> result = connection.getStatements(id, SKOS.PREF_LABEL, null, false);
-                if (result.hasNext()) {
-                    prefLabel = result.next().getObject().stringValue();
+                try {
+                    if (result.hasNext()) {
+                        prefLabel = result.next().getObject().stringValue();
+                    }
+                } finally {
+                    result.close();
                 }
-                result.close();
             } finally {
                 connection.close();
             }
@@ -498,10 +501,14 @@ public class SesameConceptsRepository implements ConceptsRepository {
             RepositoryConnection connection = repository.getConnection();
             try {
                 RepositoryResult<Statement> result = connection.getStatements(id, predicate, null, false);
-                while (result.hasNext()) {
-                    Statement st = result.next();
-                    String value = st.getObject().stringValue();
-                    values.add(value);
+                try {
+                    while (result.hasNext()) {
+                        Statement st = result.next();
+                        String value = st.getObject().stringValue();
+                        values.add(value);
+                    }
+                } finally {
+                    result.close();
                 }
             } finally {
                 connection.close();
@@ -518,12 +525,16 @@ public class SesameConceptsRepository implements ConceptsRepository {
             RepositoryConnection connection = repository.getConnection();
             try {
                 RepositoryResult<Statement> result = connection.getStatements(id, predicate, null, false);
-                while (result.hasNext()) {
-                    Statement st = result.next();
-                    URI objectId = (URI) st.getObject();
-                    String objectLabel = connection.getStatements(objectId, SKOS.PREF_LABEL, null, false).next().getObject().stringValue();
-                    Concept object = new ConceptImpl(objectId, objectLabel);
-                    values.add(object);
+                try {
+                    while (result.hasNext()) {
+                        Statement st = result.next();
+                        URI objectId = (URI) st.getObject();
+                        String objectLabel = connection.getStatements(objectId, SKOS.PREF_LABEL, null, false).next().getObject().stringValue();
+                        Concept object = new ConceptImpl(objectId, objectLabel);
+                        values.add(object);
+                    }
+                } finally {
+                    result.close();
                 }
             } finally {
                 connection.close();
@@ -540,17 +551,21 @@ public class SesameConceptsRepository implements ConceptsRepository {
             RepositoryConnection connection = repository.getConnection();
             try {
                 RepositoryResult<Statement> result = connection.getStatements(id, predicate, null, false);
-                while (result.hasNext()) {
-                    Statement st = result.next();
-                    String definition = st.getObject().stringValue();
-                    if (value != null) {
-                        throw new IllegalStateException(
-                                String.format("Two values for property %s: %s , %s",
-                                        predicate.stringValue(),
-                                        value,
-                                        definition));
+                try {
+                    while (result.hasNext()) {
+                        Statement st = result.next();
+                        String definition = st.getObject().stringValue();
+                        if (value != null) {
+                            throw new IllegalStateException(
+                                    String.format("Two values for property %s: %s , %s",
+                                            predicate.stringValue(),
+                                            value,
+                                            definition));
+                        }
+                        value = definition;
                     }
-                    value = definition;
+                } finally {
+                    result.close();
                 }
             } finally {
                 connection.close();
@@ -638,7 +653,6 @@ public class SesameConceptsRepository implements ConceptsRepository {
             throw new IllegalStateException(re);
         }
     }
-
 
 
 }

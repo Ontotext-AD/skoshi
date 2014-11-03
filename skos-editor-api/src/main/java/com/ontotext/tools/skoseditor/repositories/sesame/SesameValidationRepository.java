@@ -33,13 +33,11 @@ public class SesameValidationRepository implements ValidationRepository {
             try {
                 boolean exists = connection.hasStatement(id, null, null, false);
                 return exists;
-            } catch (RepositoryException re) {
-                throw new IllegalStateException("Failed to validate if object " + id + " exists.", re);
             } finally {
                 connection.close();
             }
         } catch (RepositoryException re) {
-            throw new IllegalStateException(re);
+            throw new IllegalStateException("Failed to validate if object " + id + " exists.", re);
         }
     }
 }

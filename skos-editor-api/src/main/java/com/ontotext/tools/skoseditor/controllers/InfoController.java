@@ -1,5 +1,6 @@
 package com.ontotext.tools.skoseditor.controllers;
 
+import com.ontotext.tools.skoseditor.services.InfoService;
 import com.wordnik.swagger.annotations.Api;
 import org.apache.commons.io.output.StringBuilderWriter;
 import org.openrdf.model.Statement;
@@ -33,7 +34,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 public class InfoController {
 
     @Autowired
-    private Repository repository;
+    private InfoService infoService;
 
     @RequestMapping(method = GET)
     @ResponseStatus(HttpStatus.OK)
@@ -45,9 +46,7 @@ public class InfoController {
 
     @RequestMapping(method = GET, value = "/repo/dump")
     public String dumpRepo() throws Exception {
-        Writer writer = new StringBuilderWriter();
-        repository.getConnection().export(new TurtleWriter(writer));
-        return writer.toString();
+        return infoService.dumpRepo();
     }
 
 }

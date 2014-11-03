@@ -67,13 +67,11 @@ public class SesameFacetsRepository implements FacetsRepository {
                     facets.add(new NamedEntityImpl(id, prefLabel));
                 }
                 result.close();
-            } catch (Exception e) {
-                throw new IllegalStateException("Failed to get concepts.", e);
             } finally {
                 connection.close();
             }
-        } catch (RepositoryException re) {
-            throw new IllegalStateException(re);
+        } catch (Exception e) {
+            throw new IllegalStateException("Failed to get concepts.", e);
         }
         return facets;
     }
@@ -206,13 +204,11 @@ public class SesameFacetsRepository implements FacetsRepository {
                     }
                 }
                 result.close();
-            } catch (Exception e) {
-                throw new IllegalStateException("Failed to get concepts.", e);
             } finally {
                 connection.close();
             }
-        } catch (RepositoryException re) {
-            throw new IllegalStateException(re);
+        } catch (Exception e) {
+            throw new IllegalStateException("Failed to get concepts.", e);
         }
         return concepts;
     }
@@ -225,11 +221,11 @@ public class SesameFacetsRepository implements FacetsRepository {
             try {
                 String askQuery = SparqlQueryUtils.getSkosPrefix() + "\nASK { [] a skos:Facet; skos:prefLabel " + connection.getValueFactory().createLiteral(lbl) + " }";
                 exists = connection.prepareBooleanQuery(QueryLanguage.SPARQL, askQuery).evaluate();
-            } catch (MalformedQueryException|QueryEvaluationException e) {
-                throw new RuntimeException("Illegal query. Fix it!", e);
             } finally {
                 connection.close();
             }
+        } catch (MalformedQueryException|QueryEvaluationException e) {
+            throw new RuntimeException("Illegal query. Fix it!", e);
         } catch (RepositoryException re) {
             throw new IllegalStateException(re);
         }
