@@ -70,10 +70,14 @@ public class ConceptsController {
                                  @RequestParam(required = false) MultipartFile multitesRdf) {
 
         if (conceptsRdf != null && phrases == null && multitesRdf == null) {
+            log.debug("Importing concepts from RDF ...");
             return importRdf(conceptsRdf);
+//            return importMultitesRdf(conceptsRdf);
         } else if (conceptsRdf == null && phrases != null && multitesRdf == null) {
+            log.debug("Importing concepts from Phrases ...");
             return importPhrases(phrases);
         } else if (conceptsRdf == null && phrases == null && multitesRdf != null) {
+            log.debug("Importing concepts from Multites SKOS ...");
             return importMultitesRdf(multitesRdf);
         } else {
             throw new IllegalArgumentException("Invalid arguments, provide one of 'conceptsRdf', 'phrases', 'multitesRdf'.");
@@ -111,7 +115,7 @@ public class ConceptsController {
         } catch (IOException e) {
             throw new IllegalArgumentException("Failed to get multites skos.", e);
         }
-        conceptsService.importConcepts(multitesSkosFile);
+        conceptsService.importMultitesSkos(multitesSkosFile);
         multitesSkosFile.delete();
         return "Imported MultiTes files.";
     }

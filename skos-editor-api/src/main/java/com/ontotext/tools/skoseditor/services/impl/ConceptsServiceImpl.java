@@ -45,9 +45,8 @@ public class ConceptsServiceImpl implements ConceptsService {
     @Override
     public void importMultitesSkos(File multitesSkos) {
         try {
-            Reader conceptsRdfFileReader = new FileReader(multitesSkos);
-            Reader fixedSkosReader = new MultitesSkosFixer().fix(conceptsRdfFileReader, RDFFormat.TURTLE);
-            InputStream fixedSkosInputStream = new ReaderInputStream(fixedSkosReader);
+            InputStream multitesSkosInputStream = new FileInputStream(multitesSkos);
+            InputStream fixedSkosInputStream = new MultitesSkosFixer().fix(multitesSkosInputStream, RDFFormat.TURTLE);
             File fixedSkosFile = new File("fixed-skos.ttl");
             OutputStream fixedSkosOutputStream = new FileOutputStream(fixedSkosFile);
             StreamUtils.copy(fixedSkosInputStream, fixedSkosOutputStream);
