@@ -14,6 +14,22 @@
 
 	<dependencies>
 
+        <dependency>
+            <groupId>com.ontotext.openpolicy</groupId>
+            <artifactId>openpolicy-model</artifactId>
+            <version>2.3-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.ontotext.openpolicy</groupId>
+            <artifactId>openpolicy-semanticstore-utils</artifactId>
+            <version>2.3-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.ontotext.openpolicy</groupId>
+            <artifactId>openpolicy-skosfixer</artifactId>
+            <version>2.3-SNAPSHOT</version>
+        </dependency>
+
         <!-- LOGGING -->
 		<!-- provide the common slf4j interface -->
 		<dependency>
@@ -39,17 +55,6 @@
 			<artifactId>log4j-over-slf4j</artifactId>
 			<version>${slf4j.version}</version>
 		</dependency>
-
-        <dependency>
-            <groupId>com.ontotext.openpolicy</groupId>
-            <artifactId>openpolicy-model</artifactId>
-            <version>2.3-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.ontotext.openpolicy</groupId>
-            <artifactId>openpolicy-semanticstore-utils</artifactId>
-            <version>2.3-SNAPSHOT</version>
-        </dependency>
 
 		<dependency>
 			<groupId>org.springframework</groupId>

@@ -4,14 +4,19 @@ import com.google.common.io.Files;
 import com.ontotext.openpolicy.concept.Concept;
 import com.ontotext.openpolicy.concept.ConceptDescription;
 import com.ontotext.openpolicy.error.AlreadyExistsException;
+import com.ontotext.openpolicy.skosfixer.MultitesSkosFixer;
+import com.ontotext.openpolicy.skosfixer.RdfFixerException;
 import com.ontotext.tools.skoseditor.repositories.ConceptsRepository;
 import com.ontotext.tools.skoseditor.repositories.ValidationRepository;
 import com.ontotext.tools.skoseditor.services.ConceptsService;
 import com.ontotext.tools.skoseditor.util.IdUtils;
+import com.ontotext.tools.skoseditor.util.WebUtils;
+import org.apache.commons.io.input.ReaderInputStream;
 import org.openrdf.model.URI;
+import org.openrdf.rio.RDFFormat;
+import org.springframework.util.StreamUtils;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.List;
@@ -27,14 +32,34 @@ public class ConceptsServiceImpl implements ConceptsService {
     }
 
     @Override
-    public void importConcepts(File conceptsRdfFile) {
+    public void importConcepts(File conceptsTtlFile) {
         deleteConcepts();
-        conceptsRepository.importConcepts(conceptsRdfFile);
+        conceptsRepository.importConcepts(conceptsTtlFile);
     }
 
     @Override
     public String exportConcepts() {
         return conceptsRepository.exportConcepts();
+    }
+
+    @Override
+    public void importMultitesSkos(File multitesSkos) {
+        try {
+            Reader conceptsRdfFileReader = new FileReader(multitesSkos);
+            Reader fixedSkosReader = new MultitesSkosFixer().fix(conceptsRdfFileReader, RDFFormat.TURTLE);
+            InputStream fixedSkosInputStream = new ReaderInputStream(fixedSkosReader);
+            File fixedSkosFile = new File("fixed-skos.ttl");
+            OutputStream fixedSkosOutputStream = new FileOutputStream(fixedSkosFile);
+            StreamUtils.copy(fixedSkosInputStream, fixedSkosOutputStream);
+            fixedSkosInputStream.close();
+            fixedSkosOutputStream.close();
+            importConcepts(fixedSkosFile);
+            fixedSkosFile.delete();
+        } catch (IOException ioe) {
+            throw new IllegalArgumentException("Failed to get file.", ioe);
+        } catch (RdfFixerException rfe) {
+            throw new IllegalStateException("Failed to fix MultiTes RDF.", rfe);
+        }
     }
 
     @Override
@@ -272,4 +297,15 @@ public class ConceptsServiceImpl implements ConceptsService {
         conceptsRepository.deleteNarrower(id, narrowerId);
     }
 
+    @Override
+    public boolean getStemming(URI id) {
+        validationRepository.validateExists(id);
+        return conceptsRepository.findStemming(id);
+    }
+
+    @Override
+    public void setStemming(URI id, boolean v) {
+        validationRepository.validateExists(id);
+        conceptsRepository.setStemming(id, v);
+    }
 }

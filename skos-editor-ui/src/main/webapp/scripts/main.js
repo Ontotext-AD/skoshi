@@ -1,12 +1,12 @@
 $(function() {
 
-  /* retrieve concepts and the selected concept if any */
-
   var limit = 50;
   var offset = 0;
   var autoSuggestEnabled = false;
   var selected = false;
   var selectedCategory;
+
+  $('#alternativelabels').tagsinput();
 
   (function() {
     if (id && id != null) {
@@ -18,24 +18,67 @@ $(function() {
       getConcepts('', 50, 0);
     }
     $('#conceptsSearchBox').focusTextToEnd();
-    $("#importForm").attr("action", service + "/concepts/import");
+    $("#importForm, #importForm2").attr("action", service + "/concepts/import");
   }());
 
-  $('input').each(function(){
-    var self = $(this),
-      label = self.next(),
-      label_text = label.text();
+    if (id && id != null) {
+      $.when($.get(service + "/concepts/" + id + "/stemming"))
+      .then(function(value) {
+          if (value) {
+            $("#line-checkbox-1").prop("checked", true);
+            $('#line-checkbox-1').iCheck('check');
+          } else {
+            $("#line-checkbox-1").prop("checked", false);
+            $('#line-checkbox-1').iCheck('uncheck');
+          }
+          $('#line-checkbox-1').each(function(){
+          var self = $(this),
+            label = self.next(),
+            label_text = label.text();
 
-    label.remove();
-    self.iCheck({
-      checkboxClass: 'icheckbox_line',
-      radioClass: 'iradio_line',
-      insert: '<div class="icheck_line-icon"></div>' + label_text
+          label.remove();
+          self.iCheck({
+            checkboxClass: 'icheckbox_line',
+            radioClass: 'iradio_line',
+            insert: '<div class="icheck_line-icon"></div>' + label_text
+          });
+        });
+
+        if ($('#line-checkbox-1').prop('checked')) {
+          $('.icheckbox_line').css('background', '#27AE60');
+        } else {
+          $('.icheckbox_line').css('background', '#BDC3C7');
+        }
+      }, function(error) {
+          alertify.error(error);
+      });
+    }
+
+  /* EVENT HANDLERS */
+
+  $('#line-checkbox-1').on('ifChecked', function(event){
+    $('.icheckbox_line').css('background', '#27AE60');
+    $.ajax({
+      url: service + "/concepts/" + id + "/stemming/?v=true",
+      type: "PUT"
+    }).done(function(result) {
+      alertify.success(result);
+    }).fail(function(result) {
+      alertify.error(result);
     });
   });
 
-
-  /* EVENT HANDLERS */
+  $('#line-checkbox-1').on('ifUnchecked', function(event){
+    $('.icheckbox_line').css('background', '#BDC3C7');
+    $.ajax({
+      url: service + "/concepts/" + id + "/stemming/?v=false",
+      type: "PUT"
+    }).done(function(result) {
+      alertify.success(result);
+    }).fail(function(result) {
+      alertify.error(result);
+    });
+  });
 
   $('#conceptsContainer').bind('scroll', function(){
      if($(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight){
@@ -51,7 +94,7 @@ $(function() {
 
   $('#saveNewConcept').on('click', function() {
     $.ajax({
-      url: service + "/concepts/" + $('#newConceptInput').val(),
+      url: service + "/concepts/?lbl=" + $('#newConceptInput').val(),
       type: "POST"
     }).done(function(result) {
       location.href = 'index.html?id=' + result;
@@ -79,6 +122,20 @@ $(function() {
     };
     $("#importForm").ajaxForm(options);
     $('#import').modal('hide');
+    $('#conceptsContainer').html('');
+    getConcepts('', 50, 0);
+  });
+
+  $('#keyphrasesImportButtonInside').on('click', function() {
+    var options = {
+      beforeSend: function() {
+        $("#messageinfo").html("<span class='icon-spin icon-spinner'></span>");
+      },
+      dataType: 'json'
+    };
+    $("#importForm2").ajaxForm(options);
+    $('#phrasesimport').modal('hide');
+    $('#conceptsContainer').html('');
     getConcepts('', 50, 0);
   });
 

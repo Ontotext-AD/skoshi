@@ -269,7 +269,7 @@ function getConceptDetails(id) {
 				$('#stemming').css('display', 'inline-block');
 				$('#deleteConcept').html('Delete ' + l);
 			}
-			if (i == 'altLabels' || i == 'abbreviations') {
+			if (i == 'alternativeLabels' || i == 'abbreviations') {
 				$.each(l, function(index, value) {
 					$('#' + i.toLowerCase()).tagsinput('add', value);
 				});

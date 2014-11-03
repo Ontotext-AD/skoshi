@@ -1,9 +1,12 @@
 package com.ontotext.tools.skoseditor.config;
 
+import com.google.common.net.MediaType;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -11,6 +14,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.io.InputStream;
+
+import static org.junit.Assert.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -84,11 +90,26 @@ public class WebAppConfigTest {
         clearConcepts();
         final String conceptId = createConcept("Test Concept");
 
-        mockMvc.perform(get("/concepts?prefix=test"))
+        assertNotNull(conceptId);
+        assert StringUtils.isNotBlank(conceptId);
+
+        mockMvc.perform(get("/concepts").param("prefix", "test"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("[0].id").value(conceptId));
+    }
 
+    @Test
+    public void testPrefixSearchForFacet() throws Exception {
+
+        clearConcepts();
+        final String conceptId = createConcept("Test Concept");
+        final String facetId = createFacet("Test Facet");
+
+        mockMvc.perform(get("/facets/" + facetId + "/available").param("prefix", "test"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("[0].id").value(conceptId));
     }
 
     private void testMultiValueDataProperty(final String property, final String value1, final String value2) throws Exception {
@@ -120,7 +141,7 @@ public class WebAppConfigTest {
         mockMvc.perform(delete("/concepts/" + conceptId + "/" + property).param("value", value2))
                 .andExpect(status().isOk());
 
-        mockMvc.perform(get("/concepts/" + conceptId+"/" + property))
+        mockMvc.perform(get("/concepts/" + conceptId + "/" + property))
                 .andExpect(status().isOk())
                 .andExpect(content().string("[]"));
     }
@@ -203,7 +224,16 @@ public class WebAppConfigTest {
 
     private String createConcept(final String label) throws Exception {
 
-        final String id = mockMvc.perform(post("/concepts/" + label))
+        final String id = mockMvc.perform(post("/concepts").param("lbl", label))
+                .andExpect(status().isCreated())
+                .andReturn().getResponse().getContentAsString();
+
+        return id.substring(1, id.length()-1);
+    }
+
+    private String createFacet(final String label) throws Exception {
+
+        final String id = mockMvc.perform(post("/facets").param("lbl", label))
                 .andExpect(status().isCreated())
                 .andReturn().getResponse().getContentAsString();
 
@@ -224,7 +254,7 @@ public class WebAppConfigTest {
                 .andExpect(status().isOk())
                 .andExpect(content().string(quote(prefLabel)));
 
-        mockMvc.perform(put("/concepts/" + conceptId+ "/preflabel?value=" + newPrefLabel))
+        mockMvc.perform(put("/concepts/" + conceptId+ "/preflabel").param("value", newPrefLabel))
                 .andExpect(status().isOk());
 
         mockMvc.perform(get("/concepts/" + conceptId+ "/preflabel"))
@@ -279,4 +309,43 @@ public class WebAppConfigTest {
 
 
     private static final String quote(final String s) { return "\"" + s + "\""; }
+
+    @Test
+    public void testImportPhrases() throws Exception {
+
+        clearConcepts();
+
+        InputStream phrasesStream = WebAppConfigTest.class.getClassLoader().getResourceAsStream("phrases.txt");
+        MockMultipartFile phrasesFile = new MockMultipartFile("phrases", "phrases.txt", "text/plain;charset=UTF-8", phrasesStream);
+
+        mockMvc.perform(fileUpload("/concepts/import").file(phrasesFile))
+                .andExpect(status().isCreated())
+                .andDo(print());
+    }
+
+    @Test
+    public void testImportRdf() throws Exception {
+
+        clearConcepts();
+
+        InputStream conceptsRdfStream = WebAppConfigTest.class.getClassLoader().getResourceAsStream("concepts.ttl");
+        MockMultipartFile conceptsRdfFile = new MockMultipartFile("conceptsRdf", "concepts.ttl", "application/x-turtle;charset=UTF-8", conceptsRdfStream);
+
+        mockMvc.perform(fileUpload("/concepts/import").file(conceptsRdfFile))
+                .andExpect(status().isCreated())
+                .andDo(print());
+    }
+
+    @Test
+    public void testImportMultitesSkos() throws Exception {
+
+        clearConcepts();
+
+        InputStream multitesSkosStream = WebAppConfigTest.class.getClassLoader().getResourceAsStream("multites-export.rdf");
+        MockMultipartFile multitesSkosFile = new MockMultipartFile("multitesRdf", "multites-export.rdf", "application/rdf+xml;charset=UTF-8", multitesSkosStream);
+
+        mockMvc.perform(fileUpload("/concepts/import").file(multitesSkosFile))
+                .andExpect(status().isCreated())
+                .andDo(print());
+    }
 }
