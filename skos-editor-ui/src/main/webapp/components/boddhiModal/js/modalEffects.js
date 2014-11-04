@@ -12,8 +12,20 @@ var ModalEffects = (function() {
 				close = modal.querySelector( '.md-close' );
 
 			function removeModal( hasPerspective ) {
-				classie.remove( modal, 'md-show' );
+				if ($('#newConceptInput').val()) {
+					$(modal).css('visibility', 'hidden');
+					$(modal).hide();
+					classie.remove( modal, 'md-show' );
+				}
+				if( hasPerspective ) {
+					classie.remove( document.documentElement, 'md-perspective' );
+				}
+			}
 
+			function removeModal2( hasPerspective ) {
+				$(modal).css('visibility', 'hidden');
+				$(modal).hide();
+				classie.remove( modal, 'md-show' );
 				if( hasPerspective ) {
 					classie.remove( document.documentElement, 'md-perspective' );
 				}
@@ -23,6 +35,10 @@ var ModalEffects = (function() {
 				removeModal( classie.has( el, 'md-setperspective' ) ); 
 			}
 
+			function removeModalHandler2() {
+				removeModal2( classie.has( el, 'md-setperspective' ) ); 
+			}
+
 			el.addEventListener( 'keydown', function( ev ) {
 				if (ev.keyCode == 27) {
 			        removeModalHandler();
@@ -30,9 +46,11 @@ var ModalEffects = (function() {
 			});
 
 			el.addEventListener( 'click', function( ev ) {
+				$(modal).css('visibility', 'visible');
+				$(modal).show();
 				classie.add( modal, 'md-show' );
 				overlay.removeEventListener( 'click', removeModalHandler );
-				overlay.addEventListener( 'click', removeModalHandler );
+				overlay.addEventListener( 'click', removeModalHandler2 );
 
 				if( classie.has( el, 'md-setperspective' ) ) {
 					setTimeout( function() {
@@ -44,6 +62,7 @@ var ModalEffects = (function() {
 			});
 
 			close.addEventListener( 'click', function( ev ) {
+				
 				removeModalHandler();
 			});
 

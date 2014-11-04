@@ -298,7 +298,12 @@ $(function() {
   getFacets();
 
   $('#conceptsSearchBox').keyup(function() {
-    facetsAutosuggestService(selectedCategory);
+    $('#conceptsSearchBox').keyup(function(e) {
+      var keycode = (e.keyCode ? e.keyCode : e.which);
+      if (keycode != '17' && keycode != '18' && keycode != '91' && keycode != '93' && keycode != '9' && keycode != '27' && keycode != '37' && keycode != '38' && keycode != '39' && keycode != '40'){
+        facetsAutosuggestService(selectedCategory);
+      }
+    });
   });
 
   $('#newFacetInput').keyup(function(e) {
@@ -353,25 +358,32 @@ $(function() {
     }
   });
 
-  $('#newFacetInput').focus();
-  $(document).on('keypress', '#newFacetInput', function(e) {
-      if (e.which == '13') {
-          $('#saveNewFacet').click();
-      }
+  $(document).on('click', '#saveNewFacet', function() {
+    if ($('#newFacetInput').val()) {
+      $.ajax({
+        url: service + "/facets/",
+        type: "POST",
+        data: 'lbl=' + $('#newFacetInput').val()
+      }).done(function(result) {
+        $('#newFacetInput').val('');
+        alertify.success(result);
+        getFacetsAfterAdd();
+      }).fail(function(result) {
+        alertify.error(result);
+      });
+    } else {
+      alertify.error('Please type a facet name.');
+      return false;
+    }
+    
   });
 
-  $(document).on('click', '#saveNewFacet', function() {
-    $.ajax({
-      url: service + "/facets/",
-      type: "POST",
-      data: 'lbl=' + $('#newFacetInput').val()
-    }).done(function(result) {
-      $('#newFacetInput').val('');
-      alertify.success(result);
-      getFacetsAfterAdd();
-    }).fail(function(result) {
-      alertify.error(result);
-    });
+  $('#newFacetButton').on('mouseover', function() {
+    $('.md-modal').css('visibility', 'visible');
+  });
+
+  $('#newFacetButton').on('mouseout', function() {
+    $('.md-modal').css('visibility', 'hidden');
   });
 
   $(document).on('click', '.removeFacet', function() {
