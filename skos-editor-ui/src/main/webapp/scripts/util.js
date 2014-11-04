@@ -223,7 +223,7 @@ function autoSuggestService() {
 function changeNotePrefDef(type, el) {
 	el = el.replace(/(?:\r\n|\r|\n)/g, '%0A');
 	$.ajax({
-		url: service + "/concepts/" + encodeURIComponent(id) + "/" + type + "?value=" + el,
+		url: service + "/concepts/" + id + "/" + type + "?value=" + el,
 		type: "PUT"
 	}).done(function(result) {
 		alertify.success(result);
@@ -234,7 +234,7 @@ function changeNotePrefDef(type, el) {
 
 function addRemoveRSNB(http, type, conceptID, itemID) {
 	$.ajax({
-		url: service + "/concepts/" + encodeURIComponent(conceptID) + "/" + type + "/" + encodeURIComponent(itemID),
+		url: service + "/concepts/" + conceptID + "/" + type + "/" + itemID,
 		type: http
 	}).done(function(result) {
 		alertify.success(result);
