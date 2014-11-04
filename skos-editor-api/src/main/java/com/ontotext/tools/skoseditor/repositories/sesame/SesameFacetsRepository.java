@@ -4,10 +4,14 @@ import com.ontotext.openpolicy.concept.Concept;
 import com.ontotext.openpolicy.concept.ConceptImpl;
 import com.ontotext.openpolicy.entity.NamedEntity;
 import com.ontotext.openpolicy.entity.NamedEntityImpl;
+import com.ontotext.openpolicy.error.DataAccessException;
 import com.ontotext.openpolicy.navigation.TreeNode;
 import com.ontotext.openpolicy.ontologyconstants.openpolicy.SKOSX;
+import com.ontotext.openpolicy.semanticstoreutils.QueryExecutor;
+import com.ontotext.openpolicy.semanticstoreutils.QueryExecutorUtils;
 import com.ontotext.openpolicy.semanticstoreutils.facets.RdfFacetsRetriever;
 import com.ontotext.openpolicy.semanticstoreutils.sparql.SparqlQueryUtils;
+import com.ontotext.openpolicy.serviceproviders.RepositoryConnectionProvider;
 import com.ontotext.openpolicy.tree.Tree;
 import com.ontotext.tools.skoseditor.repositories.FacetsRepository;
 import com.ontotext.tools.skoseditor.util.SparqlUtils;
@@ -78,18 +82,12 @@ public class SesameFacetsRepository implements FacetsRepository {
 
     @Override
     public Tree<TreeNode> findFacet(URI id) {
-        Tree<TreeNode> facet;
         try {
-            RepositoryConnection connection = repository.getConnection();
-            try {
-                facet = new RdfFacetsRetriever(connection).getFacetTree(id);
-            } finally {
-                connection.close();
-            }
-        } catch (RepositoryException re) {
+            QueryExecutorUtils executorUtils = new QueryExecutorUtils(new RepositoryConnectionProvider(repository));
+            return new RdfFacetsRetriever(executorUtils).getFacetTree(id);
+        } catch (DataAccessException re) {
             throw new IllegalStateException(re);
         }
-        return facet;
     }
 
     @Override
