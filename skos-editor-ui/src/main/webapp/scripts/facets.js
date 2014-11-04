@@ -58,7 +58,7 @@ $(function() {
     $('#concepts-loader').html('');
   } else {
     $('#conceptsSearchBox').show();
-    url = service + "/facets/" + $(selectedCategory).attr('data-id') + "/available";
+    url = service + "/facets/" + $(selectedCategory).attr('data-id') + "/available?limit=" + limit + "&offset=" + offset;
     var xhr = $.ajax({
       url: url,
       type: "GET"
