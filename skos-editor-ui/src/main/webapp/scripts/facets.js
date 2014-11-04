@@ -9,14 +9,17 @@ $(function() {
   var facetsAutosuggestRenderer = function (url, textValue) {
   
   $('#conceptsContainer').html('');
+  $('#concepts-loader').html('Loading...');
     xhr = $.ajax({
       url: url,
+      cache: true
     }).done(function(result) {
       $.each(result, function(i, l) {
         var dataID = l.id;
         if (dataID.endsWith('=')) {
           dataID = dataID.slice(0, -1);
         }
+        $('#concepts-loader').html('');
         $('#conceptsContainer').append('<a href="javascript:void(0)" class="list-group-item facet" data-id="' + l.id + '">' + l.label + '</a>');
         if (textValue.length > 1) {
           $('#conceptsContainer').highlight(textValue);
@@ -48,7 +51,7 @@ $(function() {
     $('#conceptsContainer').html(''); 
   }
 
-  $('#concepts-loader').html('Loading...');
+  $('#concepts-loader').html('Loading next 50 concepts...');
 
   var txt = '';
   var url = '';
@@ -296,6 +299,24 @@ $(function() {
 
   $('#conceptsSearchBox').keyup(function() {
     facetsAutosuggestService(selectedCategory);
+  });
+
+  $('#newFacetInput').keyup(function(e) {
+      var keycode = (e.keyCode ? e.keyCode : e.which);
+      if (keycode == '13'){
+        $('#saveNewFacet').trigger('click');
+      }
+      if (keycode == '27') {
+        var overlay = document.querySelector( '.md-overlay' );
+
+        [].slice.call( document.querySelectorAll( '.md-trigger' ) ).forEach( function( el, i ) {
+
+          var modal = document.querySelector( '#' + el.getAttribute( 'data-modal' ) ),
+            close = modal.querySelector( '.md-close' );
+            classie.remove( modal, 'md-show' );
+
+        });
+      }
   });
 
   $(document).on('click', '.remove', function(e) {

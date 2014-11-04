@@ -171,24 +171,35 @@ var tooltipAutoSuggest = function() {
 function autoSuggestRenderer(url, textValue) {
 	
 	$('#conceptsContainer').html('');
+	$('#concepts-loader').html('Loading...');
+	var txt = '';
     xhr = $.ajax({
       url: url,
+      cache: true
     }).done(function(result) {
+    	$('#concepts-loader').html('');
       $.each(result, function(i, l) {
         var dataID = l.id;
         if (dataID.endsWith('=')) {
           dataID = dataID.slice(0, -1);
         }
         if (id && id != null && id == dataID) {
-          $('#conceptsContainer').append('<a href="javascript:void(0)" class="list-group-item active" data-id="' + l.id + '">' + l.label + ' <span class="glyphicon glyphicon-asterisk"></span></a>');
+          txt += '<a href="javascript:void(0)" class="list-group-item active" data-id="' + l.id + '">' + l.label + ' <span class="glyphicon glyphicon-asterisk"></span></a>';
         } else {
-          $('#conceptsContainer').append('<a href="javascript:void(0)" class="list-group-item tt" data-id="' + l.id + '">' + l.label + '</a>');
-        }
-        if (textValue.length > 1) {
-          $('#conceptsContainer').highlight(textValue);
+          txt += '<a href="javascript:void(0)" class="list-group-item tt" data-id="' + l.id + '">' + l.label + '</a>';
         }
       });
-        tooltipAutoSuggest();
+
+      	document.getElementById('conceptsContainer').innerHTML = txt;
+      	if (textValue.length > 1) {
+	      $('#conceptsContainer').highlight(textValue);
+	    }
+      	
+      	if (result.length > 0) {
+      		tooltipAutoSuggest();
+      	} else {
+      		$('#conceptsContainer').append('<div style="font-size: 12px; margin-top: 5px;">No results found.</div>');
+      	}     
     });
 }
 function autoSuggestService() {
@@ -212,7 +223,7 @@ function autoSuggestService() {
 function changeNotePrefDef(type, el) {
 	el = el.replace(/(?:\r\n|\r|\n)/g, '%0A');
 	$.ajax({
-		url: service + "/concepts/" + id + "/" + type + "?value=" + el,
+		url: service + "/concepts/" + encodeURIComponent(id) + "/" + type + "?value=" + el,
 		type: "PUT"
 	}).done(function(result) {
 		alertify.success(result);
@@ -223,7 +234,7 @@ function changeNotePrefDef(type, el) {
 
 function addRemoveRSNB(http, type, conceptID, itemID) {
 	$.ajax({
-		url: service + "/concepts/" + conceptID + "/" + type + "/" + itemID,
+		url: service + "/concepts/" + encodeURIComponent(conceptID) + "/" + type + "/" + encodeURIComponent(itemID),
 		type: http
 	}).done(function(result) {
 		alertify.success(result);
@@ -266,9 +277,6 @@ function getConcepts(val, limit, offset) {
 			
 		});
 		$('#conceptsContainer').append(txt);
-		//if (result.length <= 0) {
-		//	$('#conceptsContainer').html('No concepts.');
-		//}
 		if (window.location.href.indexOf("facets") == -1) {
 			tooltip('c' + offset);
 		}
@@ -290,7 +298,6 @@ function getConceptDetails(id) {
 				$('#deleteConcept').css('display', 'inline-block');
 				$('#activeUser').html(l);
 				$('#stemming').css('display', 'inline-block');
-				$('#deleteConcept').html('Delete ' + l);
 			}
 			if (i == 'alternativeLabels' || i == 'abbreviations') {
 				$.each(l, function(index, value) {
@@ -306,7 +313,7 @@ function getConceptDetails(id) {
 					$('#' + i + '-list').append('<a href="javascript:void(0)" class="list-group-item RSNB" id="' + synValue.id + '">' + synValue.label + '<span style="float: right" data-type="' + i + '" data-id="' + synValue.id + '" class="glyphicon glyphicon-remove deleteRSBA"></span></a>');
 				});
 				if (l.length <= 0) {
-					$('#' + i + '-list').append('N/A for ' + pl);
+					$('#' + i + '-list').append('N/A');
 				}
 				$('.RSNB').qtip({
 					content: {

@@ -9,6 +9,7 @@ $(function() {
   $('#alternativelabels').tagsinput();
 
   key('a', function(){ 
+    $('#newConceptInput').focus();
     var overlay = document.querySelector( '.md-overlay' );
 
     [].slice.call( document.querySelectorAll( '.md-trigger' ) ).forEach( function( el, i ) {
@@ -65,6 +66,7 @@ $(function() {
     if ($('#conceptsSearchBox').val().length > 0) {
       autoSuggestService();
     } else {
+      $('#conceptsContainer').html('');
       getConcepts('', 50, 0);
     }
     $('#conceptsSearchBox').focusTextToEnd();
@@ -138,8 +140,29 @@ $(function() {
      }
   });
 
-  $('#conceptsSearchBox').keyup(function() {
-    autoSuggestService();
+  $('#conceptsSearchBox').keyup(function(e) {
+    var keycode = (e.keyCode ? e.keyCode : e.which);
+    if (keycode != '17' && keycode != '18' && keycode != '91' && keycode != '93' && keycode != '9' && keycode != '27'){
+      autoSuggestService();
+    }
+  });
+
+  $('#newConceptInput').keyup(function(e) {
+      var keycode = (e.keyCode ? e.keyCode : e.which);
+      if (keycode == '13'){
+        $('#saveNewConcept').trigger('click');
+      }
+      if (keycode == '27') {
+        var overlay = document.querySelector( '.md-overlay' );
+
+        [].slice.call( document.querySelectorAll( '.md-trigger' ) ).forEach( function( el, i ) {
+
+          var modal = document.querySelector( '#' + el.getAttribute( 'data-modal' ) ),
+            close = modal.querySelector( '.md-close' );
+            classie.remove( modal, 'md-show' );
+
+        });
+      }
   });
 
   $('#saveNewConcept').on('click', function() {
@@ -255,6 +278,7 @@ $(function() {
       } else {
         alertify.success(result);
       }
+      $('#conceptsContainer').html('');
       getConcepts('', 50, 0);
     }).fail(function(result) {
       alertify.error('Error');

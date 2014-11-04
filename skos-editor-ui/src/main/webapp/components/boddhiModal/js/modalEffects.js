@@ -31,7 +31,6 @@ var ModalEffects = (function() {
 
 			el.addEventListener( 'click', function( ev ) {
 				classie.add( modal, 'md-show' );
-				$('#newFacetInput').focus();
 				overlay.removeEventListener( 'click', removeModalHandler );
 				overlay.addEventListener( 'click', removeModalHandler );
 
@@ -40,6 +39,7 @@ var ModalEffects = (function() {
 						classie.add( document.documentElement, 'md-perspective' );
 					}, 25 );
 				}
+				$('#newConceptInput').focus();
 				$('#newFacetInput').focus();
 			});
 
@@ -47,12 +47,11 @@ var ModalEffects = (function() {
 				removeModalHandler();
 			});
 
-		} );
+		});
 
 	}
 
 	init();
-	$('#newFacetInput').focus();
 
 })();
 
