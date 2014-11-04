@@ -323,7 +323,7 @@ $(function() {
           $('#conceptsContainer').html('');
           getFacet($(selectedCategory).attr('data-id'), selectedCategory);
 
-          getConceptsAvailable();
+          getConceptsAvailable('', 50, 0);
         }).fail(function(result) {
           alertify.error(result);
         });
@@ -364,7 +364,7 @@ $(function() {
       alertify.success(result);
       $('#conceptsContainer').html('');
       getFacet(facetId, container);
-      getConceptsAvailable();
+      getConceptsAvailable('', 50, 0);
     }).fail(function(result) {
       alertify.error(result);
     });
