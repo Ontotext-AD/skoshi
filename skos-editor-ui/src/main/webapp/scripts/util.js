@@ -211,7 +211,7 @@ function autoSuggestService() {
     var url;
     var textValue = $('#conceptsSearchBox').val();
     if (textValue.length >= 2) {
-      url = service + "/concepts?prefix=" + textValue;
+      url = service + "/concepts?prefix=" + textValue + "?limit=50";
       autoSuggestRenderer(url, textValue);
     } else if (textValue.length == 0) {
       url = service + "/concepts?limit=50";
@@ -327,22 +327,22 @@ function getConceptDetails(id) {
 
 								$.each(result, function(i, l) {
 									if (i == 'label') {
-										detailInfo += '<div><b>Main label:</b> ' + l + '</div>';
+										detailInfo += '<div><span style="color: #3498DB"><b>Main label:</b></span> ' + l + '</div>';
 									}
 									if (i == 'altLabels' && l != null && l.length > 0) {
-										detailInfo += '<div><b>Alternative labels:</b> ' + l + '</div>';
+										detailInfo += '<div><span style="color: #3498DB"><b>Alternative labels:</b></span> ' + l + '</div>';
 									}
 									if (i == 'abbreviations' && l != null && l.length > 0) {
-										detailInfo += '<div><b>Abbreviations:</b> ' + l + '</div>';
+										detailInfo += '<div><span style="color: #3498DB"><b>Abbreviations:</b></span> ' + l + '</div>';
 									}
 									if (i == 'definition' && l != null && l.length > 0) {
-										detailInfo += '<div><b>Definition:</b> ' + l + '</div>';
+										detailInfo += '<div><span style="color: #3498DB"><b>Definition:</b></span> ' + l + '</div>';
 									}
 									if (i == 'note' && l != null && l.length > 0) {
-										detailInfo += '<div><b>Note:</b> ' + l + '</div>';
+										detailInfo += '<div><span style="color: #3498DB"><b>Note:</b></span> ' + l + '</div>';
 									}
 									if (i == 'related' && l != null && l.length > 0) {
-										detailInfo += '<div><b>Related:</b> ';
+										detailInfo += '<div><span style="color: #3498DB"><b>Related:</b></span> ';
 										var len = $(l).length;
 										$.each(l, function(synIndex, synValue) {
 											if (synIndex == len - 1) {
@@ -354,7 +354,7 @@ function getConceptDetails(id) {
 										detailInfo += '</div>';
 									}
 									if (i == 'synonyms' && l != null && l.length > 0) {
-										detailInfo += '<div><b>Synonyms:</b> ';
+										detailInfo += '<div><span style="color: #3498DB"><b>Synonyms:</b></span> ';
 										var len = $(l).length;
 										$.each(l, function(synIndex, synValue) {
 											if (synIndex == len - 1) {
@@ -366,7 +366,7 @@ function getConceptDetails(id) {
 										detailInfo += '</div>';
 									}
 									if (i == 'broader' && l != null && l.length > 0) {
-										detailInfo += '<div><b>Broader:</b> ';
+										detailInfo += '<div><span style="color: #3498DB"><b>Broader:</b></span> ';
 										var len = $(l).length;
 										$.each(l, function(synIndex, synValue) {
 											if (synIndex == len - 1) {
@@ -378,7 +378,7 @@ function getConceptDetails(id) {
 										detailInfo += '</div>';
 									}
 									if (i == 'narrower' && l != null && l.length > 0) {
-										detailInfo += '<div><b>Narrower:</b> ';
+										detailInfo += '<div><span style="color: #3498DB"><b>Narrower:</b></span> ';
 										var len = $(l).length;
 										$.each(l, function(synIndex, synValue) {
 											if (synIndex == len - 1) {

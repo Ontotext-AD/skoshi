@@ -308,7 +308,7 @@ $(function() {
   });
 
   var timer;
-  $('#mainLabel, #definition, #note').on('keyup', function() {
+  $('#preflabel, #definition, #note').on('keyup', function() {
     var el = $(this);
     clearTimeout(timer);
     var ms = 1000;

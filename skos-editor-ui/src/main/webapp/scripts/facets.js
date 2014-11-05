@@ -338,13 +338,15 @@ $(function() {
 
   $(document).on('click', '.facet', function() {
     if (typeof selected != 'undefined' && selected) {
+      var fLabel = $(selectedCategory).attr('data-label');
+      var cLabel = $(this).text();
       var fId = $(selectedCategory).attr('data-id');
       var cId = $(this).attr('data-id');
         $.ajax({
           url: service + "/facets/" + fId + '/concepts/' + cId,
           type: "POST"
         }).done(function(result) {
-          alertify.success(result);
+          alertify.success('Concept "' + cLabel + '" added successfuly to the facet "' + fLabel + '"', 6000);
 
           $('#conceptsContainer').html('');
           getFacet($(selectedCategory).attr('data-id'), selectedCategory);
@@ -413,7 +415,9 @@ $(function() {
       getConceptsAvailable(val, limit, offset);
     }
     $('.category').attr('data-selected', null);
+    $('.category').removeClass('selected');
     $(this).attr('data-selected', 'true');
+    $(this).addClass('selected');
     $('.panel-heading').css('background-color', '#f5f5f5').css('border-color', '#ddd').css('color', '#333');
     $(this).children().find('.panel-heading').css('background-color', '#3498DB').css('border-color', '#2980B9').css('color', '#fff');
   });
