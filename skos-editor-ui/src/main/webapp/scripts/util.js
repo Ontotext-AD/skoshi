@@ -211,7 +211,7 @@ function autoSuggestService() {
     var url;
     var textValue = $('#conceptsSearchBox').val();
     if (textValue.length >= 2) {
-      url = service + "/concepts?prefix=" + textValue + "?limit=50";
+      url = service + "/concepts?prefix=" + textValue;
       autoSuggestRenderer(url, textValue);
     } else if (textValue.length == 0) {
       url = service + "/concepts?limit=50";
@@ -320,7 +320,7 @@ function getConceptDetails(id) {
 						text: function(event, api) {
 							var detailInfo = '';
 							$.ajax({
-								url: service + "/concepts/" + $(this).attr('id'),
+								url: service + "/concepts/" + encodeURIComponent($(this).attr('id')),
 								type: "GET",
 								async: false
 							}).done(function(result) {

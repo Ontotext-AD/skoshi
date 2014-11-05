@@ -443,4 +443,7 @@ h2 {
 }
 .label-success {
   background: #34495E !important;
+  margin-bottom: 5px;
+  padding: 5px;
+  display: inline-block;
 }
