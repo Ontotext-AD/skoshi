@@ -116,7 +116,7 @@ $(function() {
     }).done(function(result) {
       alertify.success(result);
     }).fail(function(result) {
-      alertify.error(result);
+      alertify.error(result.responseText);
     });
   });
 
@@ -128,7 +128,7 @@ $(function() {
     }).done(function(result) {
       alertify.success(result);
     }).fail(function(result) {
-      alertify.error(result);
+      alertify.error(result.responseText);
     });
   });
 
@@ -181,7 +181,7 @@ $(function() {
       }).done(function(result) {
         location.href = 'index.html?id=' + result;
       }).fail(function(result) {
-        alertify.error('Error');
+        alertify.error(result.responseText);
       });
     } else {
       alertify.error('Please type a concept name.');
@@ -210,7 +210,7 @@ $(function() {
         location.href = 'index.html';
       },
       error: function(xhr) {
-        alertify.error(xhr);
+        alertify.error(xhr.responseText);
       }
     };
     $("#importForm").ajaxForm(options);
@@ -226,7 +226,7 @@ $(function() {
         location.href = 'index.html';
       },
       error: function(xhr) {
-        alertify.error(xhr);
+        alertify.error(xhr.responseText);
       }
     };
     $("#importForm2").ajaxForm(options);
@@ -276,7 +276,7 @@ $(function() {
       }).done(function(result) {
         location.href = 'index.html';
       }).fail(function(result) {
-        alertify.error('Error');
+        alertify.error(result.responseText);
       });
     }
   });
@@ -295,7 +295,7 @@ $(function() {
       $('#conceptsContainer').html('');
       getConcepts('', 50, 0);
     }).fail(function(result) {
-      alertify.error('Error');
+      alertify.error(result.responseText);
     });
   });
 
