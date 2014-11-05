@@ -75,5 +75,7 @@
     <!--  Swagger Config  -->
     <bean class="com.ontotext.tools.skoseditor.web.SkosEditorSwaggerConfig" />
 
+    <!-- Automatic exception handling -->
+    <bean class="com.ontotext.tools.skoseditor.web.RestExceptionHandler" />
 
 </beans>
