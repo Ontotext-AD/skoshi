@@ -50,6 +50,9 @@ public class FacetsController {
     @RequestMapping(method = PUT, value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
     public String updateFacetLabel(@PathVariable URI id, @RequestParam String lbl) {
+        if (StringUtils.isEmpty(lbl)) {
+            throw new IllegalArgumentException("Please provide a valid label.");
+        }
         facetsService.updateFacetLabel(id, lbl);
         return "Facet label updated successfully.";
     }
