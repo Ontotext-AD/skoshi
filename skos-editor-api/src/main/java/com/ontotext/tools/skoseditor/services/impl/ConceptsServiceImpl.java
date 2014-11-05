@@ -10,6 +10,8 @@ import com.ontotext.tools.skoseditor.repositories.ConceptsRepository;
 import com.ontotext.tools.skoseditor.repositories.ValidationRepository;
 import com.ontotext.tools.skoseditor.services.ConceptsService;
 import com.ontotext.tools.skoseditor.util.IdUtils;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.openrdf.model.URI;
 import org.openrdf.rio.RDFFormat;
 import org.springframework.util.StreamUtils;
@@ -42,20 +44,26 @@ public class ConceptsServiceImpl implements ConceptsService {
 
     @Override
     public void importMultitesSkos(File multitesSkos) {
+        InputStream multitesSkosInputStream = null;
+        InputStream fixedSkosInputStream = null;
+        File fixedSkosFile = null;
+        OutputStream fixedSkosOutputStream = null;
         try {
-            InputStream multitesSkosInputStream = new FileInputStream(multitesSkos);
-            InputStream fixedSkosInputStream = new MultitesSkosFixer().fix(multitesSkosInputStream, RDFFormat.RDFXML);
-            File fixedSkosFile = new File("fixed-skos.ttl");
-            OutputStream fixedSkosOutputStream = new FileOutputStream(fixedSkosFile);
+            multitesSkosInputStream = new FileInputStream(multitesSkos);
+            fixedSkosInputStream = new MultitesSkosFixer().fix(multitesSkosInputStream, RDFFormat.RDFXML);
+            fixedSkosFile = File.createTempFile("fixed-skos","ttl");
+            fixedSkosOutputStream = new FileOutputStream(fixedSkosFile);
             StreamUtils.copy(fixedSkosInputStream, fixedSkosOutputStream);
-            fixedSkosInputStream.close();
-            fixedSkosOutputStream.close();
             importConcepts(fixedSkosFile);
-            fixedSkosFile.delete();
         } catch (IOException ioe) {
             throw new IllegalArgumentException("Failed to get file.", ioe);
         } catch (RdfFixerException rfe) {
             throw new IllegalStateException("Failed to fix MultiTes RDF.", rfe);
+        } finally {
+            IOUtils.closeQuietly(multitesSkosInputStream);
+            IOUtils.closeQuietly(fixedSkosInputStream);
+            IOUtils.closeQuietly(fixedSkosOutputStream);
+            FileUtils.deleteQuietly(fixedSkosFile);
         }
     }
 
