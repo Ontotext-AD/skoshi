@@ -1,47 +1,25 @@
 package com.ontotext.tools.skoseditor.services.impl;
 
+import com.ontotext.tools.skoseditor.repositories.UriEncodeRepository;
 import com.ontotext.tools.skoseditor.services.UriEncodeService;
-import org.openrdf.model.Namespace;
 import org.openrdf.model.URI;
 import org.openrdf.model.impl.ValueFactoryImpl;
-import org.openrdf.repository.Repository;
-import org.openrdf.repository.RepositoryConnection;
-import org.openrdf.repository.RepositoryException;
-import org.openrdf.repository.RepositoryResult;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class UriEncodeServiceImpl implements UriEncodeService {
 
-    private Logger log = LoggerFactory.getLogger(UriEncodeServiceImpl.class);
-
-    private Repository repository;
+    private UriEncodeRepository uriEncodeRepository;
 
     private Map<String, String> ns2prefix;
     private Map<String, String> prefix2ns;
 
-    public UriEncodeServiceImpl(Repository repository) {
+    public UriEncodeServiceImpl(UriEncodeRepository uriEncodeRepository) {
+        this.uriEncodeRepository = uriEncodeRepository;
         ns2prefix = new HashMap<>();
         prefix2ns = new HashMap<>();
-
-        try {
-            RepositoryConnection connection = repository.getConnection();
-            try {
-                RepositoryResult<Namespace> namespaces = repository.getConnection().getNamespaces();
-                while (namespaces.hasNext()) {
-                    Namespace ns = namespaces.next();
-                    ns2prefix.put(ns.getName(), ns.getPrefix());
-                    prefix2ns.put(ns.getPrefix(), ns.getName());
-                }
-            } finally {
-                connection.close();
-            }
-        } catch (RepositoryException re) {
-            throw new IllegalStateException(re);
-        }
+        uriEncodeRepository.fillMaps(ns2prefix, prefix2ns);
     }
 
     @Override

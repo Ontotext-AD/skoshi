@@ -3,6 +3,7 @@ package com.ontotext.tools.skoseditor.services;
 import com.ontotext.openpolicy.concept.Concept;
 import com.ontotext.openpolicy.concept.ConceptDescription;
 import org.openrdf.model.URI;
+import org.openrdf.rio.RDFFormat;
 
 import java.io.File;
 import java.util.Collection;
@@ -19,6 +20,8 @@ public interface ConceptsService {
     Collection<Concept> getConceptsWithPrefix(String prefix, int limit, int offset);
     Collection<Concept> getAllConcepts(int limit, int offset);
     void deleteConcepts();
+
+    int getConceptsCount();
 
     URI createConcept(String prefLabel);
     ConceptDescription getConcept(URI id);

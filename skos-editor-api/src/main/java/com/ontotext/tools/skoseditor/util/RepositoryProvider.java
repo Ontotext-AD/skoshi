@@ -12,7 +12,7 @@ import org.openrdf.repository.sail.SailRepository;
 import org.openrdf.rio.RDFFormat;
 import org.openrdf.rio.RDFParseException;
 import org.openrdf.sail.inferencer.fc.ForwardChainingRDFSInferencer;
-import org.openrdf.sail.memory.MemoryStore;
+import org.openrdf.sail.nativerdf.NativeStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,23 +48,29 @@ public class RepositoryProvider {
             if (!dataDirExists) {
                 dataDir.mkdirs();
             }
-            REPO = new SailRepository(new ForwardChainingRDFSInferencer(new MemoryStore(dataDir)));
+            REPO = new SailRepository(new ForwardChainingRDFSInferencer(new NativeStore(dataDir)));
             try {
                 REPO.initialize();
                 RepositoryConnection connection = REPO.getConnection();
 
-                log.debug("Adding SKOS as axioms.");
-                connection.setNamespace("skos", SKOS.NAMESPACE);
+                try {
+                    log.debug("Adding SKOS as axioms.");
+                    connection.setNamespace("skos", SKOS.NAMESPACE);
 
-                URL skosUrl = RepositoryProvider.class.getClassLoader().getResource("kb/skos.rdf");
-                if (!new File(skosUrl.toURI()).exists())
-                    throw new IllegalStateException("Could not find skos.rdf in the classpath.");
-                connection.add(skosUrl, SKOS.NAMESPACE, RDFFormat.RDFXML);
+                    URL skosUrl = RepositoryProvider.class.getClassLoader().getResource("kb/skos.rdf");
+                    if (!new File(skosUrl.toURI()).exists())
+                        throw new IllegalStateException("Could not find skos.rdf in the classpath.");
+                    connection.add(skosUrl, SKOS.NAMESPACE, RDFFormat.RDFXML);
 
-                URL skosXUrl = RepositoryProvider.class.getClassLoader().getResource("kb/skos-x.ttl");
-                if (!new File(skosXUrl.toURI()).exists())
-                    throw new IllegalStateException("Could not find skos.rdf in the classpath.");
-                connection.add(skosXUrl, SKOS.NAMESPACE, RDFFormat.TURTLE);
+                    URL skosXUrl = RepositoryProvider.class.getClassLoader().getResource("kb/skos-x.ttl");
+                    if (!new File(skosXUrl.toURI()).exists())
+                        throw new IllegalStateException("Could not find skos.rdf in the classpath.");
+                    connection.add(skosXUrl, SKOS.NAMESPACE, RDFFormat.TURTLE);
+                } catch (RepositoryException e) {
+                    e.printStackTrace();
+                } finally {
+                    connection.close();
+                }
             } catch (URISyntaxException use) {
                 throw new IllegalStateException("Invalid file location.", use);
             } catch (RepositoryException re) {

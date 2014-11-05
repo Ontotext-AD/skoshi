@@ -4,10 +4,14 @@ import com.ontotext.openpolicy.concept.Concept;
 import com.ontotext.openpolicy.concept.ConceptImpl;
 import com.ontotext.openpolicy.entity.NamedEntity;
 import com.ontotext.openpolicy.entity.NamedEntityImpl;
+import com.ontotext.openpolicy.error.DataAccessException;
 import com.ontotext.openpolicy.navigation.TreeNode;
 import com.ontotext.openpolicy.ontologyconstants.openpolicy.SKOSX;
+import com.ontotext.openpolicy.semanticstoreutils.QueryExecutor;
+import com.ontotext.openpolicy.semanticstoreutils.QueryExecutorUtils;
 import com.ontotext.openpolicy.semanticstoreutils.facets.RdfFacetsRetriever;
 import com.ontotext.openpolicy.semanticstoreutils.sparql.SparqlQueryUtils;
+import com.ontotext.openpolicy.serviceproviders.RepositoryConnectionProvider;
 import com.ontotext.openpolicy.tree.Tree;
 import com.ontotext.tools.skoseditor.repositories.FacetsRepository;
 import com.ontotext.tools.skoseditor.util.SparqlUtils;
@@ -67,31 +71,23 @@ public class SesameFacetsRepository implements FacetsRepository {
                     facets.add(new NamedEntityImpl(id, prefLabel));
                 }
                 result.close();
-            } catch (Exception e) {
-                throw new IllegalStateException("Failed to get concepts.", e);
             } finally {
                 connection.close();
             }
-        } catch (RepositoryException re) {
-            throw new IllegalStateException(re);
+        } catch (Exception e) {
+            throw new IllegalStateException("Failed to get concepts.", e);
         }
         return facets;
     }
 
     @Override
     public Tree<TreeNode> findFacet(URI id) {
-        Tree<TreeNode> facet;
         try {
-            RepositoryConnection connection = repository.getConnection();
-            try {
-                facet = new RdfFacetsRetriever(connection).getFacetTree(id);
-            } finally {
-                connection.close();
-            }
-        } catch (RepositoryException re) {
+            QueryExecutorUtils executorUtils = new QueryExecutorUtils(new RepositoryConnectionProvider(repository));
+            return new RdfFacetsRetriever(executorUtils).getFacetTree(id);
+        } catch (DataAccessException re) {
             throw new IllegalStateException(re);
         }
-        return facet;
     }
 
     @Override
@@ -206,13 +202,11 @@ public class SesameFacetsRepository implements FacetsRepository {
                     }
                 }
                 result.close();
-            } catch (Exception e) {
-                throw new IllegalStateException("Failed to get concepts.", e);
             } finally {
                 connection.close();
             }
-        } catch (RepositoryException re) {
-            throw new IllegalStateException(re);
+        } catch (Exception e) {
+            throw new IllegalStateException("Failed to get concepts.", e);
         }
         return concepts;
     }
@@ -225,11 +219,11 @@ public class SesameFacetsRepository implements FacetsRepository {
             try {
                 String askQuery = SparqlQueryUtils.getSkosPrefix() + "\nASK { [] a skos:Facet; skos:prefLabel " + connection.getValueFactory().createLiteral(lbl) + " }";
                 exists = connection.prepareBooleanQuery(QueryLanguage.SPARQL, askQuery).evaluate();
-            } catch (MalformedQueryException|QueryEvaluationException e) {
-                throw new RuntimeException("Illegal query. Fix it!", e);
             } finally {
                 connection.close();
             }
+        } catch (MalformedQueryException|QueryEvaluationException e) {
+            throw new RuntimeException("Illegal query. Fix it!", e);
         } catch (RepositoryException re) {
             throw new IllegalStateException(re);
         }

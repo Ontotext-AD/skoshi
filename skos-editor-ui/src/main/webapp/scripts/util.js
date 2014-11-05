@@ -2,6 +2,29 @@
 var service, protocol, api, xhr, el, conceptDataCached;
 var id = getUrlParameter('id');
 
+function spinInit(el, color) {
+    var opts = {
+        lines: 11, // The number of lines to draw
+        length: 5, // The length of each line
+        width: 2, // The line thickness
+        radius: 3, // The radius of the inner circle
+        corners: 0.9, // Corner roundness (0..1)
+        rotate: 0, // The rotation offset
+        direction: 1, // 1: clockwise, -1: counterclockwise
+        color: '#' + color, // #rgb or #rrggbb
+        speed: 1.1, // Rounds per second
+        trail: 60, // Afterglow percentage
+        shadow: false, // Whether to render a shadow
+        hwaccel: true, // Whether to use hardware acceleration
+        className: 'spinner', // The CSS class to assign to the spinner
+        zIndex: 2e9, // The z-index (defaults to 2000000000)
+        top: 'auto', // Top position relative to parent in px
+        left: 'auto' // Left position relative to parent in px
+    };
+    target = el;
+    var spinner = new Spinner(opts).spin(target);
+}
+
 function parseUri (str) {
 	var	o   = parseUri.options,
 		m   = o.parser[o.strictMode ? "strict" : "loose"].exec(str),
@@ -148,24 +171,35 @@ var tooltipAutoSuggest = function() {
 function autoSuggestRenderer(url, textValue) {
 	
 	$('#conceptsContainer').html('');
+	$('#concepts-loader').html('Loading...');
+	var txt = '';
     xhr = $.ajax({
       url: url,
+      cache: true
     }).done(function(result) {
+    	$('#concepts-loader').html('');
       $.each(result, function(i, l) {
         var dataID = l.id;
         if (dataID.endsWith('=')) {
           dataID = dataID.slice(0, -1);
         }
         if (id && id != null && id == dataID) {
-          $('#conceptsContainer').append('<a href="javascript:void(0)" class="list-group-item active" data-id="' + l.id + '">' + l.label + ' <span class="glyphicon glyphicon-asterisk"></span></a>');
+          txt += '<a href="javascript:void(0)" class="list-group-item active" data-id="' + l.id + '">' + l.label + ' <span class="glyphicon glyphicon-asterisk"></span></a>';
         } else {
-          $('#conceptsContainer').append('<a href="javascript:void(0)" class="list-group-item tt" data-id="' + l.id + '">' + l.label + '</a>');
-        }
-        if (textValue.length > 1) {
-          $('#conceptsContainer').highlight(textValue);
+          txt += '<a href="javascript:void(0)" class="list-group-item tt" data-id="' + l.id + '">' + l.label + '</a>';
         }
       });
-        tooltipAutoSuggest();
+
+      	document.getElementById('conceptsContainer').innerHTML = txt;
+      	if (textValue.length > 1) {
+	      $('#conceptsContainer').highlight(textValue);
+	    }
+      	
+      	if (result.length > 0) {
+      		tooltipAutoSuggest();
+      	} else {
+      		$('#conceptsContainer').append('<div style="font-size: 12px; margin-top: 5px;">No results found.</div>');
+      	}     
     });
 }
 function autoSuggestService() {
@@ -177,7 +211,7 @@ function autoSuggestService() {
     var url;
     var textValue = $('#conceptsSearchBox').val();
     if (textValue.length >= 2) {
-      url = service + "/concepts?prefix=" + textValue;
+      url = service + "/concepts?prefix=" + textValue + "&limit=50";
       autoSuggestRenderer(url, textValue);
     } else if (textValue.length == 0) {
       url = service + "/concepts?limit=50";
@@ -243,11 +277,11 @@ function getConcepts(val, limit, offset) {
 			
 		});
 		$('#conceptsContainer').append(txt);
-		//if (result.length <= 0) {
-		//	$('#conceptsContainer').html('No concepts.');
-		//}
 		if (window.location.href.indexOf("facets") == -1) {
 			tooltip('c' + offset);
+		}
+		if (val && val != null) {
+			$('#conceptsContainer').highlight(val);
 		}
 		$('#concepts-loader').html('');
 	});
@@ -267,7 +301,6 @@ function getConceptDetails(id) {
 				$('#deleteConcept').css('display', 'inline-block');
 				$('#activeUser').html(l);
 				$('#stemming').css('display', 'inline-block');
-				$('#deleteConcept').html('Delete ' + l);
 			}
 			if (i == 'alternativeLabels' || i == 'abbreviations') {
 				$.each(l, function(index, value) {
@@ -283,36 +316,36 @@ function getConceptDetails(id) {
 					$('#' + i + '-list').append('<a href="javascript:void(0)" class="list-group-item RSNB" id="' + synValue.id + '">' + synValue.label + '<span style="float: right" data-type="' + i + '" data-id="' + synValue.id + '" class="glyphicon glyphicon-remove deleteRSBA"></span></a>');
 				});
 				if (l.length <= 0) {
-					$('#' + i + '-list').append('N/A for ' + pl);
+					$('#' + i + '-list').append('N/A');
 				}
 				$('.RSNB').qtip({
 					content: {
 						text: function(event, api) {
 							var detailInfo = '';
 							$.ajax({
-								url: service + "/concepts/" + $(this).attr('id'),
+								url: service + "/concepts/" + encodeURIComponent($(this).attr('id')),
 								type: "GET",
 								async: false
 							}).done(function(result) {
 
 								$.each(result, function(i, l) {
 									if (i == 'label') {
-										detailInfo += '<div><b>Main label:</b> ' + l + '</div>';
+										detailInfo += '<div><span style="color: #3498DB"><b>Main label:</b></span> ' + l + '</div>';
 									}
 									if (i == 'altLabels' && l != null && l.length > 0) {
-										detailInfo += '<div><b>Alternative labels:</b> ' + l + '</div>';
+										detailInfo += '<div><span style="color: #3498DB"><b>Alternative labels:</b></span> ' + l + '</div>';
 									}
 									if (i == 'abbreviations' && l != null && l.length > 0) {
-										detailInfo += '<div><b>Abbreviations:</b> ' + l + '</div>';
+										detailInfo += '<div><span style="color: #3498DB"><b>Abbreviations:</b></span> ' + l + '</div>';
 									}
 									if (i == 'definition' && l != null && l.length > 0) {
-										detailInfo += '<div><b>Definition:</b> ' + l + '</div>';
+										detailInfo += '<div><span style="color: #3498DB"><b>Definition:</b></span> ' + l + '</div>';
 									}
 									if (i == 'note' && l != null && l.length > 0) {
-										detailInfo += '<div><b>Note:</b> ' + l + '</div>';
+										detailInfo += '<div><span style="color: #3498DB"><b>Note:</b></span> ' + l + '</div>';
 									}
 									if (i == 'related' && l != null && l.length > 0) {
-										detailInfo += '<div><b>Related:</b> ';
+										detailInfo += '<div><span style="color: #3498DB"><b>Related:</b></span> ';
 										var len = $(l).length;
 										$.each(l, function(synIndex, synValue) {
 											if (synIndex == len - 1) {
@@ -324,7 +357,7 @@ function getConceptDetails(id) {
 										detailInfo += '</div>';
 									}
 									if (i == 'synonyms' && l != null && l.length > 0) {
-										detailInfo += '<div><b>Synonyms:</b> ';
+										detailInfo += '<div><span style="color: #3498DB"><b>Synonyms:</b></span> ';
 										var len = $(l).length;
 										$.each(l, function(synIndex, synValue) {
 											if (synIndex == len - 1) {
@@ -336,7 +369,7 @@ function getConceptDetails(id) {
 										detailInfo += '</div>';
 									}
 									if (i == 'broader' && l != null && l.length > 0) {
-										detailInfo += '<div><b>Broader:</b> ';
+										detailInfo += '<div><span style="color: #3498DB"><b>Broader:</b></span> ';
 										var len = $(l).length;
 										$.each(l, function(synIndex, synValue) {
 											if (synIndex == len - 1) {
@@ -348,7 +381,7 @@ function getConceptDetails(id) {
 										detailInfo += '</div>';
 									}
 									if (i == 'narrower' && l != null && l.length > 0) {
-										detailInfo += '<div><b>Narrower:</b> ';
+										detailInfo += '<div><span style="color: #3498DB"><b>Narrower:</b></span> ';
 										var len = $(l).length;
 										$.each(l, function(synIndex, synValue) {
 											if (synIndex == len - 1) {

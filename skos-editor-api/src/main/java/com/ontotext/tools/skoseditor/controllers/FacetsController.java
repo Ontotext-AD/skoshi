@@ -6,6 +6,7 @@ import com.ontotext.openpolicy.navigation.TreeNode;
 import com.ontotext.openpolicy.tree.Tree;
 import com.ontotext.tools.skoseditor.services.FacetsService;
 import com.wordnik.swagger.annotations.Api;
+import org.apache.commons.lang3.StringUtils;
 import org.openrdf.model.URI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,6 +28,9 @@ public class FacetsController {
     @RequestMapping(method = POST)
     @ResponseStatus(HttpStatus.CREATED)
     public URI createFacet(@RequestParam String lbl) {
+        if (StringUtils.isEmpty(lbl)) {
+            throw new IllegalArgumentException("Please provide a valid label.");
+        }
         return facetsService.createFacet(lbl);
     }
 
@@ -46,6 +50,9 @@ public class FacetsController {
     @RequestMapping(method = PUT, value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
     public String updateFacetLabel(@PathVariable URI id, @RequestParam String lbl) {
+        if (StringUtils.isEmpty(lbl)) {
+            throw new IllegalArgumentException("Please provide a valid label.");
+        }
         facetsService.updateFacetLabel(id, lbl);
         return "Facet label updated successfully.";
     }

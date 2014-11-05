@@ -6,31 +6,36 @@
                     http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
 
 
-    <bean id="repository" factory-method="get" class="com.ontotext.tools.skoseditor.util.RepositoryProvider" destroy-method="shutDown">
-        <constructor-arg name="dataFolderPath" value="#{ systemProperties['skosedit.home'] }"/>
+    <bean id="infoRepository" class="com.ontotext.tools.skoseditor.repositories.sesame.SesameInfoRepository">
+        <constructor-arg ref="repository"/>
     </bean>
 
     <bean id="validationRepository" class="com.ontotext.tools.skoseditor.repositories.sesame.SesameValidationRepository">
         <constructor-arg ref="repository"/>
     </bean>
 
-    <bean id="extractionService" class="com.ontotext.tools.skoseditor.services.impl.ExtractionServiceImpl"/>
-
     <bean id="conceptsRepository" class="com.ontotext.tools.skoseditor.repositories.sesame.SesameConceptsRepository">
         <constructor-arg ref="repository"/>
-    </bean>
-
-    <bean id="conceptsService" class="com.ontotext.tools.skoseditor.services.impl.ConceptsServiceImpl">
-        <constructor-arg ref="conceptsRepository"/>
-        <constructor-arg ref="validationRepository"/>
     </bean>
 
     <bean id="facetsRepository" class="com.ontotext.tools.skoseditor.repositories.sesame.SesameFacetsRepository">
         <constructor-arg ref="repository"/>
     </bean>
 
+
+    <bean id="infoService" class="com.ontotext.tools.skoseditor.services.impl.InfoServiceImpl">
+        <constructor-arg ref="infoRepository"/>
+    </bean>
+
+    <bean id="extractionService" class="com.ontotext.tools.skoseditor.services.impl.ExtractionServiceImpl"/>
+
     <bean id="facetsService" class="com.ontotext.tools.skoseditor.services.impl.FacetsServiceImpl">
         <constructor-arg ref="facetsRepository"/>
+        <constructor-arg ref="validationRepository"/>
+    </bean>
+
+    <bean id="conceptsService" class="com.ontotext.tools.skoseditor.services.impl.ConceptsServiceImpl">
+        <constructor-arg ref="conceptsRepository"/>
         <constructor-arg ref="validationRepository"/>
     </bean>
 

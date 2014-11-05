@@ -14,12 +14,16 @@
     <!-- DispatcherServlet Context: defines this servlet's request-processing
         infrastructure -->
 
-    <bean id="idEncodeService" class="com.ontotext.tools.skoseditor.services.impl.UriEncodeServiceImpl">
+    <bean id="uriEncodeRepository" class="com.ontotext.tools.skoseditor.repositories.sesame.SesameUriEncodeRepository">
         <constructor-arg ref="repository"/>
     </bean>
 
+    <bean id="uriEncodeService" class="com.ontotext.tools.skoseditor.services.impl.UriEncodeServiceImpl">
+        <constructor-arg ref="uriEncodeRepository"/>
+    </bean>
+
     <bean id="jsonUriObjectMapper" class="com.ontotext.tools.skoseditor.util.JacksonObjectMapper">
-        <constructor-arg ref="idEncodeService"/>
+        <constructor-arg ref="uriEncodeService"/>
     </bean>
 
     <!-- Enables the Spring MVC @Controller programming model -->
@@ -36,10 +40,10 @@
         <property name="converters">
             <set>
                 <bean class="com.ontotext.tools.skoseditor.util.StringToUriConverter">
-                    <constructor-arg ref="idEncodeService"/>
+                    <constructor-arg ref="uriEncodeService"/>
                 </bean>
                 <bean class="com.ontotext.tools.skoseditor.util.UriToStringConverter">
-                    <constructor-arg ref="idEncodeService"/>
+                    <constructor-arg ref="uriEncodeService"/>
                 </bean>
             </set>
         </property>
@@ -71,5 +75,7 @@
     <!--  Swagger Config  -->
     <bean class="com.ontotext.tools.skoseditor.web.SkosEditorSwaggerConfig" />
 
+    <!-- Automatic exception handling -->
+    <bean class="com.ontotext.tools.skoseditor.web.RestExceptionHandler" />
 
 </beans>

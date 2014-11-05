@@ -5,7 +5,9 @@ import com.ontotext.openpolicy.concept.ConceptDescription;
 import com.ontotext.tools.skoseditor.services.ConceptsService;
 import com.ontotext.tools.skoseditor.util.WebUtils;
 import com.wordnik.swagger.annotations.Api;
+import org.apache.commons.lang3.StringUtils;
 import org.openrdf.model.URI;
+import org.openrdf.rio.RDFFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,11 +36,10 @@ public class ConceptsController {
     @RequestMapping(method = POST)
     @ResponseStatus(HttpStatus.CREATED)
     public URI createConcept(@RequestParam String lbl) {
-
-        if (lbl != null) {
-            return conceptsService.createConcept(lbl);
+        if (StringUtils.isEmpty(lbl)) {
+            throw new IllegalArgumentException("Please provide a valid label.");
         } else {
-            throw new IllegalArgumentException("Invalid arguments, provide either 'conceptsRdf' or 'phrases'.");
+            return conceptsService.createConcept(lbl);
         }
     }
 
@@ -70,10 +71,13 @@ public class ConceptsController {
                                  @RequestParam(required = false) MultipartFile multitesRdf) {
 
         if (conceptsRdf != null && phrases == null && multitesRdf == null) {
+            log.debug("Importing concepts from RDF ...");
             return importRdf(conceptsRdf);
         } else if (conceptsRdf == null && phrases != null && multitesRdf == null) {
+            log.debug("Importing concepts from Phrases ...");
             return importPhrases(phrases);
         } else if (conceptsRdf == null && phrases == null && multitesRdf != null) {
+            log.debug("Importing concepts from Multites SKOS ...");
             return importMultitesRdf(multitesRdf);
         } else {
             throw new IllegalArgumentException("Invalid arguments, provide one of 'conceptsRdf', 'phrases', 'multitesRdf'.");
@@ -111,7 +115,7 @@ public class ConceptsController {
         } catch (IOException e) {
             throw new IllegalArgumentException("Failed to get multites skos.", e);
         }
-        conceptsService.importConcepts(multitesSkosFile);
+        conceptsService.importMultitesSkos(multitesSkosFile);
         multitesSkosFile.delete();
         return "Imported MultiTes files.";
     }
@@ -126,6 +130,12 @@ public class ConceptsController {
         WebUtils.appendFileToResponse(filename, "text/turtle", conceptsRdf, response);
 
         return "Concepts exported successfully.";
+    }
+
+    @RequestMapping(method = GET, value = "/count")
+    @ResponseStatus(HttpStatus.OK)
+    public int getConceptsCount() {
+        return conceptsService.getConceptsCount();
     }
 
 
@@ -151,6 +161,9 @@ public class ConceptsController {
 
     @RequestMapping(method = PUT, value = "/{id}/preflabel")
     public String updatePrefLabel(@PathVariable URI id, @RequestParam String value) {
+        if (StringUtils.isEmpty(value)) {
+            throw new IllegalArgumentException("Please provide a valid label.");
+        }
         conceptsService.updatePrefLabel(id, value);
         return "Preferred label updated successfully.";
     }
@@ -166,6 +179,9 @@ public class ConceptsController {
     @RequestMapping(method = POST, value = "/{id}/altlabels")
     @ResponseStatus(HttpStatus.CREATED)
     public String addAltLabel(@PathVariable URI id, @RequestParam String value) {
+        if (StringUtils.isEmpty(value)) {
+            throw new IllegalArgumentException("Please provide a valid label.");
+        }
         conceptsService.addAltLabel(id, value);
         return "Added label '" + value + "'.";
     }
@@ -188,6 +204,9 @@ public class ConceptsController {
     @RequestMapping(method = POST, value = "/{id}/acronyms")
     @ResponseStatus(HttpStatus.CREATED)
     public String addAcronym(@PathVariable URI id, @RequestParam String value) {
+        if (StringUtils.isEmpty(value)) {
+            throw new IllegalArgumentException("Please provide a valid acronym.");
+        }
         conceptsService.addAcronym(id, value);
         return "Added acronym '" + value + "'.";
     }
@@ -210,6 +229,9 @@ public class ConceptsController {
     @RequestMapping(method = POST, value = "/{id}/abbreviations")
     @ResponseStatus(HttpStatus.CREATED)
     public String addAbbreviation(@PathVariable URI id, @RequestParam String value) {
+        if (StringUtils.isEmpty(value)) {
+            throw new IllegalArgumentException("Please provide a valid abbreviation.");
+        }
         conceptsService.addAbbreviation(id, value);
         return "Added abbreviation '" + value + "'";
     }
@@ -232,6 +254,9 @@ public class ConceptsController {
     @RequestMapping(method = PUT, value = "/{id}/definition")
     @ResponseStatus(HttpStatus.OK)
     public String updateDefinition(@PathVariable URI id, @RequestParam String value) {
+        if (StringUtils.isEmpty(value)) {
+            throw new IllegalArgumentException("Please provide a valid definition.");
+        }
         conceptsService.updateDefinition(id, value);
         return "Updated definition to '" + value + "'.";
     }
@@ -254,6 +279,9 @@ public class ConceptsController {
     @RequestMapping(method = PUT, value = "/{id}/note")
     @ResponseStatus(HttpStatus.OK)
     public String updateNote(@PathVariable URI id, @RequestParam String value) {
+        if (StringUtils.isEmpty(value)) {
+            throw new IllegalArgumentException("Please provide a valid note.");
+        }
         conceptsService.updateNote(id, value);
         return "Updated note to '" + value + "'.";
     }

@@ -23,6 +23,8 @@ Editableform is linked with one of input types, e.g. 'text', 'select' etc.
         //nothing shown after init
     };
 
+    var initialValue;
+
     EditableForm.prototype = {
         constructor: EditableForm,
         initInput: function() {  //called once
@@ -31,7 +33,10 @@ Editableform is linked with one of input types, e.g. 'text', 'select' etc.
             
             //set initial value
             //todo: may be add check: typeof str === 'string' ? 
+
             this.value = this.input.str2value(this.options.value); 
+
+            initialValue = this.value;
             
             //prerender: get input.$input
             this.input.prerender();
@@ -201,18 +206,20 @@ Editableform is linked with one of input types, e.g. 'text', 'select' etc.
             e.preventDefault();
 
             //get new value from input
+
             var newValue = this.input.input2value();
 
-            $.ajax({
-                url: service + "/facets/" + this.options.name + "/?lbl=" + newValue,
-                type: "PUT"
-              }).done(function(result) {
-                alertify.success(result);
-              }).fail(function(result) {
-                alertify.error(result);
-              });
+            if (initialValue != newValue) {
+                $.ajax({
+                    url: service + "/facets/" + this.options.name + "/?lbl=" + newValue,
+                    type: "PUT"
+                  }).done(function(result) {
+                    alertify.success(result);
+                  }).fail(function(result) {
+                    alertify.error(result);
+                  });
 
-            //validation: if validate returns string or truthy value - means error
+                  //validation: if validate returns string or truthy value - means error
             //if returns object like {newValue: '...'} => submitted value is reassigned to it
             var error = this.validate(newValue);
             if ($.type(error) === 'object' && error.newValue !== undefined) {
@@ -307,6 +314,11 @@ Editableform is linked with one of input types, e.g. 'text', 'select' etc.
                 this.error(msg);
                 this.showForm();
             }, this));
+
+            } else {
+                alertify.error('Please enter a different name.');
+            }
+            
         },
 
         save: function(submitValue) {

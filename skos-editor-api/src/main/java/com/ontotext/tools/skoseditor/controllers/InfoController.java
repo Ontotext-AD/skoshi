@@ -1,5 +1,6 @@
 package com.ontotext.tools.skoseditor.controllers;
 
+import com.ontotext.tools.skoseditor.services.InfoService;
 import com.wordnik.swagger.annotations.Api;
 import org.apache.commons.io.output.StringBuilderWriter;
 import org.openrdf.model.Statement;
@@ -33,47 +34,19 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 public class InfoController {
 
     @Autowired
-    private Repository repository;
+    private InfoService infoService;
 
     @RequestMapping(method = GET)
     @ResponseStatus(HttpStatus.OK)
     public Map<String,String> info() throws Exception{
         Map<String,String> info = new HashMap<>();
         info.put("Application Name", "SKOS Editor");
-
-//        RepositoryConnection con = repository.getConnection();
-//        String query = SparqlUtils.getPrefix("skos", SKOS.NAMESPACE) +
-//                "select * where { skos:prefLabel ?p ?o }";
-//        TupleQuery tupleQuery = con.prepareTupleQuery(QueryLanguage.SPARQL, query);
-//        TupleQueryResult result = tupleQuery.evaluate();
-//        System.out.println("=========================");
-//        while (result.hasNext()) {
-//            BindingSet bs = result.next();
-//            for (String var : bs.getBindingNames()) {
-//                System.out.print(var + ":" + bs.getValue(var) + "  ");
-//            }
-//            System.out.println();
-//        }
-//        System.out.println("=========================");
-//        result.close();
-//        con.close();
-
-//        RepositoryConnection con = repository.getConnection();
-//        URI concept = new URIImpl(SKOS.NAMESPACE + "test-concept");
-//        RepositoryResult<Statement> statements = con.getStatements(concept, null, null, true);
-//        while (statements.hasNext()) {
-//            Statement st = statements.next();
-//            System.out.println("=== " + st);
-//        }
-
         return info;
     }
 
     @RequestMapping(method = GET, value = "/repo/dump")
     public String dumpRepo() throws Exception {
-        Writer writer = new StringBuilderWriter();
-        repository.getConnection().export(new TurtleWriter(writer));
-        return writer.toString();
+        return infoService.dumpRepo();
     }
 
 }

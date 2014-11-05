@@ -9,14 +9,17 @@ $(function() {
   var facetsAutosuggestRenderer = function (url, textValue) {
   
   $('#conceptsContainer').html('');
+  $('#concepts-loader').html('Loading...');
     xhr = $.ajax({
       url: url,
+      cache: true
     }).done(function(result) {
       $.each(result, function(i, l) {
         var dataID = l.id;
         if (dataID.endsWith('=')) {
           dataID = dataID.slice(0, -1);
         }
+        $('#concepts-loader').html('');
         $('#conceptsContainer').append('<a href="javascript:void(0)" class="list-group-item facet" data-id="' + l.id + '">' + l.label + '</a>');
         if (textValue.length > 1) {
           $('#conceptsContainer').highlight(textValue);
@@ -48,7 +51,7 @@ $(function() {
     $('#conceptsContainer').html(''); 
   }
 
-  $('#concepts-loader').html('Loading...');
+  $('#concepts-loader').html('Loading next 50 concepts...');
 
   var txt = '';
   var url = '';
@@ -58,7 +61,7 @@ $(function() {
     $('#concepts-loader').html('');
   } else {
     $('#conceptsSearchBox').show();
-    url = service + "/facets/" + $(selectedCategory).attr('data-id') + "/available";
+    url = service + "/facets/" + $(selectedCategory).attr('data-id') + "/available?limit=" + limit + "&offset=" + offset;
     var xhr = $.ajax({
       url: url,
       type: "GET"
@@ -86,7 +89,12 @@ $(function() {
       type: "GET"
     }).done(function(result) {
       $.each(result, function(i, l) {
-        $("#right-content").append('<div class="form-group category item"><div class="panel panel-default"><div class="panel-heading"><a class="panel-title categoryName" id=' + l.id + '>' + l.label + '</a><a href="javascript:void(0)" class="remove" data-label="' + l.label + '" title="Remove facet" data-id="' + l.id + '"><span class="glyphicon glyphicon-remove" style="color: #000"></span></a></div><div class="panel-body category-content tokenfield" data-label="' + l.label + '" data-id="' + l.id + '"></div></div></div>');
+        var label = l.label;
+        if (label.length > 25) {
+            label = label.substr(0, 22);
+            label = label + '...';
+        }
+        $("#right-content").append('<div class="form-group category item"><div class="panel panel-default"><div class="panel-heading"><a class="panel-title categoryName" title="' + l.label + '" id=' + l.id + '>' + label + '</a><a href="javascript:void(0)" class="remove" data-label="' + l.label + '" title="Remove facet" data-id="' + l.id + '"><span class="glyphicon glyphicon-remove" style="color: #000"></span></a></div><div class="panel-body category-content tokenfield" data-label="' + l.label + '" data-id="' + l.id + '"></div></div></div>');
         $('.categoryName').editable({
             type: 'text',
             title: 'Enter facet name',
@@ -129,7 +137,12 @@ $(function() {
       type: "GET"
     }).done(function(result) {
       $.each(result, function(i, l) {
-        $("#right-content").append('<div class="form-group category item data-id="' + l.id + '""><div class="panel panel-default"><div class="panel-heading"><a class="panel-title categoryName" id=' + l.id + '>' + l.label + '</a><a href="javascript:void(0)" class="remove" data-label="' + l.label + '" title="Remove facet" data-id="' + l.id + '"><span class="glyphicon glyphicon-remove" style="color: #000"></span></a></div><div class="panel-body category-content tokenfield" data-label="' + l.label + '" data-id="' + l.id + '"></div></div></div>');
+        var label = l.label;
+        if (label.length > 25) {
+            label = label.substr(0, 22);
+            label = label + '...';
+        }
+        $("#right-content").append('<div class="form-group category item data-id="' + l.id + '""><div class="panel panel-default"><div class="panel-heading"><a class="panel-title categoryName" id=' + l.id + '>' + label + '</a><a href="javascript:void(0)" class="remove" data-label="' + l.label + '" title="Remove facet" data-id="' + l.id + '"><span class="glyphicon glyphicon-remove" style="color: #000"></span></a></div><div class="panel-body category-content tokenfield" data-label="' + l.label + '" data-id="' + l.id + '"></div></div></div>');
         $('.categoryName').editable({
             type: 'text',
             title: 'Enter facet name',
@@ -183,7 +196,12 @@ $(function() {
       type: "GET"
     }).done(function(result) {
       $.each(result, function(i, l) {
-        $("#right-content").append('<div class="form-group category item" data-id="' + l.id + '"><div class="panel panel-default"><div class="panel-heading"><a class="panel-title categoryName" id=' + l.id + '>' + l.label + '</a><a href="javascript:void(0)" class="remove" data-label="' + l.label + '" title="Remove facet" data-id="' + l.id + '"><span class="glyphicon glyphicon-remove" style="color: #000"></span></a></div><div class="panel-body category-content tokenfield" data-label="' + l.label + '" data-id="' + l.id + '"></div></div></div>');
+        var label = l.label;
+        if (label.length > 25) {
+            label = label.substr(0, 22);
+            label = label + '...';
+        }
+        $("#right-content").append('<div class="form-group category item" data-id="' + l.id + '"><div class="panel panel-default"><div class="panel-heading"><a class="panel-title categoryName" id=' + l.id + '>' + label + '</a><a href="javascript:void(0)" class="remove" data-label="' + l.label + '" title="Remove facet" data-id="' + l.id + '"><span class="glyphicon glyphicon-remove" style="color: #000"></span></a></div><div class="panel-body category-content tokenfield" data-label="' + l.label + '" data-id="' + l.id + '"></div></div></div>');
         $('.categoryName').editable({
             type: 'text',
             title: 'Enter facet name',
@@ -290,7 +308,30 @@ $(function() {
   getFacets();
 
   $('#conceptsSearchBox').keyup(function() {
-    facetsAutosuggestService(selectedCategory);
+    $('#conceptsSearchBox').keyup(function(e) {
+      var keycode = (e.keyCode ? e.keyCode : e.which);
+      if (keycode != '16' && keycode != '17' && keycode != '18' && keycode != '91' && keycode != '93' && keycode != '9' && keycode != '27' && keycode != '37' && keycode != '38' && keycode != '39' && keycode != '40'){
+        facetsAutosuggestService(selectedCategory);
+      }
+    });
+  });
+
+  $('#newFacetInput').keyup(function(e) {
+      var keycode = (e.keyCode ? e.keyCode : e.which);
+      if (keycode == '13'){
+        $('#saveNewFacet').trigger('click');
+      }
+      if (keycode == '27') {
+        var overlay = document.querySelector( '.md-overlay' );
+
+        [].slice.call( document.querySelectorAll( '.md-trigger' ) ).forEach( function( el, i ) {
+
+          var modal = document.querySelector( '#' + el.getAttribute( 'data-modal' ) ),
+            close = modal.querySelector( '.md-close' );
+            classie.remove( modal, 'md-show' );
+
+        });
+      }
   });
 
   $(document).on('click', '.remove', function(e) {
@@ -307,18 +348,20 @@ $(function() {
 
   $(document).on('click', '.facet', function() {
     if (typeof selected != 'undefined' && selected) {
+      var fLabel = $(selectedCategory).attr('data-label');
+      var cLabel = $(this).text();
       var fId = $(selectedCategory).attr('data-id');
       var cId = $(this).attr('data-id');
         $.ajax({
           url: service + "/facets/" + fId + '/concepts/' + cId,
           type: "POST"
         }).done(function(result) {
-          alertify.success(result);
+          alertify.success('Concept "' + cLabel + '" added successfuly to the facet "' + fLabel + '"', 6000);
 
           $('#conceptsContainer').html('');
           getFacet($(selectedCategory).attr('data-id'), selectedCategory);
 
-          getConceptsAvailable();
+          getConceptsAvailable('', 50, 0);
         }).fail(function(result) {
           alertify.error(result);
         });
@@ -327,25 +370,35 @@ $(function() {
     }
   });
 
-  $('#newFacetInput').focus();
-  $(document).on('keypress', '#newFacetInput', function(e) {
-      if (e.which == '13') {
-          $('#saveNewFacet').click();
-      }
+  $(document).on('click', '#saveNewFacet', function() {
+    if ($('#newFacetInput').val()) {
+      $.ajax({
+        url: service + "/facets/",
+        type: "POST",
+        data: 'lbl=' + $('#newFacetInput').val()
+      }).done(function(result) {
+        $('#newFacetInput').val('');
+        alertify.success('Facet created successfully.');
+        getFacetsAfterAdd();
+        $('.md-modal').css('visibility', 'hidden');
+          $('.md-modal').hide();
+        $('.md-modal').removeClass('md-show');
+      }).fail(function(result) {
+        alertify.error(result);
+      });
+    } else {
+      alertify.error('Please type a facet name.');
+      return false;
+    }
+    
   });
 
-  $(document).on('click', '#saveNewFacet', function() {
-    $.ajax({
-      url: service + "/facets/",
-      type: "POST",
-      data: 'lbl=' + $('#newFacetInput').val()
-    }).done(function(result) {
-      $('#newFacetInput').val('');
-      alertify.success(result);
-      getFacetsAfterAdd();
-    }).fail(function(result) {
-      alertify.error(result);
-    });
+  $('#newFacetButton').on('mouseover', function() {
+    $('.md-modal').css('visibility', 'visible');
+  });
+
+  $('#newFacetButton').on('mouseout', function() {
+    $('.md-modal').css('visibility', 'hidden');
   });
 
   $(document).on('click', '.removeFacet', function() {
@@ -359,7 +412,7 @@ $(function() {
       alertify.success(result);
       $('#conceptsContainer').html('');
       getFacet(facetId, container);
-      getConceptsAvailable();
+      getConceptsAvailable('', 50, 0);
     }).fail(function(result) {
       alertify.error(result);
     });
@@ -375,7 +428,9 @@ $(function() {
       getConceptsAvailable(val, limit, offset);
     }
     $('.category').attr('data-selected', null);
+    $('.category').removeClass('selected');
     $(this).attr('data-selected', 'true');
+    $(this).addClass('selected');
     $('.panel-heading').css('background-color', '#f5f5f5').css('border-color', '#ddd').css('color', '#333');
     $(this).children().find('.panel-heading').css('background-color', '#3498DB').css('border-color', '#2980B9').css('color', '#fff');
   });

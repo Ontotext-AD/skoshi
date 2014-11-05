@@ -69,6 +69,7 @@ public class ExtractionServiceImpl implements ExtractionService {
     @Override
     public Collection<String> getKeyphrases() {
         // TODO: implement the real stuff
-        return Arrays.asList(new String[] {"management", "organization", "order"});
+        throw new org.apache.commons.lang.NotImplementedException("Keyphrase extraction not yet implemented.");
+//        return Arrays.asList(new String[] {"management", "organization", "order"});
     }
 }

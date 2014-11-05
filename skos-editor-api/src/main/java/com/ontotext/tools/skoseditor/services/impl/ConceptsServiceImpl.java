@@ -10,8 +10,6 @@ import com.ontotext.tools.skoseditor.repositories.ConceptsRepository;
 import com.ontotext.tools.skoseditor.repositories.ValidationRepository;
 import com.ontotext.tools.skoseditor.services.ConceptsService;
 import com.ontotext.tools.skoseditor.util.IdUtils;
-import com.ontotext.tools.skoseditor.util.WebUtils;
-import org.apache.commons.io.input.ReaderInputStream;
 import org.openrdf.model.URI;
 import org.openrdf.rio.RDFFormat;
 import org.springframework.util.StreamUtils;
@@ -45,9 +43,8 @@ public class ConceptsServiceImpl implements ConceptsService {
     @Override
     public void importMultitesSkos(File multitesSkos) {
         try {
-            Reader conceptsRdfFileReader = new FileReader(multitesSkos);
-            Reader fixedSkosReader = new MultitesSkosFixer().fix(conceptsRdfFileReader, RDFFormat.TURTLE);
-            InputStream fixedSkosInputStream = new ReaderInputStream(fixedSkosReader);
+            InputStream multitesSkosInputStream = new FileInputStream(multitesSkos);
+            InputStream fixedSkosInputStream = new MultitesSkosFixer().fix(multitesSkosInputStream, RDFFormat.RDFXML);
             File fixedSkosFile = new File("fixed-skos.ttl");
             OutputStream fixedSkosOutputStream = new FileOutputStream(fixedSkosFile);
             StreamUtils.copy(fixedSkosInputStream, fixedSkosOutputStream);
@@ -64,6 +61,7 @@ public class ConceptsServiceImpl implements ConceptsService {
 
     @Override
     public void addPhrases(File phrasesFile) {
+        deleteConcepts();
         try {
             List<String> lines = Files.readLines(phrasesFile, Charset.defaultCharset());
             for (String line : lines) {
@@ -87,6 +85,11 @@ public class ConceptsServiceImpl implements ConceptsService {
     @Override
     public void deleteConcepts() {
         conceptsRepository.clearRepository();
+    }
+
+    @Override
+    public int getConceptsCount() {
+        return conceptsRepository.findConceptsCount();
     }
 
     @Override
