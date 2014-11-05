@@ -13,7 +13,7 @@ public interface ConceptsService {
     void importConcepts(File conceptsTtlFile);
     String exportConcepts();
 
-    void importMultitesSkos(File multitesSkos, RDFFormat format);
+    void importMultitesSkos(File multitesSkos);
 
     void addPhrases(File phrasesFile);
 
