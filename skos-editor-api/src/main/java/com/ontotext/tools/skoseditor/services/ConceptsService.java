@@ -3,6 +3,7 @@ package com.ontotext.tools.skoseditor.services;
 import com.ontotext.openpolicy.concept.Concept;
 import com.ontotext.openpolicy.concept.ConceptDescription;
 import org.openrdf.model.URI;
+import org.openrdf.rio.RDFFormat;
 
 import java.io.File;
 import java.util.Collection;
@@ -12,7 +13,7 @@ public interface ConceptsService {
     void importConcepts(File conceptsTtlFile);
     String exportConcepts();
 
-    void importMultitesSkos(File multitesSkos);
+    void importMultitesSkos(File multitesSkos, RDFFormat format);
 
     void addPhrases(File phrasesFile);
 
