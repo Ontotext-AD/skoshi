@@ -196,7 +196,12 @@ $(function() {
       type: "GET"
     }).done(function(result) {
       $.each(result, function(i, l) {
-        $("#right-content").append('<div class="form-group category item" data-id="' + l.id + '"><div class="panel panel-default"><div class="panel-heading"><a class="panel-title categoryName" id=' + l.id + '>' + l.label + '</a><a href="javascript:void(0)" class="remove" data-label="' + l.label + '" title="Remove facet" data-id="' + l.id + '"><span class="glyphicon glyphicon-remove" style="color: #000"></span></a></div><div class="panel-body category-content tokenfield" data-label="' + l.label + '" data-id="' + l.id + '"></div></div></div>');
+        var label = l.label;
+        if (label.length > 25) {
+            label = label.substr(0, 22);
+            label = label + '...';
+        }
+        $("#right-content").append('<div class="form-group category item" data-id="' + l.id + '"><div class="panel panel-default"><div class="panel-heading"><a class="panel-title categoryName" id=' + l.id + '>' + label + '</a><a href="javascript:void(0)" class="remove" data-label="' + l.label + '" title="Remove facet" data-id="' + l.id + '"><span class="glyphicon glyphicon-remove" style="color: #000"></span></a></div><div class="panel-body category-content tokenfield" data-label="' + l.label + '" data-id="' + l.id + '"></div></div></div>');
         $('.categoryName').editable({
             type: 'text',
             title: 'Enter facet name',
@@ -305,7 +310,7 @@ $(function() {
   $('#conceptsSearchBox').keyup(function() {
     $('#conceptsSearchBox').keyup(function(e) {
       var keycode = (e.keyCode ? e.keyCode : e.which);
-      if (keycode != '17' && keycode != '18' && keycode != '91' && keycode != '93' && keycode != '9' && keycode != '27' && keycode != '37' && keycode != '38' && keycode != '39' && keycode != '40'){
+      if (keycode != '16' && keycode != '17' && keycode != '18' && keycode != '91' && keycode != '93' && keycode != '9' && keycode != '27' && keycode != '37' && keycode != '38' && keycode != '39' && keycode != '40'){
         facetsAutosuggestService(selectedCategory);
       }
     });
@@ -373,7 +378,7 @@ $(function() {
         data: 'lbl=' + $('#newFacetInput').val()
       }).done(function(result) {
         $('#newFacetInput').val('');
-        alertify.success(result);
+        alertify.success('Facet created successfully.');
         getFacetsAfterAdd();
         $('.md-modal').css('visibility', 'hidden');
           $('.md-modal').hide();

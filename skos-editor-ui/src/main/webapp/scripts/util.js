@@ -211,7 +211,7 @@ function autoSuggestService() {
     var url;
     var textValue = $('#conceptsSearchBox').val();
     if (textValue.length >= 2) {
-      url = service + "/concepts?prefix=" + textValue;
+      url = service + "/concepts?prefix=" + textValue + "&limit=50";
       autoSuggestRenderer(url, textValue);
     } else if (textValue.length == 0) {
       url = service + "/concepts?limit=50";
@@ -279,6 +279,9 @@ function getConcepts(val, limit, offset) {
 		$('#conceptsContainer').append(txt);
 		if (window.location.href.indexOf("facets") == -1) {
 			tooltip('c' + offset);
+		}
+		if (val && val != null) {
+			$('#conceptsContainer').highlight(val);
 		}
 		$('#concepts-loader').html('');
 	});

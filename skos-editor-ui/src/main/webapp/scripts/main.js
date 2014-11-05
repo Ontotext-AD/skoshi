@@ -142,7 +142,7 @@ $(function() {
 
   $('#conceptsSearchBox').keyup(function(e) {
     var keycode = (e.keyCode ? e.keyCode : e.which);
-    if (keycode != '17' && keycode != '18' && keycode != '91' && keycode != '93' && keycode != '9' && keycode != '27' && keycode != '37' && keycode != '38' && keycode != '39' && keycode != '40'){
+    if (keycode != '16' && keycode != '17' && keycode != '18' && keycode != '91' && keycode != '93' && keycode != '9' && keycode != '27' && keycode != '37' && keycode != '38' && keycode != '39' && keycode != '40'){
       autoSuggestService();
     }
   });
