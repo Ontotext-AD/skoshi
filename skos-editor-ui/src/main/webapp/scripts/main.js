@@ -9,6 +9,7 @@ $(function() {
   $('#alternativelabels').tagsinput();
 
   key('a', function(){ 
+    $('#newConceptInput').focus();
     var overlay = document.querySelector( '.md-overlay' );
 
     [].slice.call( document.querySelectorAll( '.md-trigger' ) ).forEach( function( el, i ) {
@@ -65,6 +66,7 @@ $(function() {
     if ($('#conceptsSearchBox').val().length > 0) {
       autoSuggestService();
     } else {
+      $('#conceptsContainer').html('');
       getConcepts('', 50, 0);
     }
     $('#conceptsSearchBox').focusTextToEnd();
@@ -138,19 +140,54 @@ $(function() {
      }
   });
 
-  $('#conceptsSearchBox').keyup(function() {
-    autoSuggestService();
+  $('#conceptsSearchBox').keyup(function(e) {
+    var keycode = (e.keyCode ? e.keyCode : e.which);
+    if (keycode != '17' && keycode != '18' && keycode != '91' && keycode != '93' && keycode != '9' && keycode != '27' && keycode != '37' && keycode != '38' && keycode != '39' && keycode != '40'){
+      autoSuggestService();
+    }
+  });
+
+  $('#newConceptInput').keyup(function(e) {
+      var keycode = (e.keyCode ? e.keyCode : e.which);
+      if (keycode == '13'){
+        $('#saveNewConcept').trigger('click');
+      }
+      if (keycode == '27') {
+        var overlay = document.querySelector( '.md-overlay' );
+
+        [].slice.call( document.querySelectorAll( '.md-trigger' ) ).forEach( function( el, i ) {
+
+          var modal = document.querySelector( '#' + el.getAttribute( 'data-modal' ) ),
+            close = modal.querySelector( '.md-close' );
+            classie.remove( modal, 'md-show' );
+
+        });
+      }
+  });
+
+  $('#newConceptButton').on('mouseover', function() {
+    $('.md-modal').css('visibility', 'visible');
+  });
+
+  $('#newConceptButton').on('mouseout', function() {
+    $('.md-modal').css('visibility', 'hidden');
   });
 
   $('#saveNewConcept').on('click', function() {
-    $.ajax({
-      url: service + "/concepts/?lbl=" + $('#newConceptInput').val(),
-      type: "POST"
-    }).done(function(result) {
-      location.href = 'index.html?id=' + result;
-    }).fail(function(result) {
-      alertify.error('Error');
-    });
+    if ($('#newConceptInput').val()) {
+      $.ajax({
+        url: service + "/concepts/?lbl=" + $('#newConceptInput').val(),
+        type: "POST"
+      }).done(function(result) {
+        location.href = 'index.html?id=' + result;
+      }).fail(function(result) {
+        alertify.error('Error');
+      });
+    } else {
+      alertify.error('Please type a concept name.');
+      return false;
+    }
+    
   });
 
   $('#importButton').on('keypress', function() {
@@ -255,6 +292,7 @@ $(function() {
       } else {
         alertify.success(result);
       }
+      $('#conceptsContainer').html('');
       getConcepts('', 50, 0);
     }).fail(function(result) {
       alertify.error('Error');
@@ -270,7 +308,7 @@ $(function() {
   });
 
   var timer;
-  $('#mainLabel, #definition, #note').on('keyup', function() {
+  $('#preflabel, #definition, #note').on('keyup', function() {
     var el = $(this);
     clearTimeout(timer);
     var ms = 1000;

@@ -9,14 +9,17 @@ $(function() {
   var facetsAutosuggestRenderer = function (url, textValue) {
   
   $('#conceptsContainer').html('');
+  $('#concepts-loader').html('Loading...');
     xhr = $.ajax({
       url: url,
+      cache: true
     }).done(function(result) {
       $.each(result, function(i, l) {
         var dataID = l.id;
         if (dataID.endsWith('=')) {
           dataID = dataID.slice(0, -1);
         }
+        $('#concepts-loader').html('');
         $('#conceptsContainer').append('<a href="javascript:void(0)" class="list-group-item facet" data-id="' + l.id + '">' + l.label + '</a>');
         if (textValue.length > 1) {
           $('#conceptsContainer').highlight(textValue);
@@ -48,7 +51,7 @@ $(function() {
     $('#conceptsContainer').html(''); 
   }
 
-  $('#concepts-loader').html('Loading...');
+  $('#concepts-loader').html('Loading next 50 concepts...');
 
   var txt = '';
   var url = '';
@@ -295,7 +298,30 @@ $(function() {
   getFacets();
 
   $('#conceptsSearchBox').keyup(function() {
-    facetsAutosuggestService(selectedCategory);
+    $('#conceptsSearchBox').keyup(function(e) {
+      var keycode = (e.keyCode ? e.keyCode : e.which);
+      if (keycode != '17' && keycode != '18' && keycode != '91' && keycode != '93' && keycode != '9' && keycode != '27' && keycode != '37' && keycode != '38' && keycode != '39' && keycode != '40'){
+        facetsAutosuggestService(selectedCategory);
+      }
+    });
+  });
+
+  $('#newFacetInput').keyup(function(e) {
+      var keycode = (e.keyCode ? e.keyCode : e.which);
+      if (keycode == '13'){
+        $('#saveNewFacet').trigger('click');
+      }
+      if (keycode == '27') {
+        var overlay = document.querySelector( '.md-overlay' );
+
+        [].slice.call( document.querySelectorAll( '.md-trigger' ) ).forEach( function( el, i ) {
+
+          var modal = document.querySelector( '#' + el.getAttribute( 'data-modal' ) ),
+            close = modal.querySelector( '.md-close' );
+            classie.remove( modal, 'md-show' );
+
+        });
+      }
   });
 
   $(document).on('click', '.remove', function(e) {
@@ -312,13 +338,15 @@ $(function() {
 
   $(document).on('click', '.facet', function() {
     if (typeof selected != 'undefined' && selected) {
+      var fLabel = $(selectedCategory).attr('data-label');
+      var cLabel = $(this).text();
       var fId = $(selectedCategory).attr('data-id');
       var cId = $(this).attr('data-id');
         $.ajax({
           url: service + "/facets/" + fId + '/concepts/' + cId,
           type: "POST"
         }).done(function(result) {
-          alertify.success(result);
+          alertify.success('Concept "' + cLabel + '" added successfuly to the facet "' + fLabel + '"', 6000);
 
           $('#conceptsContainer').html('');
           getFacet($(selectedCategory).attr('data-id'), selectedCategory);
@@ -332,25 +360,32 @@ $(function() {
     }
   });
 
-  $('#newFacetInput').focus();
-  $(document).on('keypress', '#newFacetInput', function(e) {
-      if (e.which == '13') {
-          $('#saveNewFacet').click();
-      }
+  $(document).on('click', '#saveNewFacet', function() {
+    if ($('#newFacetInput').val()) {
+      $.ajax({
+        url: service + "/facets/",
+        type: "POST",
+        data: 'lbl=' + $('#newFacetInput').val()
+      }).done(function(result) {
+        $('#newFacetInput').val('');
+        alertify.success(result);
+        getFacetsAfterAdd();
+      }).fail(function(result) {
+        alertify.error(result);
+      });
+    } else {
+      alertify.error('Please type a facet name.');
+      return false;
+    }
+    
   });
 
-  $(document).on('click', '#saveNewFacet', function() {
-    $.ajax({
-      url: service + "/facets/",
-      type: "POST",
-      data: 'lbl=' + $('#newFacetInput').val()
-    }).done(function(result) {
-      $('#newFacetInput').val('');
-      alertify.success(result);
-      getFacetsAfterAdd();
-    }).fail(function(result) {
-      alertify.error(result);
-    });
+  $('#newFacetButton').on('mouseover', function() {
+    $('.md-modal').css('visibility', 'visible');
+  });
+
+  $('#newFacetButton').on('mouseout', function() {
+    $('.md-modal').css('visibility', 'hidden');
   });
 
   $(document).on('click', '.removeFacet', function() {
@@ -380,7 +415,9 @@ $(function() {
       getConceptsAvailable(val, limit, offset);
     }
     $('.category').attr('data-selected', null);
+    $('.category').removeClass('selected');
     $(this).attr('data-selected', 'true');
+    $(this).addClass('selected');
     $('.panel-heading').css('background-color', '#f5f5f5').css('border-color', '#ddd').css('color', '#333');
     $(this).children().find('.panel-heading').css('background-color', '#3498DB').css('border-color', '#2980B9').css('color', '#fff');
   });
