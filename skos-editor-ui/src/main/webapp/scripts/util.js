@@ -79,7 +79,7 @@ var tooltip = function(param) {
 		content: {
 			text: function(event, api) {
 				if (id && id != null) {
-					return '<ul class="nav nav-pills nav-stacked" data-ttipid="' + $(this).attr('data-id') + '"><li><a href="javascript:void(0)" id="synonyms">Add to synonyms</a></li><li><a href="javascript:void(0)" id="related">Add to related</a></li><li><a href="javascript:void(0)" id="broader">Add to broader</a></li><li><a href="javascript:void(0)" id="narrower">Add to narrower</a></li><li><a href="javascript:void(0)" id="deleteConceptFromList">Delete</a></li></ul>';
+					return '<ul class="nav nav-pills nav-stacked" data-ttipid="' + $(this).attr('data-id') + '"><li><a href="javascript:void(0)" id="synonyms">Add as synonym</a></li><li><a href="javascript:void(0)" id="related">Add as related</a></li><li><a href="javascript:void(0)" id="broader">Add as broader</a></li><li><a href="javascript:void(0)" id="narrower">Add as narrower</a></li><li><a href="javascript:void(0)" id="deleteConceptFromList">Delete</a></li></ul>';
 				} else {
 					return '<ul class="nav nav-pills nav-stacked" data-ttipid="' + $(this).attr('data-id') + '"><li><a href="javascript:void(0)" id="deleteConceptFromList">Delete</a></li></ul>';
 				}
@@ -125,7 +125,7 @@ var tooltipAutoSuggest = function() {
 		content: {
 			text: function(event, api) {
 				if (id && id != null) {
-					return '<ul class="nav nav-pills nav-stacked" data-ttipid="' + $(this).attr('data-id') + '"><li><a href="javascript:void(0)" id="synonyms">Add to synonyms</a></li><li><a href="javascript:void(0)" id="related">Add to related</a></li><li><a href="javascript:void(0)" id="broader">Add to broader</a></li><li><a href="javascript:void(0)" id="narrower">Add to narrower</a></li><li><a href="javascript:void(0)" id="deleteConceptFromList">Delete</a></li></ul>';
+					return '<ul class="nav nav-pills nav-stacked" data-ttipid="' + $(this).attr('data-id') + '"><li><a href="javascript:void(0)" id="synonyms">Add as synonym</a></li><li><a href="javascript:void(0)" id="related">Add as related</a></li><li><a href="javascript:void(0)" id="broader">Add as broader</a></li><li><a href="javascript:void(0)" id="narrower">Add as narrower</a></li><li><a href="javascript:void(0)" id="deleteConceptFromList">Delete</a></li></ul>';
 				} else {
 					return '<ul class="nav nav-pills nav-stacked" data-ttipid="' + $(this).attr('data-id') + '"><li><a href="javascript:void(0)" id="deleteConceptFromList">Delete</a></li></ul>';
 				}
