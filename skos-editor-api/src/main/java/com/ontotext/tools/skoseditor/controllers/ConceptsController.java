@@ -5,6 +5,7 @@ import com.ontotext.openpolicy.concept.ConceptDescription;
 import com.ontotext.tools.skoseditor.services.ConceptsService;
 import com.ontotext.tools.skoseditor.util.WebUtils;
 import com.wordnik.swagger.annotations.Api;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openrdf.model.URI;
 import org.openrdf.rio.RDFFormat;
@@ -85,39 +86,42 @@ public class ConceptsController {
     }
 
     private String importRdf(MultipartFile conceptsRdf) {
-        File conceptsRdfFile;
+        File conceptsRdfFile = null;
         try {
             conceptsRdfFile = WebUtils.getFileFromParam(conceptsRdf);
+            conceptsService.importConcepts(conceptsRdfFile);
         } catch (IOException e) {
             throw new IllegalArgumentException("Failed to get file.", e);
+        } finally {
+            FileUtils.deleteQuietly(conceptsRdfFile);
         }
-        conceptsService.importConcepts(conceptsRdfFile);
-        conceptsRdfFile.delete();
         return "Resumed from saved state.";
     }
 
     private String importPhrases(MultipartFile phrases) {
-        File phrasesFile ;
+        File phrasesFile = null;
         try {
             phrasesFile = WebUtils.getFileFromParam(phrases);
+            conceptsService.addPhrases(phrasesFile);
         } catch (IOException e) {
             throw new IllegalArgumentException("Failed to get file.", e);
+        } finally {
+            FileUtils.deleteQuietly(phrasesFile);
         }
-        conceptsService.addPhrases(phrasesFile);
-        phrasesFile.delete();
         return "Added phrases.";
     }
 
     private String importMultitesRdf(MultipartFile multitesSkos) {
-        File multitesSkosFile;
+        File multitesSkosFile = null;
         try {
             multitesSkosFile = WebUtils.getFileFromParam(multitesSkos);
+            conceptsService.importMultitesSkos(multitesSkosFile);
         } catch (IOException e) {
             throw new IllegalArgumentException("Failed to get multites skos.", e);
+        } finally {
+            FileUtils.deleteQuietly(multitesSkosFile);
         }
-        conceptsService.importMultitesSkos(multitesSkosFile);
-        multitesSkosFile.delete();
-        return "Imported MultiTes files.";
+        return "Imported MultiTes file.";
     }
 
     @RequestMapping(method = GET, value = "/export")
