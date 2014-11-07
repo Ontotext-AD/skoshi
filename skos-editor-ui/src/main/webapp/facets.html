@@ -29,15 +29,18 @@
   </head>
   <body>
     <div class='notifications bottom-right'></div>
-    <div class="tabs tabs-style-bar">
-          <nav>
-            <ul>
-              <li><a href="index.html"><span>Concepts manager</span></a></li>
-              <li class="tab-current"><a href="facets.html"><span>Facets manager</span></a></li>
-            </ul>
+    <header>
+        <div class="logo">Open Policy Concepts Manager</div>
+        <section class="color-1">
+          <nav class="cl-effect-1" id="cl-effect-1">
+            <a href="index.html">Concepts</a>
+            <a href="facets.html">Facets</a>
           </nav>
-        </div>
+        </section>
+      </header>
+<div style="height: 90px"></div>
 
+<section id="content">
     <h3>
 <div>
       <a href="javascript:void(0)" class="btn btn-primary btn-sm md-trigger" data-modal="modal-9" id="newFacetButton">Add new facet</a>
@@ -73,6 +76,21 @@
       </div>
     </div>
     <div class="md-overlay"></div>
+
+    <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="deleteFacet" id="deleteFacet" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <h4 class="modal-title" id="importModalLabel">Are you sure?</h4>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+            <button type="button" class="btn btn-primary" id="delete">Yes</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <script src="components/boddhiModal/js/modernizr.custom.js"></script>
     <script src="vendor/jquery-2.1.1.min.js"></script>

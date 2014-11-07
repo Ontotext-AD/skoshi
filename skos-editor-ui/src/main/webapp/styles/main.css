@@ -451,141 +451,104 @@ h2 {
     box-shadow: none !important;
 }
 
-.letter-container{
-  border-bottom: 1px dashed rgba(255,255,255,0.1);
-  border-top: 1px dashed rgba(255,255,255,0.1);
-  margin: 20px;
-  padding: 40px 10px;
-  font-family: 'Aldrich', Arial, sans-serif;
+.logo {
+  float: left;
 }
-.letter-container h2{
-  text-align: center;
-}
-.letter-container h2 a{
-  color: #fff;
-  text-transform: uppercase;
-  display: inline-block;
-}
-.letter-container h2 .twrap{
-  position: relative;
-  display: inline-block;
-  width: 100px;
-  height: 120px;
-  line-height: 120px;
-  font-size: 20px;
-  border: 15px solid rgba(0,0,0,0.5);
-  -webkit-perspective: 400px;
-  perspective: 400px;
-  -webkit-box-shadow: 1px 1px 4px #000;
-  -moz-box-shadow: 1px 1px 4px #000;
-  box-shadow: 1px 1px 4px #000;
-}
-.letter-container h2 .tbg{
-  background: #121212;
-  position: absolute;
-  color: #f2c200;
-  width: 100%;
-  height: 100%;
-  -moz-box-shadow: 0px 1px 3px rgba(0,0,0,0.9);
-  -webkit-box-shadow: 0px 1px 3px rgba(0,0,0,0.9);
-  box-shadow: 0px 1px 3px rgba(0,0,0,0.9);
-}
-.letter-container h2 .tdown{
-  height: 50%;
-  top: 50%;
-  width: 100%;
-  position: absolute;
-  overflow: hidden;
-  z-index: 1;
-  background: #151515;
-  -webkit-box-shadow: 0px 1px 3px rgba(0,0,0,0.9);
-  -moz-box-shadow: 0px 1px 3px rgba(0,0,0,0.9);
-  box-shadow: 0px 1px 3px rgba(0,0,0,0.9);
-  -webkit-transition: all 0.3s linear;
-  -moz-transition: all 0.3s linear;
-  -o-transition: all 0.3s linear;
-  -ms-transition: all 0.3s linear;
-  transition: all 0.3s linear;
-}
-.letter-container h2 .tdown span,
-.letter-container h2 .tup .tback span{
-  display: block;
-  margin-top:-60px;
-}
-.letter-container h2 .tup{
-  height: 50%;
-  width: 100%;
-  position: absolute;
-  z-index: 10;
-  -webkit-transform-style: preserve-3d;
-  -moz-transform-style: preserve-3d;
-  -ms-transform-style: preserve-3d;
-  -o-transform-style: preserve-3d;
-  transform-style: preserve-3d;
-  -webkit-transform-origin: 50% 100%;
-  -webkit-transition: all 0.3s linear;
-  -moz-transition: all 0.3s linear;
-  -o-transition: all 0.3s linear;
-  -ms-transition: all 0.3s linear;
-  transition: all 0.3s linear;
-  -webkit-box-shadow: 0px 1px 3px rgba(0,0,0,0.9);
-  -moz-box-shadow: 0px 1px 3px rgba(0,0,0,0.9);
-  box-shadow: 0px 1px 3px rgba(0,0,0,0.9);
-}
-.letter-container h2 .tup .tfront,
-.letter-container h2 .tup .tback{
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0px;
-  overflow: hidden;
-  -webkit-backface-visibility: hidden;
-  background: #151515;
-}
-.letter-container h2 .tup .tback{
-  background: #121212;
-  color: #f2c200;
-}
-.csstransforms3d .letter-container h2 .tup .tback{
-  -webkit-transform: rotateX(-180deg); 
-}
-.csstransforms3d .letter-container h2 a .twrap:hover .tup{
-  -webkit-transform: rotateX(-180deg);
+.color-1 {
+  float: right;
+  font-size: 14px !important;
+  margin-right: 10px;
 }
 
-/* For browsers with no 3d transfrom support */
-.no-csstransforms3d .letter-container h2 .tup .tback{
-  display: none;
+/* Effect 1: Brackets */
+.cl-effect-1 a::before,
+.cl-effect-1 a::after {
+  display: inline-block;
+  opacity: 0;
+  -webkit-transition: -webkit-transform 0.3s, opacity 0.2s;
+  -moz-transition: -moz-transform 0.3s, opacity 0.2s;
+  transition: transform 0.3s, opacity 0.2s;
 }
-.no-csstransforms3d .letter-container h2 a .twrap:hover .tup{
-  -moz-animation: moveBackUp 0.7s ease-in-out forwards;
+
+.cl-effect-1 a::before {
+  margin-right: 10px;
+  content: '[';
+  -webkit-transform: translateX(20px);
+  -moz-transform: translateX(20px);
+  transform: translateX(20px);
 }
-.no-csstransforms3d .letter-container h2 a .twrap:hover .tdown{
-  -moz-animation: moveBackDown 0.7s ease-in-out forwards;
+
+.cl-effect-1 a::after {
+  margin-left: 10px;
+  content: ']';
+  -webkit-transform: translateX(-20px);
+  -moz-transform: translateX(-20px);
+  transform: translateX(-20px);
 }
-@-moz-keyframes moveBackUp {
-    0%{ 
-    -moz-transform: translateY(0%);
-  }
-  50%{
-    -moz-transform: translateY(-120%);
-    z-index: -1;
-  }
-  100%{
-    -moz-transform: translateY(0%);
-    z-index: -1;
-  }
+
+.cl-effect-1 a:hover::before,
+.cl-effect-1 a:hover::after,
+.cl-effect-1 a:focus::before,
+.cl-effect-1 a:focus::after {
+  opacity: 1;
+  -webkit-transform: translateX(0px);
+  -moz-transform: translateX(0px);
+  transform: translateX(0px);
+  text-decoration: none !important;
 }
-@-moz-keyframes moveBackDown {
-    0%{ 
-    -moz-transform: translateY(0%);
-  }
-  50%{
-    -moz-transform: translateY(120%);
-    z-index: -1;
-  }
-  100%{
-    -moz-transform: translateY(0%);
-    z-index: -1;
-  }
+.cl-effect-1 a:hover {
+  text-decoration: none !important;
 }
+.cl-effect-1 a {
+  color: #fff !important;
+}
+.cl-effect-1 a {
+  outline: none !important;
+}
+#content {
+  padding: 10px;
+  margin: 10px;
+}
+textarea {
+    resize: none;
+}
+html, body, div, span, object, iframe,h1, h2, h3, h4, h5, h6, p, blockquote, pre,a, abbr, acronym, address, big, cite, code,del, dfn, em, img, ins, kbd, q, s, samp,small, strike, strong, sub, sup, tt, var,b, u, i,dl, dt, dd, ol, ul, li,fieldset, form, label, legend,table, caption, tbody, tfoot, thead, tr, th, td,article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, section, summary,time, mark, audio, video {  margin: 0;  padding: 0; border: 0;  vertical-align: baseline;}
+article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {  display: block;}
+ol, ul {  list-style: none;}
+blockquote, q { quotes: none;}
+blockquote:before, blockquote:after,q:before, q:after { content: '';  content: none;}
+table {  border-collapse: collapse;  border-spacing: 0;}
+        
+        
+        header{
+            position: fixed;
+            width: 100%;
+            text-align: left;
+            font-size: 22px;
+            line-height: 90px;
+            height: 90px;
+            padding-left: 20px;
+            background: #2C3E50;
+            color: #fff;
+            -webkit-box-shadow: 0 10px 6px -6px #777;
+            -moz-box-shadow: 0 10px 6px -6px #777;
+          box-shadow: 0 10px 6px -6px #777;
+            
+            // set animation
+            -webkit-transition: all 0.1s ease;
+            transition: all 0.1s ease;
+        }
+        
+        header.sticky {
+            font-size: 14px;
+            line-height: 48px;
+            height: 48px; 
+            background: #34495E;
+            text-align: left;
+            padding-left: 20px;
+            z-index: 100000;
+            opacity: 0.7;
+            -moz-box-shadow: 0 4px 2px -3px;
+            box-shadow: 0 4px 2px -3px;
+        }
+       

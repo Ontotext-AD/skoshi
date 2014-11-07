@@ -1,3 +1,11 @@
+$(window).scroll(function() {
+    if ($(this).scrollTop() > 1){  
+        $('header').addClass("sticky");
+    }
+    else{
+        $('header').removeClass("sticky");
+    }
+});
 
 var service, protocol, api, xhr, el, conceptDataCached;
 var id = getUrlParameter('id');

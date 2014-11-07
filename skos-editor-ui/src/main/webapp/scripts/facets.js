@@ -5,6 +5,7 @@ $(function() {
   var autoSuggestEnabled = false;
   var selected = false;
   var selectedCategory;
+  var facetToDelete;
 
   var facetsAutosuggestRenderer = function (url, textValue) {
   
@@ -94,7 +95,7 @@ $(function() {
             label = label.substr(0, 22);
             label = label + '...';
         }
-        $("#right-content").append('<div class="form-group category item"><div class="panel panel-default"><div class="panel-heading"><a class="panel-title categoryName" title="' + l.label + '" id=' + l.id + '>' + label + '</a><a href="javascript:void(0)" class="remove" data-label="' + l.label + '" title="Remove facet" data-id="' + l.id + '"><span class="glyphicon glyphicon-remove" style="color: #000"></span></a></div><div class="panel-body category-content tokenfield" data-label="' + l.label + '" data-id="' + l.id + '"></div></div></div>');
+        $("#right-content").append('<div class="form-group category item"><div class="panel panel-default"><div class="panel-heading"><a class="panel-title categoryName" title="' + l.label + '" id=' + l.id + '>' + label + '</a><a href="javascript:void(0)" class="remove md-trigger" data-modal="modal-1" data-label="' + l.label + '" title="Remove facet" data-id="' + l.id + '"><span class="glyphicon glyphicon-remove" style="color: #000"></span></a></div><div class="panel-body category-content tokenfield" data-label="' + l.label + '" data-id="' + l.id + '"></div></div></div>');
         $('.categoryName').editable({
             type: 'text',
             title: 'Enter facet name',
@@ -142,7 +143,7 @@ $(function() {
             label = label.substr(0, 22);
             label = label + '...';
         }
-        $("#right-content").append('<div class="form-group category item data-id="' + l.id + '""><div class="panel panel-default"><div class="panel-heading"><a class="panel-title categoryName" id=' + l.id + '>' + label + '</a><a href="javascript:void(0)" class="remove" data-label="' + l.label + '" title="Remove facet" data-id="' + l.id + '"><span class="glyphicon glyphicon-remove" style="color: #000"></span></a></div><div class="panel-body category-content tokenfield" data-label="' + l.label + '" data-id="' + l.id + '"></div></div></div>');
+        $("#right-content").append('<div class="form-group category item data-id="' + l.id + '""><div class="panel panel-default"><div class="panel-heading"><a class="panel-title categoryName" id=' + l.id + '>' + label + '</a><a href="javascript:void(0)" class="remove md-trigger" data-modal="modal-10" data-label="' + l.label + '" title="Remove facet" data-id="' + l.id + '"><span class="glyphicon glyphicon-remove" style="color: #000"></span></a></div><div class="panel-body category-content tokenfield" data-label="' + l.label + '" data-id="' + l.id + '"></div></div></div>');
         $('.categoryName').editable({
             type: 'text',
             title: 'Enter facet name',
@@ -201,7 +202,7 @@ $(function() {
             label = label.substr(0, 22);
             label = label + '...';
         }
-        $("#right-content").append('<div class="form-group category item" data-id="' + l.id + '"><div class="panel panel-default"><div class="panel-heading"><a class="panel-title categoryName" id=' + l.id + '>' + label + '</a><a href="javascript:void(0)" class="remove" data-label="' + l.label + '" title="Remove facet" data-id="' + l.id + '"><span class="glyphicon glyphicon-remove" style="color: #000"></span></a></div><div class="panel-body category-content tokenfield" data-label="' + l.label + '" data-id="' + l.id + '"></div></div></div>');
+        $("#right-content").append('<div class="form-group category item" data-id="' + l.id + '"><div class="panel panel-default"><div class="panel-heading"><a class="panel-title categoryName" id=' + l.id + '>' + label + '</a><a href="javascript:void(0)" class="remove md-trigger" data-modal="modal-10" data-label="' + l.label + '" title="Remove facet" data-id="' + l.id + '"><span class="glyphicon glyphicon-remove" style="color: #000"></span></a></div><div class="panel-body category-content tokenfield" data-label="' + l.label + '" data-id="' + l.id + '"></div></div></div>');
         $('.categoryName').editable({
             type: 'text',
             title: 'Enter facet name',
@@ -255,7 +256,7 @@ $(function() {
       }
 
       $('#conceptsContainer').html('');
-      //getConceptsAvailable();
+      getConceptsAvailable('', 50, 0);
 
     }).fail(function(result) {
       alertify.error(result);
@@ -336,11 +337,22 @@ $(function() {
 
   $(document).on('click', '.remove', function(e) {
     e.stopPropagation();
+    $('#deleteFacet').modal({
+      keyboard: true
+    });
+    facetToDelete = $(this).attr('data-id');
+  });
+
+  $(document).on('click', '#delete', function(e) {
+    
+    selected = false;
+    $('#deleteFacet').modal('hide')
     $.ajax({
-      url: service + "/facets/" + $(this).attr('data-id'),
+      url: service + "/facets/" + facetToDelete,
       type: "DELETE"
     }).done(function(result) {
       getFacetsAfterRemove();
+      alertify.success(result);
     }).fail(function(result) {
       alertify.error(result);
     });
