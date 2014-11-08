@@ -12,9 +12,11 @@ import com.ontotext.tools.skoseditor.util.SparqlUtils;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
 import org.openrdf.model.vocabulary.RDF;
-import org.openrdf.model.vocabulary.RDFS;
 import org.openrdf.model.vocabulary.SKOS;
-import org.openrdf.query.*;
+import org.openrdf.query.BindingSet;
+import org.openrdf.query.QueryLanguage;
+import org.openrdf.query.TupleQuery;
+import org.openrdf.query.TupleQueryResult;
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
@@ -525,15 +527,20 @@ public class SesameConceptsRepository implements ConceptsRepository {
             RepositoryConnection connection = repository.getConnection();
             try {
                 RepositoryResult<Statement> result = connection.getStatements(id, predicate, null, false);
+                RepositoryResult<Statement> statements = null;
                 try {
                     while (result.hasNext()) {
                         Statement st = result.next();
                         URI objectId = (URI) st.getObject();
-                        String objectLabel = connection.getStatements(objectId, SKOS.PREF_LABEL, null, false).next().getObject().stringValue();
+                        statements = connection.getStatements(objectId, SKOS.PREF_LABEL, null, false);
+                        String objectLabel = statements.next().getObject().stringValue();
                         Concept object = new ConceptImpl(objectId, objectLabel);
                         values.add(object);
                     }
                 } finally {
+                    if (statements != null) {
+                        statements.close();
+                    }
                     result.close();
                 }
             } finally {
