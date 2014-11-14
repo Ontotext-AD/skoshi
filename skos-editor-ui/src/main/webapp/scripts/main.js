@@ -230,12 +230,15 @@ $(function() {
       beforeSend: function() {
         spinInit($('#importButtonInside').prev().prev()[0], '333');
       },
-      dataType: 'json',
       complete: function(xhr) {
-        location.href = 'index.html';
+        alertify.success(xhr.responseText);
+        window.setTimeout(function () {
+            location.href = 'index.html';
+        }, 1000);
       },
       error: function(xhr) {
         alertify.error(xhr.responseText);
+        $('#importButtonInside').prev().prev().empty();
       }
     };
     $("#importForm").ajaxForm(options);
@@ -246,12 +249,15 @@ $(function() {
       beforeSend: function() {
         spinInit($('#keyphrasesImportButtonInside').prev().prev()[0], '333');
       },
-      dataType: 'json',
       complete: function(xhr) {
-        location.href = 'index.html';
+        alertify.success(xhr.responseText);
+        window.setTimeout(function () {
+            location.href = 'index.html';
+        }, 1000);
       },
       error: function(xhr) {
         alertify.error(xhr.responseText);
+        $('#keyphrasesImportButtonInside').prev().prev().empty();
       }
     };
     $("#importForm2").ajaxForm(options);
@@ -262,9 +268,11 @@ $(function() {
       beforeSend: function() {
         spinInit($('#multitestImportButton').prev().prev()[0], '333');
       },
-      dataType: 'json',
-      success: function(result) {
-        location.href = 'index.html';
+      complete: function(xhr) {
+        alertify.success(xhr.responseText);
+        window.setTimeout(function () {
+            location.href = 'index.html';
+        }, 1000);
       },
       error: function(xhr) {
         $('#multitestImportButton').prev().prev().empty();
