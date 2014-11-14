@@ -87,7 +87,7 @@ public class SesameConceptsRepository implements ConceptsRepository {
                     "select ?concept ?label where \n" +
                     "{\n" +
 //                    "    ?concept rdfs:label ?label . \n" +
-                    "    ?concept skos:prefLabel|skos:altLabel ?label . \n" +
+                    "    ?concept skos:prefLabel|skos:altLabel|skos:acronym|skos:abbreviation ?label . \n" +
                     "    FILTER REGEX(?label, \"(^|\\\\W)" + prefix + "\", \"i\") . \n" +
                     "}";
             if (limit != 0) sparql += "limit " + limit + "\n";
