@@ -420,11 +420,15 @@ public class SesameConceptsRepository implements ConceptsRepository {
     @Override
     public void addRelated(URI id, URI relatedId) {
         addConceptObjectPropertyValue(id, SKOS.RELATED, relatedId);
+        // TODO: remove this and use a working inferencer
+        addConceptObjectPropertyValue(relatedId, SKOS.RELATED, id);
     }
 
     @Override
     public void deleteRelated(URI id, URI relatedId) {
         deleteConceptObjectPropertyValue(id, SKOS.RELATED, relatedId);
+        // TODO: remove this and use a working inferencer
+        deleteConceptObjectPropertyValue(relatedId, SKOS.RELATED, id);
     }
 
     @Override
@@ -435,11 +439,15 @@ public class SesameConceptsRepository implements ConceptsRepository {
     @Override
     public void addSynonym(URI id, URI synonymId) {
         addConceptObjectPropertyValue(id, SKOSX.SYNONYM, synonymId);
+        // TODO: remove this and use a working inferencer
+        addConceptObjectPropertyValue(synonymId, SKOSX.SYNONYM, id);
     }
 
     @Override
     public void deleteSynonym(URI id, URI synonymId) {
         deleteConceptObjectPropertyValue(id, SKOSX.SYNONYM, synonymId);
+        // TODO: remove this and use a working inferencer
+        deleteConceptObjectPropertyValue(synonymId, SKOSX.SYNONYM, id);
     }
 
     @Override
@@ -450,11 +458,15 @@ public class SesameConceptsRepository implements ConceptsRepository {
     @Override
     public void addBroader(URI id, URI broaderId) {
         addConceptObjectPropertyValue(id, SKOS.BROADER, broaderId);
+        // TODO: remove this and use a working inferencer
+        addConceptObjectPropertyValue(broaderId, SKOS.NARROWER, id);
     }
 
     @Override
     public void deleteBroader(URI id, URI broaderId) {
         deleteConceptObjectPropertyValue(id, SKOS.BROADER, broaderId);
+        // TODO: remove this and use a working inferencer
+        deleteConceptObjectPropertyValue(broaderId, SKOS.NARROWER, id);
     }
 
     @Override
@@ -465,11 +477,15 @@ public class SesameConceptsRepository implements ConceptsRepository {
     @Override
     public void addNarrower(URI id, URI narrowerId) {
         addConceptObjectPropertyValue(id, SKOS.NARROWER, narrowerId);
+        // TODO: remove this and use a working inferencer
+        addConceptObjectPropertyValue(narrowerId, SKOS.BROADER, id);
     }
 
     @Override
     public void deleteNarrower(URI id, URI narrowerId) {
         deleteConceptObjectPropertyValue(id, SKOS.NARROWER, narrowerId);
+        // TODO: remove this and use a working inferencer
+        deleteConceptObjectPropertyValue(narrowerId, SKOS.BROADER, id);
     }
 
     @Override
