@@ -21,7 +21,7 @@ h2 {
   overflow: scroll;
   margin-bottom: 5px;
 }
-#synonyms-container, #related-container, #broader-container, #narrower-container {
+#synonyms-list, #related-list, #broader-list, #narrower-list {
   overflow: hidden !important;
 }
 #abbr, #altLabels {
