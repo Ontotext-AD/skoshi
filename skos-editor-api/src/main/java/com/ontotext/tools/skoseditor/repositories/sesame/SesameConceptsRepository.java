@@ -6,6 +6,7 @@ import com.ontotext.openpolicy.concept.ConceptDescriptionImpl;
 import com.ontotext.openpolicy.concept.ConceptImpl;
 import com.ontotext.openpolicy.ontologyconstants.openpolicy.SKOSX;
 import com.ontotext.openpolicy.semanticstoreutils.SemanticStoreHelper;
+import com.ontotext.openpolicy.semanticstoreutils.SemanticStoreUtils;
 import com.ontotext.openpolicy.semanticstoreutils.sparql.SparqlQueryUtils;
 import com.ontotext.tools.skoseditor.repositories.ConceptsRepository;
 import com.ontotext.tools.skoseditor.util.SparqlUtils;
@@ -107,7 +108,7 @@ public class SesameConceptsRepository implements ConceptsRepository {
                         concepts.add(new ConceptImpl(id, prefLabel));
                     }
                 } finally {
-                    result.close();
+                    SemanticStoreUtils.closeQuietly(result);
                 }
             } finally {
                 connection.close();
@@ -138,7 +139,7 @@ public class SesameConceptsRepository implements ConceptsRepository {
                         concepts.add(new ConceptImpl(id, prefLabel));
                     }
                 } finally {
-                    result.close();
+                    SemanticStoreUtils.closeQuietly(result);
                 }
             } finally {
                 connection.close();
@@ -205,7 +206,7 @@ public class SesameConceptsRepository implements ConceptsRepository {
                         concept = new ConceptImpl(id, prefLabel);
                     }
                 } finally {
-                    result.close();
+                    SemanticStoreUtils.closeQuietly(result);
                 }
             } finally {
                 connection.close();

@@ -7,8 +7,8 @@ import com.ontotext.openpolicy.entity.NamedEntityImpl;
 import com.ontotext.openpolicy.error.DataAccessException;
 import com.ontotext.openpolicy.navigation.TreeNode;
 import com.ontotext.openpolicy.ontologyconstants.openpolicy.SKOSX;
-import com.ontotext.openpolicy.semanticstoreutils.QueryExecutor;
 import com.ontotext.openpolicy.semanticstoreutils.QueryExecutorUtils;
+import com.ontotext.openpolicy.semanticstoreutils.SemanticStoreUtils;
 import com.ontotext.openpolicy.semanticstoreutils.facets.RdfFacetsRetriever;
 import com.ontotext.openpolicy.semanticstoreutils.sparql.SparqlQueryUtils;
 import com.ontotext.openpolicy.serviceproviders.RepositoryConnectionProvider;
@@ -61,17 +61,19 @@ public class SesameFacetsRepository implements FacetsRepository {
             String sparql = SparqlUtils.getPrefix("skos", SKOS.NAMESPACE) +
                     "select ?facet ?label where { ?facet a skos:Facet; skos:prefLabel ?label }\n";
             RepositoryConnection connection = repository.getConnection();
+            TupleQueryResult result = null;
             try {
                 TupleQuery tupleQuery = connection.prepareTupleQuery(QueryLanguage.SPARQL, sparql);
-                TupleQueryResult result = tupleQuery.evaluate();
+                result = tupleQuery.evaluate();
                 while (result.hasNext()) {
                     BindingSet row = result.next();
                     URI id = (URI) row.getValue("facet");
                     String prefLabel = row.getValue("label").stringValue();
                     facets.add(new NamedEntityImpl(id, prefLabel));
                 }
-                result.close();
+
             } finally {
+                SemanticStoreUtils.closeQuietly(result);
                 connection.close();
             }
         } catch (Exception e) {
@@ -188,9 +190,10 @@ public class SesameFacetsRepository implements FacetsRepository {
             log.debug("Query: \n" + sparqlQuery);
 
             RepositoryConnection connection = repository.getConnection();
+            TupleQueryResult result = null;
             try {
                 TupleQuery tupleQuery = connection.prepareTupleQuery(QueryLanguage.SPARQL, sparqlQuery.toString());
-                TupleQueryResult result = tupleQuery.evaluate();
+                result = tupleQuery.evaluate();
                 while (result.hasNext()) {
                     BindingSet row = result.next();
                     // this check is necessary, because the group by clause produces
@@ -201,8 +204,8 @@ public class SesameFacetsRepository implements FacetsRepository {
                         concepts.add(new ConceptImpl(conceptId, conceptLabel));
                     }
                 }
-                result.close();
             } finally {
+                SemanticStoreUtils.closeQuietly(result);
                 connection.close();
             }
         } catch (Exception e) {
