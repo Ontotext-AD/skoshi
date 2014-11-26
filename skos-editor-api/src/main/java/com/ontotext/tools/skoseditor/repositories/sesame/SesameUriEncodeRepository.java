@@ -40,4 +40,18 @@ public class SesameUriEncodeRepository implements UriEncodeRepository {
             throw new IllegalStateException(re);
         }
     }
+
+    @Override
+    public void addNamespace(String prefix, String namespace) {
+        try {
+            RepositoryConnection connection = repository.getConnection();
+            try {
+                repository.getConnection().setNamespace(prefix, namespace);
+            } finally {
+                connection.close();
+            }
+        } catch (RepositoryException re) {
+            throw new IllegalStateException(re);
+        }
+    }
 }

@@ -12,7 +12,7 @@ import org.openrdf.repository.sail.SailRepository;
 import org.openrdf.rio.RDFFormat;
 import org.openrdf.rio.RDFParseException;
 import org.openrdf.sail.inferencer.fc.ForwardChainingRDFSInferencer;
-import org.openrdf.sail.nativerdf.NativeStore;
+import org.openrdf.sail.memory.MemoryStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +48,7 @@ public class RepositoryProvider {
             if (!dataDirExists) {
                 dataDir.mkdirs();
             }
-            REPO = new SailRepository(new ForwardChainingRDFSInferencer(new NativeStore(dataDir)));
+            REPO = new SailRepository(new ForwardChainingRDFSInferencer(new MemoryStore(dataDir)));
             try {
                 REPO.initialize();
                 RepositoryConnection connection = REPO.getConnection();
