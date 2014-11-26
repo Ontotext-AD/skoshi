@@ -69,7 +69,7 @@
     <bean id="multipartResolver"
           class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
         <!-- set the maximum file size in bytes - 1 MB -->
-        <property name="maxUploadSize" value="1048576"/>
+        <property name="maxUploadSize" value="5242880"/>
     </bean>
 
     <!--  Swagger Config  -->
