@@ -5,12 +5,12 @@
 	<parent>
 		<groupId>com.ontotext.openpolicy.tools</groupId>
 		<artifactId>tools</artifactId>
-		<version>2.5.7-SNAPSHOT</version>
+		<version>2.5.7</version>
 	</parent>
 
 	<artifactId>skos-editor-ui</artifactId>
 	<name>SKOS Editor UI</name>
-	<version>2.5.7-SNAPSHOT</version>
+	<version>2.5.7</version>
 	<packaging>war</packaging>
 
 	<properties>
