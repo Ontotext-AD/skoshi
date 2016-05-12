@@ -43,7 +43,7 @@
 <section id="content">
     <h3>
 <div>
-      <a href="javascript:void(0)" class="btn btn-primary btn-sm md-trigger" data-modal="modal-9" id="newFacetButton">Add new facet</a>
+      <a href="javascript:void(0)" class="btn btn-primary btn-sm md-trigger triggerFacet" data-modal="modal-9" id="newFacetButton">Add new facet</a>
     </div>
     </h3>
 
@@ -71,10 +71,11 @@
       <div class="md-content">
         <h3>Add new facet</h3>
         <div>
-          <div><input type="text" id="newFacetInput" placeholder="Enter a facet name"><button class="md-close" id="saveNewFacet">Save</button></div>
+          <div><input type="text" id="newFacetInput" name="newFacetInput" placeholder="Enter a facet name"><button class="md-close" id="saveNewFacet">Save</button></div>
         </div>
       </div>
     </div>
+
     <div class="md-overlay"></div>
 
     <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="deleteFacet" id="deleteFacet" aria-hidden="true">
@@ -94,6 +95,7 @@
 
     <script src="components/boddhiModal/js/modernizr.custom.js"></script>
     <script src="vendor/jquery-2.1.1.min.js"></script>
+    <script src="components/boddhiKeymaster.js"></script>
     <script src="components/boddhiModal/js/classie.js"></script>
     <script src="components/boddhiModal/js/modalEffects.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.js"></script>

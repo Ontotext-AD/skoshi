@@ -37,6 +37,8 @@ $(function() {
     $('#newConceptInput').focus();
     var overlay = document.querySelector( '.md-overlay' );
 
+    console.log(document.querySelectorAll( '.md-trigger' ));
+
     [].slice.call( document.querySelectorAll( '.md-trigger' ) ).forEach( function( el, i ) {
 
       var modal = document.querySelector( '#' + el.getAttribute( 'data-modal' ) ),
@@ -65,7 +67,7 @@ $(function() {
       });
 
         classie.add( modal, 'md-show' );
-        $('#newFacetInput').focus();
+        $('#newConceptInput').focus();
         overlay.removeEventListener( 'click', removeModalHandler );
         overlay.addEventListener( 'click', removeModalHandler );
 
@@ -74,7 +76,7 @@ $(function() {
             classie.add( document.documentElement, 'md-perspective' );
           }, 25 );
         }
-        $('#newFacetInput').focus();
+        $('#newConceptInput').focus();
 
       close.addEventListener( 'click', function( ev ) {
         removeModalHandler();
@@ -199,12 +201,13 @@ $(function() {
   });
 
   $('#saveNewConcept').on('click', function() {
+    console.log($('#newConceptInput').val());
     if ($('#newConceptInput').val()) {
       $.ajax({
         url: service + "/concepts/?lbl=" + $('#newConceptInput').val(),
         type: "POST"
       }).done(function(result) {
-        location.href = 'index.html?id=' + result;
+        //location.href = 'index.html?id=' + result;
       }).fail(function(result) {
         alertify.error(result.responseText);
       });
@@ -261,6 +264,11 @@ $(function() {
       }
     };
     $("#importForm2").ajaxForm(options);
+  });
+
+  $('#newVocabularyButtonInside').on('click', function() {
+    console.log('new vocabulary triggerred');
+    // TODO: request to a new vocabulary service goes here
   });
 
   $('#multitestImportButton').on('click', function() {
