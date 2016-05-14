@@ -267,8 +267,14 @@ $(function() {
   });
 
   $('#newVocabularyButtonInside').on('click', function() {
-    console.log('new vocabulary triggerred');
-    // TODO: request to a new vocabulary service goes here
+    $.ajax({
+      url: service + "/concepts/",
+      type: "DELETE"
+    }).done(function(result) {
+      location.href = 'index.html';
+    }).fail(function(result) {
+      alertify.error(result.responseText);
+    });
   });
 
   $('#multitestImportButton').on('click', function() {
