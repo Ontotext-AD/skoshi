@@ -297,8 +297,8 @@ $(function() {
   });
 
   $(document).on('click', '.tt', function() {
-    var url = encodeURIComponent($(this).attr('data-id'));
-    location.href = 'index.html?id=' + url;
+    var url = $(this).attr('data-id');
+    location.href = 'index.html?id=' + encodeURIComponent(url);
   });
 
   $(document).ajaxComplete(function() {

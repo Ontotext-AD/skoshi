@@ -418,7 +418,7 @@ $(function() {
       var fId = $(selectedCategory).attr('data-id');
       var cId = $(this).attr('data-id');
         $.ajax({
-          url: service + "/facets/" + fId + '/concepts/' + cId,
+          url: service + "/facets/" + fId + '/concepts/' + encodeURIComponent(cId),
           type: "POST"
         }).done(function(result) {
           alertify.success('Concept "' + cLabel + '" added successfuly to the facet "' + fLabel + '"', 6000);
@@ -471,7 +471,7 @@ $(function() {
     var container = $(this).parents('.category-content');
     var facetId = $(this).attr('data-fid');
     $.ajax({
-      url: service + "/facets/" + $(this).attr('data-fid') + '/concepts/' + $(this).attr('data-cid'),
+      url: service + "/facets/" + $(this).attr('data-fid') + '/concepts/' + encodeURIComponent($(this).attr('data-cid')),
       type: "DELETE"
     }).done(function(result) {
       alertify.success(result);

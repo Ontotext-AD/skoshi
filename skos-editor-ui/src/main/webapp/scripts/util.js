@@ -415,6 +415,8 @@ function getConceptDetails(id) {
 				});
 			}
 		});
+	}).fail(function(result) {
+		alertify.error(result.statusText);
 	});
 	$.when(promise).done(function(xhr) {
 		conceptDataCached = xhr;
