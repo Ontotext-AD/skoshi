@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Concepts Manager</title>
+
+    <link rel='stylesheet' href='http://fonts.googleapis.com/css?family=Bitter:400,700,400italic' type='text/css' media='all' />
+    <link rel='stylesheet' href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' type='text/css' media='all' />
+    <link href="vendor/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link rel="stylesheet" href="components/bootstrap-utils/css/bootstrap-utils.css" type="text/css" />
+    <link rel="stylesheet" href="components/bootstrap-editable/css/bootstrap-editable.css" type="text/css" />
+    <link href="styles/main.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="components/qtip/jquery.qtip.min.css" />
+    <link rel="stylesheet" href="components/textBubble/bootstrap-tagsinput.css" type="text/css" />
+    <link rel="stylesheet" href="components/alertify/css/alertify.core.css" type="text/css" />
+    <link rel="stylesheet" href="components/alertify/css/alertify.default.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="styles/tabs.css" />
+    <link rel="stylesheet" type="text/css" href="styles/tabstyles.css" />
+    <link rel="stylesheet" type="text/css" href="components/boddhiModal/css/default.css" />
+    <link rel="stylesheet" type="text/css" href="components/boddhiModal/css/component.css" />
+
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+  </head>
+  <body>
+    <div class='notifications bottom-right'></div>
+    <header>
+        <div class="logo">Open Policy Concepts Manager</div>
+        <section class="color-1">
+          <nav class="cl-effect-1" id="cl-effect-1">
+            <a href="index.html">Concepts</a>
+            <a href="facets.html">Facets</a>
+          </nav>
+        </section>
+      </header>
+<div style="height: 90px"></div>
+
+<section id="content">
+    <h3>
+<div>
+      <a href="javascript:void(0)" class="btn btn-primary btn-sm md-trigger triggerFacet" data-modal="modal-9" id="newFacetButton">Add new facet</a>
+    </div>
+    </h3>
+
+    <div class="section group">
+      <div class="col span_1_of_3">
+        
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">Concepts</h3><div class="concepts-loader" id="concepts-loader" style="float: right"></div>
+          </div>
+          <div class="panel-body">
+            <div class="input-group">
+              <input type="text" class="form-control" id="conceptsSearchBox" placeholder="Search for com.ontotext.skoshi.model.concept...">
+            </div>
+            <div class="list-group" id="conceptsContainer"></div>
+          </div>
+        </div>
+
+      </div>
+      <div class="col span_2_of_3" id="right-content"></div>
+
+    </div>
+
+    <div class="md-modal md-effect-9" id="modal-9" style="visibility: hidden">
+      <div class="md-content">
+        <h3>Add new facet</h3>
+        <div>
+          <div><input type="text" id="newFacetInput" name="newFacetInput" placeholder="Enter a facet name"><button class="md-close" id="saveNewFacet">Save</button></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="md-overlay"></div>
+
+    <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="deleteFacet" id="deleteFacet" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <h4 class="modal-title" id="importModalLabel">Are you sure?</h4>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+            <button type="button" class="btn btn-primary" id="delete">Yes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="components/boddhiModal/js/modernizr.custom.js"></script>
+    <script src="vendor/jquery-2.1.1.min.js"></script>
+    <script src="components/boddhiKeymaster.js"></script>
+    <script src="components/boddhiModal/js/classie.js"></script>
+    <script src="components/boddhiModal/js/modalEffects.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.js"></script>
+    <script src="components/textBubble/bootstrap-tagsinput.js"></script>
+    <script src="components/bootstrap-utils/js/bootstrap-utils.js"></script>
+    <script src="components/bootstrap-editable/js/bootstrap-editable.js"></script>
+    <script src="components/jquery.scrollTo.js"></script>
+    <script src="components/canvasloader.js"></script>
+    <script src="scripts/util.js"></script>
+    <script src="components/qtip/jquery.qtip.min.js"></script>
+    <script src="components/boddhi.highlight.js"></script>
+    <script src="components/jquery.form.js"></script>
+    <script src="components/alertify/js/alertify.min.js"></script>
+    <script src="scripts/facets.js"></script>
+
+  </body>
+</html>
