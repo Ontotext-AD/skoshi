@@ -1,8 +1,8 @@
 package com.ontotext.skoshi.services.impl;
 
 import com.google.common.io.Files;
-import com.ontotext.openpolicy.skosfixer.MultitesSkosFixer;
-import com.ontotext.openpolicy.skosfixer.RdfFixerException;
+import com.ontotext.skoshi.skosfixer.MultitesSkosFixer;
+import com.ontotext.skoshi.skosfixer.RdfFixerException;
 import com.ontotext.skoshi.error.AlreadyExistsException;
 import com.ontotext.skoshi.model.concept.Concept;
 import com.ontotext.skoshi.model.concept.ConceptDescription;
