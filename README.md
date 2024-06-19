@@ -1,3 +1,5 @@
+## ⚠️ _This repository is no longer supported or updated by Ontotext. If you wish to continue to develop this code yourself, we recommend you fork it._
+
 Ontotext Skoshi SKOS Editor
 ===========================
 
